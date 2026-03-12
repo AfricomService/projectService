@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--
+        Added the constraints for entity MatriceJourFerie.
+    -->
+    <changeSet id="20260312132239-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="matrice_id"
+                                 baseTableName="matrice_jour_ferie"
+                                 constraintName="fk_matrice_jour_ferie__matrice_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="matrice_facturation"/>
+
+        <addForeignKeyConstraint baseColumnNames="jour_ferie_id"
+                                 baseTableName="matrice_jour_ferie"
+                                 constraintName="fk_matrice_jour_ferie__jour_ferie_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jour_ferie"/>
+    </changeSet>
+</databaseChangeLog>
