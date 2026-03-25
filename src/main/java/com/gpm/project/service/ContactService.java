@@ -4,7 +4,9 @@ import com.gpm.project.domain.Contact;
 import com.gpm.project.repository.ContactRepository;
 import com.gpm.project.service.dto.ContactDTO;
 import com.gpm.project.service.mapper.ContactMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -95,6 +97,18 @@ public class ContactService {
      */
     public Page<ContactDTO> findAllWithEagerRelationships(Pageable pageable) {
         return contactRepository.findAllWithEagerRelationships(pageable).map(contactMapper::toDto);
+    }
+
+    /**
+     * Get all contacts by clientId.
+     *
+     * @param clientId the id of the client.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<ContactDTO> findContactsByClientId(Long clientId) {
+        log.debug("Request to get Contacts by clientId : {}", clientId);
+        return contactRepository.findByClientId(clientId).stream().map(contactMapper::toDto).collect(Collectors.toList());
     }
 
     /**

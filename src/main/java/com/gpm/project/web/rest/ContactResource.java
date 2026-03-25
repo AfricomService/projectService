@@ -175,6 +175,19 @@ public class ContactResource {
     }
 
     /**
+     * {@code GET  /contacts/client/:clientId} : get the contacts by "clientId".
+     *
+     * @param clientId the id of the client to retrieve contacts for.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of contactDTO.
+     */
+    @GetMapping("/contacts/client/{clientId}")
+    public ResponseEntity<List<ContactDTO>> findContactsByClientId(@PathVariable Long clientId) {
+        log.debug("REST request to get Contacts by clientId : {}", clientId);
+        List<ContactDTO> contacts = contactService.findContactsByClientId(clientId);
+        return ResponseEntity.ok().body(contacts);
+    }
+
+    /**
      * {@code DELETE  /contacts/:id} : delete the "id" contact.
      *
      * @param id the id of the contactDTO to delete.

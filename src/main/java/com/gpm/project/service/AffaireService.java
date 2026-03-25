@@ -1,9 +1,12 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Affaire;
 import com.gpm.project.repository.AffaireRepository;
+import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +28,12 @@ public class AffaireService {
 
     private final AffaireMapper affaireMapper;
 
-    public AffaireService(AffaireRepository affaireRepository, AffaireMapper affaireMapper) {
+    private final UserRestClient userRestClient;
+
+    public AffaireService(AffaireRepository affaireRepository, AffaireMapper affaireMapper, UserRestClient userRestClient) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -38,6 +44,14 @@ public class AffaireService {
      */
     public AffaireDTO save(AffaireDTO affaireDTO) {
         log.debug("Request to save Affaire : {}", affaireDTO);
+
+        affaireDTO.setCreatedAt(ZonedDateTime.now());
+        affaireDTO.setUpdatedAt(ZonedDateTime.now());
+        affaireDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        affaireDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        affaireDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
         return affaireMapper.toDto(affaire);

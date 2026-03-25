@@ -37,4 +37,6 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     @Query("select contact from Contact contact left join fetch contact.client where contact.id =:id")
     Optional<Contact> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<Contact> findByClientId(Long clientId);
 }
