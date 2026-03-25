@@ -1,9 +1,12 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Client;
 import com.gpm.project.repository.ClientRepository;
+import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.ClientDTO;
 import com.gpm.project.service.mapper.ClientMapper;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +28,12 @@ public class ClientService {
 
     private final ClientMapper clientMapper;
 
-    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper) {
+    private final UserRestClient userRestClient;
+
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper, UserRestClient userRestClient) {
         this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -38,6 +44,14 @@ public class ClientService {
      */
     public ClientDTO save(ClientDTO clientDTO) {
         log.debug("Request to save Client : {}", clientDTO);
+
+        clientDTO.setCreatedAt(ZonedDateTime.now());
+        clientDTO.setUpdatedAt(ZonedDateTime.now());
+        clientDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        clientDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        clientDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        clientDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
         return clientMapper.toDto(client);
