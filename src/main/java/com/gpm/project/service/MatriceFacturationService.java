@@ -113,6 +113,22 @@ public class MatriceFacturationService {
     }
 
     /**
+     * Get matrice facturations by affaire id.
+     *
+     * @param affaireId the id of the affaire.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<MatriceFacturationDTO> findMatriceByAffaireId(Long affaireId) {
+        log.debug("Request to get MatriceFacturation by affaire id : {}", affaireId);
+        return matriceFacturationRepository
+            .findAllByAffaireId(affaireId)
+            .stream()
+            .map(matriceFacturationMapper::toDto)
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
      * Delete the matriceFacturation by id.
      *
      * @param id the id of the entity.

@@ -179,6 +179,19 @@ public class MatriceFacturationResource {
     }
 
     /**
+     * {@code GET  /matrice-facturations/affaire/:id} : get matriceFacturations by affaireId.
+     *
+     * @param id the id of the affaire to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of matriceFacturationDTO.
+     */
+    @GetMapping("/matrice-facturations/affaire/{id}")
+    public ResponseEntity<List<MatriceFacturationDTO>> findMatriceByAffaireId(@PathVariable Long id) {
+        log.debug("REST request to get MatriceFacturation by affaire id : {}", id);
+        List<MatriceFacturationDTO> result = matriceFacturationService.findMatriceByAffaireId(id);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
      * {@code DELETE  /matrice-facturations/:id} : delete the "id" matriceFacturation.
      *
      * @param id the id of the matriceFacturationDTO to delete.

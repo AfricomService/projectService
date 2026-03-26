@@ -18,9 +18,7 @@ public interface MatriceFacturationRepository extends JpaRepository<MatriceFactu
         return this.findOneWithToOneRelationships(id);
     }
 
-    default List<MatriceFacturation> findAllWithEagerRelationships() {
-        return this.findAllWithToOneRelationships();
-    }
+    List<MatriceFacturation> findAllByAffaireId(Long affaireId);
 
     default Page<MatriceFacturation> findAllWithEagerRelationships(Pageable pageable) {
         return this.findAllWithToOneRelationships(pageable);
