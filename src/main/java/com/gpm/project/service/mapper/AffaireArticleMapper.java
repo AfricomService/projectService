@@ -27,5 +27,7 @@ public interface AffaireArticleMapper extends EntityMapper<AffaireArticleDTO, Af
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "code", source = "code")
+    @Mapping(target = "designation", source = "designation")
+    @Mapping(target = "uniteMesure", source = "uniteMesure")
     ArticleDTO toDtoArticleCode(Article article);
 }

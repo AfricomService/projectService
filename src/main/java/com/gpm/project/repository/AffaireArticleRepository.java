@@ -41,4 +41,6 @@ public interface AffaireArticleRepository extends JpaRepository<AffaireArticle, 
         "select affaireArticle from AffaireArticle affaireArticle left join fetch affaireArticle.affaire left join fetch affaireArticle.article where affaireArticle.id =:id"
     )
     Optional<AffaireArticle> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<AffaireArticle> findByAffaireId(Long affaireId);
 }

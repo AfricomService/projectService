@@ -118,4 +118,20 @@ public class AffaireArticleService {
         log.debug("Request to delete AffaireArticle : {}", id);
         affaireArticleRepository.deleteById(id);
     }
+
+    /**
+     * Get all the affaireArticles by affaire id.
+     *
+     * @param affaireId the id of the affaire.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<AffaireArticleDTO> findByAffaireId(Long affaireId) {
+        log.debug("Request to get AffaireArticles by affaireId : {}", affaireId);
+        return affaireArticleRepository
+            .findByAffaireId(affaireId)
+            .stream()
+            .map(affaireArticleMapper::toDto)
+            .collect(java.util.stream.Collectors.toList());
+    }
 }

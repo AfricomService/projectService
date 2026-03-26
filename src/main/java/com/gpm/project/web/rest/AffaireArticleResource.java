@@ -190,4 +190,17 @@ public class AffaireArticleResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    /**
+     * {@code GET  /affaire-articles/affaire/:affaireId} : get all the affaireArticles by affaire id.
+     *
+     * @param affaireId the id of the affaire.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of affaireArticles in body.
+     */
+    @GetMapping("/affaire-articles/affaire/{affaireId}")
+    public ResponseEntity<List<AffaireArticleDTO>> getAffaireArticlesByAffaireId(@PathVariable Long affaireId) {
+        log.debug("REST request to get AffaireArticles by affaireId : {}", affaireId);
+        List<AffaireArticleDTO> result = affaireArticleService.findByAffaireId(affaireId);
+        return ResponseEntity.ok().body(result);
+    }
 }
