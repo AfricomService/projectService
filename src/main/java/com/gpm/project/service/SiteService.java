@@ -4,7 +4,9 @@ import com.gpm.project.domain.Site;
 import com.gpm.project.repository.SiteRepository;
 import com.gpm.project.service.dto.SiteDTO;
 import com.gpm.project.service.mapper.SiteMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -95,6 +97,18 @@ public class SiteService {
      */
     public Page<SiteDTO> findAllWithEagerRelationships(Pageable pageable) {
         return siteRepository.findAllWithEagerRelationships(pageable).map(siteMapper::toDto);
+    }
+
+    /**
+     * Get all sites by clientId.
+     *
+     * @param clientId the id of the client.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<SiteDTO> findSitesByClientId(Long clientId) {
+        log.debug("Request to get Sites by clientId : {}", clientId);
+        return siteRepository.findByClientId(clientId).stream().map(siteMapper::toDto).collect(Collectors.toList());
     }
 
     /**

@@ -37,4 +37,6 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
 
     @Query("select affaire from Affaire affaire left join fetch affaire.client where affaire.id =:id")
     Optional<Affaire> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<Affaire> findByClientId(Long clientId);
 }

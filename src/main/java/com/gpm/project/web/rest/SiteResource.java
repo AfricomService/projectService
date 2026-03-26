@@ -175,6 +175,19 @@ public class SiteResource {
     }
 
     /**
+     * {@code GET  /sites/client/:clientId} : get the sites by "clientId".
+     *
+     * @param clientId the id of the client to retrieve sites for.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of siteDTO.
+     */
+    @GetMapping("/sites/client/{clientId}")
+    public ResponseEntity<List<SiteDTO>> findSitesByClientId(@PathVariable Long clientId) {
+        log.debug("REST request to get Sites by clientId : {}", clientId);
+        List<SiteDTO> sites = siteService.findSitesByClientId(clientId);
+        return ResponseEntity.ok().body(sites);
+    }
+
+    /**
      * {@code DELETE  /sites/:id} : delete the "id" site.
      *
      * @param id the id of the siteDTO to delete.

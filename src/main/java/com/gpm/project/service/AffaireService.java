@@ -7,7 +7,9 @@ import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -109,6 +111,18 @@ public class AffaireService {
      */
     public Page<AffaireDTO> findAllWithEagerRelationships(Pageable pageable) {
         return affaireRepository.findAllWithEagerRelationships(pageable).map(affaireMapper::toDto);
+    }
+
+    /**
+     * Get all affaires by clientId.
+     *
+     * @param clientId the id of the client.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<AffaireDTO> findAffairesByClientId(Long clientId) {
+        log.debug("Request to get Affaires by clientId : {}", clientId);
+        return affaireRepository.findByClientId(clientId).stream().map(affaireMapper::toDto).collect(Collectors.toList());
     }
 
     /**

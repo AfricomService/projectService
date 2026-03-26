@@ -175,6 +175,19 @@ public class AffaireResource {
     }
 
     /**
+     * {@code GET  /affaires/client/:clientId} : get the affaires by "clientId".
+     *
+     * @param clientId the id of the client to retrieve affaires for.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of affaireDTO.
+     */
+    @GetMapping("/affaires/client/{clientId}")
+    public ResponseEntity<List<AffaireDTO>> findAffairesByClientId(@PathVariable Long clientId) {
+        log.debug("REST request to get Affaires by clientId : {}", clientId);
+        List<AffaireDTO> affaires = affaireService.findAffairesByClientId(clientId);
+        return ResponseEntity.ok().body(affaires);
+    }
+
+    /**
      * {@code DELETE  /affaires/:id} : delete the "id" affaire.
      *
      * @param id the id of the affaireDTO to delete.
