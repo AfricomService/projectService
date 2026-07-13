@@ -190,11 +190,11 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: http://localhost:9080/realms/jhipster
+            issuer-uri: http://localhost:9080/realms/Africom
         registration:
           oidc:
-            client-id: internal
-            client-secret: internal
+            client-id: gpm_internal
+            client-secret: pNOoGrrA72931Oe53mjqRNosEXU57UnN
             scope: openid, profile, email, offline_access # last one for refresh tokens
 
 server:
