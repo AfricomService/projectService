@@ -65,6 +65,8 @@ public class AffaireDTO implements Serializable {
 
     private String updatedByUserLogin;
 
+    private Long societeId;
+
     private ClientDTO client;
 
     public Long getId() {
@@ -243,6 +245,14 @@ public class AffaireDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public Long getSocieteId() {
+        return societeId;
+    }
+
+    public void setSocieteId(Long societeId) {
+        this.societeId = societeId;
+    }
+
     public ClientDTO getClient() {
         return client;
     }
@@ -298,6 +308,7 @@ public class AffaireDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", societeId=" + getSocieteId() +
             ", client=" + getClient() +
             "}";
     }

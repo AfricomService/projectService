@@ -97,6 +97,9 @@ public class Affaire implements Serializable {
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
 
+    @Column(name = "societe_id")
+    private Long societeId;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "contacts", "sites" }, allowSetters = true)
@@ -390,6 +393,19 @@ public class Affaire implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public Long getSocieteId() {
+        return this.societeId;
+    }
+
+    public Affaire societeId(Long societeId) {
+        this.setSocieteId(societeId);
+        return this;
+    }
+
+    public void setSocieteId(Long societeId) {
+        this.societeId = societeId;
+    }
+
     public Client getClient() {
         return this.client;
     }
@@ -448,6 +464,7 @@ public class Affaire implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", societeId=" + getSocieteId() +
             "}";
     }
 }

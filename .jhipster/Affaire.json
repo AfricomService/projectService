@@ -95,6 +95,10 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "societeId",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,

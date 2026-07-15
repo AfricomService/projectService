@@ -72,6 +72,7 @@ public class CacheConfiguration {
             createCache(cm, com.gpm.project.domain.Ville.class.getName());
             createCache(cm, com.gpm.project.domain.Ville.class.getName() + ".zones");
             createCache(cm, com.gpm.project.domain.Zone.class.getName());
+            createCache(cm, com.gpm.project.domain.AffaireSocieteAdj.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -1,0 +1,23 @@
+{
+  "changelogDate": "20260714131446",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "affaireId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "societeId",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "projectService",
+  "name": "AffaireSocieteAdj",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}
