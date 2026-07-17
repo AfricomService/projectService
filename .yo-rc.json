@@ -33,7 +33,8 @@
       "Vehicule",
       "Ville",
       "Zone",
-      "AffaireSocieteAdj"
+      "AffaireSocieteAdj",
+      "Numsequentielle"
     ],
     "entitySuffix": "",
     "gatewayServerPort": "8080",
@@ -42,7 +43,7 @@
     "jhipsterVersion": "7.9.3",
     "jwtSecretKey": "MmFiY2YyNTA3YmM0MzZmOTZlYjQ1ZGM2YzU2ZTFkNjA0NGE5ZWQyNWM5YmJlMzc5OTQxNmE3MGQyOTk4NjljM2E1OTFhZTU0YWViZGNlMmYxMzIxMTU3NDhhYTQ4Y2ZlYjI2N2IwMDgyNDM0YWE1ZDgzYjkxNDI2NWRiM2E2NDY=",
     "languages": ["en"],
-    "lastLiquibaseTimestamp": 1784034886000,
+    "lastLiquibaseTimestamp": 1784280146000,
     "messageBroker": false,
     "microfrontend": false,
     "nativeLanguage": "en",
