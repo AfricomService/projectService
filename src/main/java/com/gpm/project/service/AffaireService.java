@@ -146,4 +146,21 @@ public class AffaireService {
         log.debug("Request to delete Affaire : {}", id);
         affaireRepository.deleteById(id);
     }
+
+    /**
+     * Search affaires by clientId and designationAffaire (partial, case-insensitive).
+     *
+     * @param clientId the id of the client.
+     * @param designation the search term.
+     * @return the list of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public List<AffaireDTO> searchAffairesByClientIdAndDesignation(Long clientId, String designation) {
+        log.debug("Request to search Affaires by clientId : {} and designation : {}", clientId, designation);
+        return affaireRepository
+            .findByClientIdAndDesignationAffaireContainingIgnoreCase(clientId, designation)
+            .stream()
+            .map(affaireMapper::toDto)
+            .collect(Collectors.toList());
+    }
 }

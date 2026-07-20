@@ -112,6 +112,23 @@ public class ContactService {
     }
 
     /**
+     * Search contacts by clientId and raisonSociale (partial, case-insensitive).
+     *
+     * @param clientId the id of the client.
+     * @param raisonSociale the search term for raisonSociale.
+     * @return the list of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public List<ContactDTO> searchContactsByClientId(Long clientId, String raisonSociale) {
+        log.debug("Request to search Contacts by clientId : {} and raisonSociale : {}", clientId, raisonSociale);
+        return contactRepository
+            .findByClientIdAndRaisonSocialeContainingIgnoreCase(clientId, raisonSociale)
+            .stream()
+            .map(contactMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Get one contact by id.
      *
      * @param id the id of the entity.
