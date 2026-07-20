@@ -100,15 +100,30 @@ public class SiteService {
     }
 
     /**
-     * Get all sites by clientId.
+     * Get all sites by clientId, paginated.
      *
      * @param clientId the id of the client.
-     * @return the list of entities.
+     * @param pageable the pagination information.
+     * @return the page of entities.
      */
     @Transactional(readOnly = true)
-    public List<SiteDTO> findSitesByClientId(Long clientId) {
+    public Page<SiteDTO> findSitesByClientId(Long clientId, Pageable pageable) {
         log.debug("Request to get Sites by clientId : {}", clientId);
-        return siteRepository.findByClientId(clientId).stream().map(siteMapper::toDto).collect(Collectors.toList());
+        return siteRepository.findByClientId(clientId, pageable).map(siteMapper::toDto);
+    }
+
+    /**
+     * Search sites by clientId and designation (partial, case-insensitive), paginated.
+     *
+     * @param clientId the id of the client.
+     * @param designation the search term for designation.
+     * @param pageable the pagination information.
+     * @return the page of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<SiteDTO> searchSitesByClientId(Long clientId, String designation, Pageable pageable) {
+        log.debug("Request to search Sites by clientId : {} and designation : {}", clientId, designation);
+        return siteRepository.findByClientIdAndDesignationContainingIgnoreCase(clientId, designation, pageable).map(siteMapper::toDto);
     }
 
     /**

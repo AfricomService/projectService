@@ -57,6 +57,10 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

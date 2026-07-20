@@ -175,16 +175,41 @@ public class SiteResource {
     }
 
     /**
-     * {@code GET  /sites/client/:clientId} : get the sites by "clientId".
+     * {@code GET  /sites/client/:clientId} : get the sites by "clientId", paginated.
      *
      * @param clientId the id of the client to retrieve sites for.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of siteDTO.
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the page of siteDTO.
      */
     @GetMapping("/sites/client/{clientId}")
-    public ResponseEntity<List<SiteDTO>> findSitesByClientId(@PathVariable Long clientId) {
+    public ResponseEntity<List<SiteDTO>> findSitesByClientId(
+        @PathVariable Long clientId,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get Sites by clientId : {}", clientId);
-        List<SiteDTO> sites = siteService.findSitesByClientId(clientId);
-        return ResponseEntity.ok().body(sites);
+        Page<SiteDTO> page = siteService.findSitesByClientId(clientId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /sites/client/:clientId/search} : search sites by "clientId" and "designation", paginated.
+     *
+     * @param clientId the id of the client to retrieve sites for.
+     * @param designation the search term for designation.
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the page of matching siteDTO.
+     */
+    @GetMapping("/sites/client/{clientId}/search")
+    public ResponseEntity<List<SiteDTO>> searchSitesByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String designation,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to search Sites by clientId : {} and designation : {}", clientId, designation);
+        Page<SiteDTO> page = siteService.searchSitesByClientId(clientId, designation, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

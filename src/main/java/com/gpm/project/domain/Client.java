@@ -16,7 +16,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "client")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +64,9 @@ public class Client implements Serializable {
 
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
+
+    @Column(name = "status")
+    private String status;
 
     @OneToMany(mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -247,6 +249,19 @@ public class Client implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getStatus() {
+        return this.status;
+    }
+
+    public Client status(String status) {
+        this.setStatus(status);
+        return this;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Set<Contact> getContacts() {
         return this.contacts;
     }
@@ -345,6 +360,7 @@ public class Client implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

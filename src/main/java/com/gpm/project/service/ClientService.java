@@ -78,6 +78,10 @@ public class ClientService {
         clientDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
         clientDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
+        if (clientDTO.getStatus() == null || clientDTO.getStatus().isBlank()) {
+            clientDTO.setStatus("ACTIF");
+        }
+
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
         return clientMapper.toDto(client);
