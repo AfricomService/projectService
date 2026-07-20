@@ -14,7 +14,7 @@ public class NumsequentielleDTO implements Serializable {
     private String prefix;
 
     @NotNull
-    private String nextNumber;
+    private Long nextNumber;
 
     private String format;
 
@@ -36,11 +36,11 @@ public class NumsequentielleDTO implements Serializable {
         this.prefix = prefix;
     }
 
-    public String getNextNumber() {
+    public Long getNextNumber() {
         return nextNumber;
     }
 
-    public void setNextNumber(String nextNumber) {
+    public void setNextNumber(Long nextNumber) {
         this.nextNumber = nextNumber;
     }
 

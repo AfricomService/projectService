@@ -4,6 +4,8 @@ import com.gpm.project.domain.Numsequentielle;
 import com.gpm.project.repository.NumsequentielleRepository;
 import com.gpm.project.service.dto.NumsequentielleDTO;
 import com.gpm.project.service.mapper.NumsequentielleMapper;
+
+import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,5 +97,32 @@ public class NumsequentielleService {
     public void delete(Long id) {
         log.debug("Request to delete Numsequentielle : {}", id);
         numsequentielleRepository.deleteById(id);
+    }
+
+    /**
+     * Génère et incrémente l'identifiant unique client.
+     * Format attendu : C-00001-26
+     *
+     * @return l'identifiant généré.
+     */
+    public String genererIdentifiantClient() {
+        log.debug("Request to generate identifiant for Client");
+
+        Numsequentielle seq = numsequentielleRepository
+            .findByCodeNumSeq("CLIENT")
+            .orElseThrow(() -> new RuntimeException("Numsequentielle introuvable pour codeNumSeq : CLIENT"));
+
+        Long currentNumber = seq.getNextNumber();
+
+        String numeroFormatte = String.format("%05d", currentNumber);
+        int shortYear = LocalDate.now().getYear() % 100;
+        String prefix = seq.getPrefix() != null ? seq.getPrefix() : "";
+        String identifiant = prefix + "-" + numeroFormatte + "-" + String.format("%02d", shortYear);
+
+        seq.setNextNumber(currentNumber + 1);
+        numsequentielleRepository.save(seq);
+
+        log.debug("Identifiant généré : {}", identifiant);
+        return identifiant;
     }
 }

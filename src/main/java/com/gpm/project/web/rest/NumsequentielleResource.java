@@ -181,4 +181,10 @@ public class NumsequentielleResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @PostMapping("/numsequentielles/generate-identifiant-client")
+    public ResponseEntity<String> generateIdentifiantClient() {
+        String identifiant = numsequentielleService.genererIdentifiantClient();
+        return ResponseEntity.ok(identifiant);
+    }
 }

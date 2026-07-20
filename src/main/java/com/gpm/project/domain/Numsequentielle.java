@@ -27,7 +27,7 @@ public class Numsequentielle implements Serializable {
 
     @NotNull
     @Column(name = "next_number", nullable = false)
-    private String nextNumber;
+    private Long nextNumber;
 
     @Column(name = "format")
     private String format;
@@ -63,16 +63,16 @@ public class Numsequentielle implements Serializable {
         this.prefix = prefix;
     }
 
-    public String getNextNumber() {
+    public Long getNextNumber() {
         return this.nextNumber;
     }
 
-    public Numsequentielle nextNumber(String nextNumber) {
+    public Numsequentielle nextNumber(Long nextNumber) {
         this.setNextNumber(nextNumber);
         return this;
     }
 
-    public void setNextNumber(String nextNumber) {
+    public void setNextNumber(Long nextNumber) {
         this.nextNumber = nextNumber;
     }
 
@@ -127,7 +127,7 @@ public class Numsequentielle implements Serializable {
         return "Numsequentielle{" +
             "id=" + getId() +
             ", prefix='" + getPrefix() + "'" +
-            ", nextNumber='" + getNextNumber() + "'" +
+            ", nextNumber=" + getNextNumber() +
             ", format='" + getFormat() + "'" +
             ", codeNumSeq='" + getCodeNumSeq() + "'" +
             "}";

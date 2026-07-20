@@ -69,6 +69,28 @@ public class ClientResource {
     }
 
     /**
+     * {@code POST  /clients/identifier-et-enregistrer} : Génère l'identifiant unique
+     * du client puis l'enregistre, en une seule requête.
+     *
+     * @param clientDTO le clientDTO à créer (sans id).
+     * @return le {@link ResponseEntity} avec statut {@code 201 (Created)} et le clientDTO créé,
+     * ou statut {@code 400 (Bad Request)} si le client possède déjà un ID.
+     * @throws URISyntaxException si l'URI de localisation est incorrecte.
+     */
+    @PostMapping("/clients/identifier-et-enregistrer")
+    public ResponseEntity<ClientDTO> createClientWithIdentifiant(@RequestBody ClientDTO clientDTO) throws URISyntaxException {
+        log.debug("REST request to identify and save Client : {}", clientDTO);
+        if (clientDTO.getId() != null) {
+            throw new BadRequestAlertException("A new client cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        ClientDTO result = clientService.identifierEtEnregistrer(clientDTO);
+        return ResponseEntity
+            .created(new URI("/api/clients/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * {@code PUT  /clients/:id} : Updates an existing client.
      *
      * @param id the id of the clientDTO to save.
