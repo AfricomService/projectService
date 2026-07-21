@@ -48,6 +48,11 @@ public class SocieteResource {
         this.societeRepository = societeRepository;
     }
 
+    @GetMapping("/societes/findAllSocieteByAffaireId")
+    public List<SocieteDTO> findAllSocieteByAffaireId(@RequestParam("affaireId") Long affaireId) {
+        return societeService.findAllByAffaireId(affaireId);
+    }
+
     /**
      * {@code POST  /societes} : Create a new societe.
      *

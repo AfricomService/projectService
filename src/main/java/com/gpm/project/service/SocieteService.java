@@ -1,9 +1,12 @@
 package com.gpm.project.service;
 
+import com.gpm.project.domain.AffaireSocieteAdj;
 import com.gpm.project.domain.Societe;
+import com.gpm.project.repository.AffaireSocieteAdjRepository;
 import com.gpm.project.repository.SocieteRepository;
 import com.gpm.project.service.dto.SocieteDTO;
 import com.gpm.project.service.mapper.SocieteMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +28,24 @@ public class SocieteService {
 
     private final SocieteMapper societeMapper;
 
-    public SocieteService(SocieteRepository societeRepository, SocieteMapper societeMapper) {
+    private final AffaireSocieteAdjRepository affaireSocieteAdjRepository;
+
+    public SocieteService(
+        SocieteRepository societeRepository,
+        SocieteMapper societeMapper,
+        AffaireSocieteAdjRepository affaireSocieteAdjRepository
+    ) {
         this.societeRepository = societeRepository;
         this.societeMapper = societeMapper;
+        this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
+    }
+
+    public List<SocieteDTO> findAllByAffaireId(Long affaireId) {
+        List<AffaireSocieteAdj> affaireSocieteAdjs = affaireSocieteAdjRepository.findAllByAffaireId(affaireId);
+
+        List<SocieteDTO> societeDTOS = affaireSocieteAdjs.stream().map(as -> findOne(as.getSocieteId()).get()).toList();
+
+        return societeDTOS;
     }
 
     /**
