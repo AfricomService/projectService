@@ -50,6 +50,10 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "clientId",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,

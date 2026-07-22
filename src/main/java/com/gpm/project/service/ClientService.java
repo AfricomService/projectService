@@ -129,7 +129,7 @@ public class ClientService {
     @Transactional(readOnly = true)
     public Page<ClientDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Clients");
-        return clientRepository.findAll(pageable).map(clientMapper::toDto);
+        return clientRepository.findAllByStatusNot("DELETED", pageable).map(clientMapper::toDto);
     }
 
     /**
@@ -153,4 +153,27 @@ public class ClientService {
         log.debug("Request to delete Client : {}", id);
         clientRepository.deleteById(id);
     }
+
+    /**
+     * Marque un client comme supprimé (suppression logique) en passant son statut à "DELETED".
+     *
+     * @param id l'id du client à marquer comme supprimé.
+     * @return l'entité mise à jour.
+     */
+    public Optional<ClientDTO> softDelete(Long id) {
+        log.debug("Request to soft delete Client : {}", id);
+
+        return clientRepository
+            .findById(id)
+            .map(existingClient -> {
+                existingClient.setStatus("DELETED");
+                existingClient.setUpdatedAt(ZonedDateTime.now());
+                existingClient.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+                existingClient.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+                return existingClient;
+            })
+            .map(clientRepository::save)
+            .map(clientMapper::toDto);
+    }
+
 }

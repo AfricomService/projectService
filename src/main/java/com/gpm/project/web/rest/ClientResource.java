@@ -202,4 +202,28 @@ public class ClientResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    /**
+     * {@code PATCH  /clients/:id/soft-delete} : marque un client comme supprimé (statut "DELETED")
+     * sans le supprimer physiquement de la base.
+     *
+     * @param id l'id du clientDTO à marquer comme supprimé.
+     * @return le {@link ResponseEntity} avec statut {@code 200 (OK)} et le clientDTO mis à jour,
+     * ou statut {@code 404 (Not Found)} si le client n'existe pas.
+     */
+    @PatchMapping("/clients/{id}/soft-delete")
+    public ResponseEntity<ClientDTO> softDeleteClient(@PathVariable Long id) {
+        log.debug("REST request to soft delete Client : {}", id);
+
+        if (!clientRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<ClientDTO> result = clientService.softDelete(id);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
+    }
 }

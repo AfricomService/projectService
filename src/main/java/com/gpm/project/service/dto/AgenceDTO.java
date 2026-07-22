@@ -8,7 +8,6 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.Agence} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class AgenceDTO implements Serializable {
 
     private Long id;
@@ -36,6 +35,8 @@ public class AgenceDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    private Long clientId;
 
     private SocieteDTO societe;
 
@@ -127,6 +128,14 @@ public class AgenceDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
     public SocieteDTO getSociete() {
         return societe;
     }
@@ -171,6 +180,7 @@ public class AgenceDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", clientId=" + getClientId() +
             ", societe=" + getSociete() +
             "}";
     }
