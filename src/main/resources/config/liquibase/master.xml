@@ -27,6 +27,7 @@
     <include file="config/liquibase/changelog/20260312132739_added_entity_Ville.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260312132839_added_entity_Zone.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260714131446_added_entity_AffaireSocieteAdj.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260721101521_added_entity_ContactSociete.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20260312131439_added_entity_constraints_Affaire.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260312131539_added_entity_constraints_AffaireArticle.xml" relativeToChangelogFile="false"/>

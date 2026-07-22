@@ -2,6 +2,7 @@ package com.gpm.project.web.rest;
 
 import com.gpm.project.repository.SocieteRepository;
 import com.gpm.project.service.SocieteService;
+import com.gpm.project.service.dto.PersonneDTO;
 import com.gpm.project.service.dto.SocieteDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -184,5 +185,14 @@ public class SocieteResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("/societes/assign-from-orgacare")
+    public ResponseEntity<Void> assignContactSocieteFromOrgaCare(
+        @RequestParam Long societeId,
+        @RequestBody List<PersonneDTO> personsToAssign
+    ) {
+        societeService.assignContactSocieteFromOrgaCare(personsToAssign, societeId);
+        return ResponseEntity.ok().build();
     }
 }

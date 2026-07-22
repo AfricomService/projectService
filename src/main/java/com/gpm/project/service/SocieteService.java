@@ -1,11 +1,16 @@
 package com.gpm.project.service;
 
 import com.gpm.project.domain.AffaireSocieteAdj;
+import com.gpm.project.domain.ContactSociete;
 import com.gpm.project.domain.Societe;
 import com.gpm.project.repository.AffaireSocieteAdjRepository;
+import com.gpm.project.repository.ContactSocieteRepository;
 import com.gpm.project.repository.SocieteRepository;
+import com.gpm.project.service.dto.ContactSocieteDTO;
+import com.gpm.project.service.dto.PersonneDTO;
 import com.gpm.project.service.dto.SocieteDTO;
 import com.gpm.project.service.mapper.SocieteMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -30,14 +35,18 @@ public class SocieteService {
 
     private final AffaireSocieteAdjRepository affaireSocieteAdjRepository;
 
+    private final ContactSocieteRepository contactSocieteRepository;
+
     public SocieteService(
         SocieteRepository societeRepository,
         SocieteMapper societeMapper,
-        AffaireSocieteAdjRepository affaireSocieteAdjRepository
+        AffaireSocieteAdjRepository affaireSocieteAdjRepository,
+        ContactSocieteRepository contactSocieteRepository
     ) {
         this.societeRepository = societeRepository;
         this.societeMapper = societeMapper;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
+        this.contactSocieteRepository = contactSocieteRepository;
     }
 
     public List<SocieteDTO> findAllByAffaireId(Long affaireId) {
@@ -126,5 +135,21 @@ public class SocieteService {
     public void delete(Long id) {
         log.debug("Request to delete Societe : {}", id);
         societeRepository.deleteById(id);
+    }
+
+    public void assignContactSocieteFromOrgaCare(List<PersonneDTO> personsToAssign, Long societeId) {
+        List<ContactSociete> contactSocieteList = new LinkedList<ContactSociete>();
+
+        personsToAssign.forEach(person -> {
+            ContactSociete contactSociete = new ContactSociete();
+            contactSociete.setSocieteId(societeId);
+            contactSociete.setEmail(person.getEmail());
+            contactSociete.setMatricule(person.getMatricule());
+            contactSociete.setNomPrenom(person.getNomPrenom());
+
+            contactSocieteList.add(contactSociete);
+        });
+
+        contactSocieteRepository.saveAll(contactSocieteList);
     }
 }
