@@ -107,14 +107,35 @@ public class NumsequentielleService {
      */
     public String genererIdentifiantClient() {
         log.debug("Request to generate identifiant for Client");
+        return genererIdentifiant("CLIENT");
+    }
 
+    /**
+     * Génère et incrémente l'identifiant unique agence.
+     * Format attendu : A-00001-26
+     *
+     * @return l'identifiant généré.
+     */
+    public String genererIdentifiantAgence() {
+        log.debug("Request to generate identifiant for Agence");
+        return genererIdentifiant("AGENCE");
+    }
+
+    /**
+     * Génère et incrémente un identifiant unique à partir d'un codeNumSeq donné.
+     * Format attendu : {prefix}-{numero sur 5 chiffres}-{2 derniers chiffres de l'année}
+     *
+     * @param codeNumSeq le code de la séquence à utiliser (ex: "CLIENT", "AGENCE").
+     * @return l'identifiant généré.
+     */
+    private String genererIdentifiant(String codeNumSeq) {
         Numsequentielle seq = numsequentielleRepository
-            .findByCodeNumSeq("CLIENT")
-            .orElseThrow(() -> new RuntimeException("Numsequentielle introuvable pour codeNumSeq : CLIENT"));
+            .findByCodeNumSeq(codeNumSeq)
+            .orElseThrow(() -> new RuntimeException("Numsequentielle introuvable pour codeNumSeq : " + codeNumSeq));
 
         Long currentNumber = seq.getNextNumber();
 
-        String numeroFormatte = String.format("%05d", currentNumber);
+        String numeroFormatte = String.format("%04d", currentNumber);
         int shortYear = LocalDate.now().getYear() % 100;
         String prefix = seq.getPrefix() != null ? seq.getPrefix() : "";
         String identifiant = prefix + "-" + numeroFormatte + "-" + String.format("%02d", shortYear);
@@ -122,7 +143,7 @@ public class NumsequentielleService {
         seq.setNextNumber(currentNumber + 1);
         numsequentielleRepository.save(seq);
 
-        log.debug("Identifiant généré : {}", identifiant);
+        log.debug("Identifiant généré pour {} : {}", codeNumSeq, identifiant);
         return identifiant;
     }
 }

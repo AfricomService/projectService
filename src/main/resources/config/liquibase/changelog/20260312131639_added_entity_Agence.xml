@@ -47,6 +47,9 @@
             <column name="client_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="identifiant_unique" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="societe_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -84,6 +87,7 @@
             <column name="updated_by" type="string"/>
             <column name="updated_by_user_login" type="string"/>
             <column name="client_id" type="numeric"/>
+            <column name="identifiant_unique" type="string"/>
             <column name="societe_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

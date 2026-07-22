@@ -63,6 +63,9 @@ public class Agence implements Serializable {
     @Column(name = "client_id")
     private Long clientId;
 
+    @Column(name = "identifiant_unique")
+    private String identifiantUnique;
+
     @OneToMany(mappedBy = "agence")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "agence" }, allowSetters = true)
@@ -231,6 +234,19 @@ public class Agence implements Serializable {
         this.clientId = clientId;
     }
 
+    public String getIdentifiantUnique() {
+        return this.identifiantUnique;
+    }
+
+    public Agence identifiantUnique(String identifiantUnique) {
+        this.setIdentifiantUnique(identifiantUnique);
+        return this;
+    }
+
+    public void setIdentifiantUnique(String identifiantUnique) {
+        this.identifiantUnique = identifiantUnique;
+    }
+
     public Set<Vehicule> getVehicules() {
         return this.vehicules;
     }
@@ -310,6 +326,7 @@ public class Agence implements Serializable {
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", clientId=" + getClientId() +
+            ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             "}";
     }
 }

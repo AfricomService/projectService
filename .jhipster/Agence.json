@@ -54,6 +54,10 @@
     {
       "fieldName": "clientId",
       "fieldType": "Long"
+    },
+    {
+      "fieldName": "identifiantUnique",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "site")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Site implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +55,21 @@ public class Site implements Serializable {
 
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
+
+    @Column(name = "nodale_gpm")
+    private String nodaleGpm;
+
+    @Column(name = "site_priority")
+    private String sitePriority;
+
+    @Column(name = "type_site")
+    private String typeSite;
+
+    @Column(name = "region_site")
+    private String regionSite;
+
+    @Column(name = "zone_id")
+    private Long zoneId;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -212,6 +226,71 @@ public class Site implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getNodaleGpm() {
+        return this.nodaleGpm;
+    }
+
+    public Site nodaleGpm(String nodaleGpm) {
+        this.setNodaleGpm(nodaleGpm);
+        return this;
+    }
+
+    public void setNodaleGpm(String nodaleGpm) {
+        this.nodaleGpm = nodaleGpm;
+    }
+
+    public String getSitePriority() {
+        return this.sitePriority;
+    }
+
+    public Site sitePriority(String sitePriority) {
+        this.setSitePriority(sitePriority);
+        return this;
+    }
+
+    public void setSitePriority(String sitePriority) {
+        this.sitePriority = sitePriority;
+    }
+
+    public String getTypeSite() {
+        return this.typeSite;
+    }
+
+    public Site typeSite(String typeSite) {
+        this.setTypeSite(typeSite);
+        return this;
+    }
+
+    public void setTypeSite(String typeSite) {
+        this.typeSite = typeSite;
+    }
+
+    public String getRegionSite() {
+        return this.regionSite;
+    }
+
+    public Site regionSite(String regionSite) {
+        this.setRegionSite(regionSite);
+        return this;
+    }
+
+    public void setRegionSite(String regionSite) {
+        this.regionSite = regionSite;
+    }
+
+    public Long getZoneId() {
+        return this.zoneId;
+    }
+
+    public Site zoneId(Long zoneId) {
+        this.setZoneId(zoneId);
+        return this;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
     public Ville getVille() {
         return this.ville;
     }
@@ -272,6 +351,11 @@ public class Site implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", nodaleGpm='" + getNodaleGpm() + "'" +
+            ", sitePriority='" + getSitePriority() + "'" +
+            ", typeSite='" + getTypeSite() + "'" +
+            ", regionSite='" + getRegionSite() + "'" +
+            ", zoneId=" + getZoneId() +
             "}";
     }
 }

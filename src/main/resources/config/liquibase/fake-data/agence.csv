@@ -1,11 +1,11 @@
-id;designation;adresse;ville;pays;created_at;updated_at;created_by;created_by_user_login;updated_by;updated_by_user_login;client_id;societe_id
-1;Home monitor;encryption;Pizza Ergonomic object-oriented;Table quantify;2026-03-11T20:45:01;2026-03-11T14:02:59;Function-based;Chair Bedfordshire;Lilangeni invoice Norway;extend Global next-generation;10340;1
-2;Rubber;compress override;Rubber Auto Washington;success models;2026-03-12T03:02:35;2026-03-12T04:39:20;Coordinator Graphic Nevada;Toys;Kansas Chicken integrated;Tanzanian;75961;2
-3;migration transmitting ubiquitous;Salad;next-generation;leading-edge Senior;2026-03-11T22:47:16;2026-03-12T08:27:20;User-centric Borders;drive;executive monitoring;tan azure;51235;3
-4;payment open-source;Associate;EXE deposit back-end;Manor Handcrafted View;2026-03-11T18:09:54;2026-03-12T07:50:51;Human auxiliary open;multi-state;Customer;Avon;32601;4
-5;collaborative;Lead;intermediate;Avon e-tailers Books;2026-03-12T11:14:23;2026-03-11T21:13:45;Dollar Accounts Rustic;Technician deliver Planner;Incredible Idaho programming;asymmetric;20411;5
-6;magenta multi-byte Wisconsin;override;haptic TCP;invoice;2026-03-12T06:28:51;2026-03-12T12:21:06;Market extend paradigms;Dollar;Strategist Regional;Designer Groves;52244;6
-7;Shoes;mobile Plastic;help-desk Cove SDD;bluetooth;2026-03-11T16:51:36;2026-03-11T21:12:03;out-of-the-box Agent;index Bedfordshire Account;Manat Plain SQL;up Vanuatu Soap;93159;7
-8;SCSI;ROI deposit;transmitting synthesizing User-centric;Principal cross-platform Jewelery;2026-03-12T05:27:38;2026-03-11T20:57:41;Turkmenistan Electronics;regional model brand;Incredible Pennsylvania;transmit;54862;8
-9;Ergonomic seamless;Dakota leverage;Loan infrastructures;orchid Turkish;2026-03-11T15:16:19;2026-03-12T06:17:48;niches Optimization hard;France hour;Wisconsin Group generating;paradigm panel Stravenue;22066;9
-10;Kentucky static;CSS;copy;compelling;2026-03-12T06:34:21;2026-03-12T05:50:58;Toys;e-enable virtual;application Fantastic Arizona;bypassing global;7470;10
+id;designation;adresse;ville;pays;created_at;updated_at;created_by;created_by_user_login;updated_by;updated_by_user_login;client_id;identifiant_unique;societe_id
+1;Home monitor;encryption;Pizza Ergonomic object-oriented;Table quantify;2026-03-11T20:45:01;2026-03-11T14:02:59;Function-based;Chair Bedfordshire;Lilangeni invoice Norway;extend Global next-generation;10340;Rubber;1
+2;compress override;Rubber Auto Washington;success models;cutting-edge utilize;2026-03-12T03:44:59;2026-03-12T05:57:57;Nevada Toys;Kansas Chicken integrated;Tanzanian;Product transmitter Islands;87930;Salad;2
+3;next-generation;leading-edge Senior;turquoise Research;virtual Kingdom;2026-03-12T06:24:05;2026-03-12T04:30:10;monitoring Comoros Intelligent;Berkshire Dollar hybrid;Frozen Orchestrator Square;Architect;6083;Uganda;3
+4;View;Quality-focused Principal Sports;Car payment Customer;Avon;2026-03-12T05:27:10;2026-03-12T12:49:50;Branding Lead;intermediate;Avon e-tailers Books;Account;10421;Accounts Rustic parse;4
+5;deliver Planner;Incredible Idaho programming;asymmetric;override;2026-03-12T04:46:28;2026-03-11T18:09:29;Organic Account;withdrawal;Internal attitude-oriented;copy calculate Berkshire;878;Steel Morocco;5
+6;Monetary navigating Canada;sky;driver;Coordinator conglomeration help-desk;2026-03-12T02:16:15;2026-03-12T10:27:36;SDD;bluetooth;Metical up Forward;experiences non-volatile Sleek;68333;implementation Vatu standardization;6
+7;Operations;Soap;Outdoors Kentucky Versatile;synthesizing;2026-03-11T16:59:22;2026-03-12T09:33:52;hack Accountability Principal;visionary virtual Krone;back Representative bluetooth;index Regional;30956;blue;7
+8;Bacon Marshall Intelligent;seamless;Dakota leverage;Loan infrastructures;2026-03-12T01:18:32;2026-03-12T08:08:01;Peru ubiquitous;niches Optimization hard;France hour;Wisconsin Group generating;84083;sensor;8
+9;Berkshire;tan;Pound;Fresh;2026-03-11T22:19:28;2026-03-12T07:15:27;didactic compelling dynamic;Turkey;Human background;mobile e-business Refined;51759;attitude-oriented South;9
+10;Diverse Plastic;Toys virtual;Cotton Handmade;turn-key;2026-03-12T02:04:25;2026-03-12T08:37:40;Helena logistical;Village;SSL capacitor;Practical Gorgeous;65124;array Philippines Hat;10

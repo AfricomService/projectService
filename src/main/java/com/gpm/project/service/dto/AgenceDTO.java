@@ -38,6 +38,8 @@ public class AgenceDTO implements Serializable {
 
     private Long clientId;
 
+    private String identifiantUnique;
+
     private SocieteDTO societe;
 
     public Long getId() {
@@ -136,6 +138,14 @@ public class AgenceDTO implements Serializable {
         this.clientId = clientId;
     }
 
+    public String getIdentifiantUnique() {
+        return identifiantUnique;
+    }
+
+    public void setIdentifiantUnique(String identifiantUnique) {
+        this.identifiantUnique = identifiantUnique;
+    }
+
     public SocieteDTO getSociete() {
         return societe;
     }
@@ -181,6 +191,7 @@ public class AgenceDTO implements Serializable {
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", clientId=" + getClientId() +
+            ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             ", societe=" + getSociete() +
             "}";
     }

@@ -41,4 +41,6 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
     Page<Site> findByClientId(Long clientId, Pageable pageable);
 
     Page<Site> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation, Pageable pageable);
+
+    Optional<Site> findByCode(String code);
 }

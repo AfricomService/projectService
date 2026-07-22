@@ -37,4 +37,7 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
 
     @Query("select zone from Zone zone left join fetch zone.ville where zone.id =:id")
     Optional<Zone> findOneWithToOneRelationships(@Param("id") Long id);
+
+    Optional<Zone> findByNomIgnoreCaseAndVilleId(String nom, Long villeId);
+
 }

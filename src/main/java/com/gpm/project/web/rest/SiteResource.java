@@ -3,7 +3,9 @@ package com.gpm.project.web.rest;
 import com.gpm.project.repository.SiteRepository;
 import com.gpm.project.service.SiteService;
 import com.gpm.project.service.dto.SiteDTO;
+import com.gpm.project.service.dto.SiteImportResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -18,8 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -226,5 +230,36 @@ public class SiteResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code POST  /sites/import/:clientId} : importe des sites depuis un fichier Excel pour un client donné.
+     *
+     * @param clientId l'id du client auquel rattacher les sites importés.
+     * @param file le fichier Excel (.xlsx) à importer.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the import result.
+     */
+    @PostMapping("/sites/import/{clientId}")
+    public ResponseEntity<SiteImportResultDTO> importSites(@PathVariable Long clientId, @RequestParam("file") MultipartFile file)
+        throws IOException {
+        log.debug("REST request to import Sites for client : {}", clientId);
+        SiteImportResultDTO result = siteService.importSites(file, clientId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * {@code GET  /sites/import/template} : télécharge le modèle Excel vide pour l'import de sites.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the Excel file as body.
+     */
+    @GetMapping("/sites/import/template")
+    public ResponseEntity<byte[]> downloadImportTemplate() throws IOException {
+        log.debug("REST request to download Site import template");
+        byte[] content = siteService.generateImportTemplate();
+        return ResponseEntity
+            .ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=modele_import_sites.xlsx")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(content);
     }
 }

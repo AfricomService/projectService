@@ -25,9 +25,12 @@ public class AgenceService {
 
     private final AgenceMapper agenceMapper;
 
-    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper) {
+    private final NumsequentielleService numsequentielleService;
+
+    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper, NumsequentielleService numsequentielleService) {
         this.agenceRepository = agenceRepository;
         this.agenceMapper = agenceMapper;
+        this.numsequentielleService = numsequentielleService;
     }
 
     /**
@@ -38,6 +41,10 @@ public class AgenceService {
      */
     public AgenceDTO save(AgenceDTO agenceDTO) {
         log.debug("Request to save Agence : {}", agenceDTO);
+
+        String identifiant = numsequentielleService.genererIdentifiantAgence();
+        agenceDTO.setIdentifiantUnique(identifiant);
+
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
         return agenceMapper.toDto(agence);
