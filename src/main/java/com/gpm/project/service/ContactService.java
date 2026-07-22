@@ -1,6 +1,8 @@
 package com.gpm.project.service;
 
+import com.gpm.project.domain.Client;
 import com.gpm.project.domain.Contact;
+import com.gpm.project.repository.ClientRepository;
 import com.gpm.project.repository.ContactRepository;
 import com.gpm.project.service.dto.ContactDTO;
 import com.gpm.project.service.mapper.ContactMapper;
@@ -27,9 +29,12 @@ public class ContactService {
 
     private final ContactMapper contactMapper;
 
-    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper) {
+    private final ClientRepository clientRepository;
+
+    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper, ClientRepository clientRepository) {
         this.contactRepository = contactRepository;
         this.contactMapper = contactMapper;
+        this.clientRepository = clientRepository;
     }
 
     /**
@@ -41,8 +46,49 @@ public class ContactService {
     public ContactDTO save(ContactDTO contactDTO) {
         log.debug("Request to save Contact : {}", contactDTO);
         Contact contact = contactMapper.toEntity(contactDTO);
+
+        if (contact.getClient() != null && contact.getClient().getId() != null) {
+            String identifiant = genererIdentifiantContact(contact.getClient().getId());
+            contact.setIdentifiantUnique(identifiant);
+        }
+
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
+    }
+
+    /**
+     * Génère l'identifiant unique d'un contact à partir de l'identifiant du client
+     * et de son compteur "nextContactNumber", puis incrémente ce compteur.
+     * Format attendu : {identifiantClient}-{nextContactNumber sur 3 chiffres} (ex: C-00009-26-001)
+     *
+     * @param clientId l'id du client parent.
+     * @return l'identifiant généré pour le contact.
+     */
+    public String genererIdentifiantContact(Long clientId) {
+        log.debug("Request to generate identifiant for Contact of client : {}", clientId);
+
+        Client client = clientRepository
+            .findById(clientId)
+            .orElseThrow(() -> new RuntimeException("Client introuvable pour id : " + clientId));
+
+        String identifiantClient = client.getIdentifiantUnique();
+        if (identifiantClient == null || identifiantClient.isBlank()) {
+            throw new RuntimeException("Le client " + clientId + " n'a pas encore d'identifiant unique");
+        }
+
+        Integer numeroActuel = client.getNextContactNumber();
+        if (numeroActuel == null) {
+            numeroActuel = 1;
+        }
+
+        String suffixe = String.format("%03d", numeroActuel);
+        String identifiant = identifiantClient + "-" + suffixe;
+
+        client.setNextContactNumber(numeroActuel + 1);
+        clientRepository.save(client);
+
+        log.debug("Identifiant Contact généré : {}", identifiant);
+        return identifiant;
     }
 
     /**

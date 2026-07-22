@@ -61,6 +61,10 @@
     {
       "fieldName": "status",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "nextContactNumber",
+      "fieldType": "Integer"
     }
   ],
   "fluentMethods": true,

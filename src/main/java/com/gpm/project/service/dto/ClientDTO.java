@@ -41,6 +41,8 @@ public class ClientDTO implements Serializable {
 
     private String status;
 
+    private Integer nextContactNumber;
+
     public Long getId() {
         return id;
     }
@@ -153,6 +155,14 @@ public class ClientDTO implements Serializable {
         this.status = status;
     }
 
+    public Integer getNextContactNumber() {
+        return nextContactNumber;
+    }
+
+    public void setNextContactNumber(Integer nextContactNumber) {
+        this.nextContactNumber = nextContactNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -192,6 +202,7 @@ public class ClientDTO implements Serializable {
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", status='" + getStatus() + "'" +
+            ", nextContactNumber=" + getNextContactNumber() +
             "}";
     }
 }

@@ -82,6 +82,9 @@ public class ClientService {
             clientDTO.setStatus("ACTIF");
         }
 
+        // Initialisation du compteur de contacts (premier contact du client démarrera à 001)
+        clientDTO.setNextContactNumber(1);
+
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
         return clientMapper.toDto(client);

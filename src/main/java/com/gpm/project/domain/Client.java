@@ -68,6 +68,9 @@ public class Client implements Serializable {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "next_contact_number")
+    private Integer nextContactNumber;
+
     @OneToMany(mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "client" }, allowSetters = true)
@@ -262,6 +265,19 @@ public class Client implements Serializable {
         this.status = status;
     }
 
+    public Integer getNextContactNumber() {
+        return this.nextContactNumber;
+    }
+
+    public Client nextContactNumber(Integer nextContactNumber) {
+        this.setNextContactNumber(nextContactNumber);
+        return this;
+    }
+
+    public void setNextContactNumber(Integer nextContactNumber) {
+        this.nextContactNumber = nextContactNumber;
+    }
+
     public Set<Contact> getContacts() {
         return this.contacts;
     }
@@ -361,6 +377,7 @@ public class Client implements Serializable {
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", status='" + getStatus() + "'" +
+            ", nextContactNumber=" + getNextContactNumber() +
             "}";
     }
 }
