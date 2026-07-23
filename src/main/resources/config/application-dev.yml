@@ -58,6 +58,7 @@ spring:
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev
+    #drop-first: true
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
@@ -76,6 +77,17 @@ spring:
     locator:
       discovery:
         enabled: true
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: http://localhost:9080/realms/Africom
+        registration:
+          oidc:
+            client-id: gpm_internal
+            client-secret: pNOoGrrA72931Oe53mjqRNosEXU57UnN
+            scope: openid, profile, email, offline_access # last one for refresh tokens
 
 server:
   port: 8081

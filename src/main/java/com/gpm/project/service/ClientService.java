@@ -39,7 +39,7 @@ public class ClientService {
         ClientRepository clientRepository,
         ClientMapper clientMapper,
         UserRestClient userRestClient,
-        AclUtilService aclUtilService
+        AclUtilService aclUtilService,
         NumsequentielleService numsequentielleService
     ) {
         this.clientRepository = clientRepository;
