@@ -102,6 +102,12 @@ public class AffaireResource {
             .body(result);
     }
 
+    @GetMapping("/affaires/updateSocieteAssociees")
+    public ResponseEntity<String> updateSocieteAssociees(@RequestParam List<Long> societeIds, @RequestParam("affaireId") Long affaireId) {
+        affaireService.updateSocieteAssociees(affaireId, societeIds);
+        return ResponseEntity.ok("Societes updated successfully");
+    }
+
     /**
      * {@code PATCH  /affaires/:id} : Partial updates given fields of an existing affaire, field will ignore if it is null
      *

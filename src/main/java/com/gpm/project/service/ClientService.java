@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,17 +32,20 @@ public class ClientService {
 
     private final UserRestClient userRestClient;
 
+    private final AclUtilService aclUtilService;
     private final NumsequentielleService numsequentielleService;
 
     public ClientService(
         ClientRepository clientRepository,
         ClientMapper clientMapper,
         UserRestClient userRestClient,
+        AclUtilService aclUtilService
         NumsequentielleService numsequentielleService
     ) {
         this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
         this.userRestClient = userRestClient;
+        this.aclUtilService = aclUtilService;
         this.numsequentielleService = numsequentielleService;
     }
 
@@ -87,6 +91,12 @@ public class ClientService {
 
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
+
+        aclUtilService.createAcl(client);
+
+        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.READ);
+        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.WRITE);
+
         return clientMapper.toDto(client);
     }
 
