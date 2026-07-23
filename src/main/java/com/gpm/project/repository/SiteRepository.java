@@ -38,5 +38,9 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
     @Query("select site from Site site left join fetch site.ville left join fetch site.client where site.id =:id")
     Optional<Site> findOneWithToOneRelationships(@Param("id") Long id);
 
-    List<Site> findByClientId(Long clientId);
+    Page<Site> findByClientId(Long clientId, Pageable pageable);
+
+    Page<Site> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation, Pageable pageable);
+
+    Optional<Site> findByCode(String code);
 }

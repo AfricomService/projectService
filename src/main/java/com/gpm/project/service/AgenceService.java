@@ -25,9 +25,12 @@ public class AgenceService {
 
     private final AgenceMapper agenceMapper;
 
-    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper) {
+    private final NumsequentielleService numsequentielleService;
+
+    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper, NumsequentielleService numsequentielleService) {
         this.agenceRepository = agenceRepository;
         this.agenceMapper = agenceMapper;
+        this.numsequentielleService = numsequentielleService;
     }
 
     /**
@@ -38,6 +41,10 @@ public class AgenceService {
      */
     public AgenceDTO save(AgenceDTO agenceDTO) {
         log.debug("Request to save Agence : {}", agenceDTO);
+
+        String identifiant = numsequentielleService.genererIdentifiantAgence();
+        agenceDTO.setIdentifiantUnique(identifiant);
+
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
         return agenceMapper.toDto(agence);
@@ -107,6 +114,35 @@ public class AgenceService {
     public Optional<AgenceDTO> findOne(Long id) {
         log.debug("Request to get Agence : {}", id);
         return agenceRepository.findOneWithEagerRelationships(id).map(agenceMapper::toDto);
+    }
+
+    /**
+     * Get all agences by clientId.
+     *
+     * @param clientId the id of the client.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<AgenceDTO> findAgencesByClientId(Long clientId) {
+        log.debug("Request to get Agences by clientId : {}", clientId);
+        return agenceRepository.findByClientId(clientId).stream().map(agenceMapper::toDto).collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Search agences by clientId and designation (partial, case-insensitive).
+     *
+     * @param clientId the id of the client.
+     * @param designation the search term.
+     * @return the list of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<AgenceDTO> searchAgencesByClientIdAndDesignation(Long clientId, String designation) {
+        log.debug("Request to search Agences by clientId : {} and designation : {}", clientId, designation);
+        return agenceRepository
+            .findByClientIdAndDesignationContainingIgnoreCase(clientId, designation)
+            .stream()
+            .map(agenceMapper::toDto)
+            .collect(java.util.stream.Collectors.toList());
     }
 
     /**

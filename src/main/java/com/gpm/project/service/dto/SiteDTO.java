@@ -8,7 +8,6 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.Site} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class SiteDTO implements Serializable {
 
     private Long id;
@@ -34,6 +33,16 @@ public class SiteDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    private String nodaleGpm;
+
+    private String sitePriority;
+
+    private String typeSite;
+
+    private String regionSite;
+
+    private Long zoneId;
 
     private VilleDTO ville;
 
@@ -127,6 +136,46 @@ public class SiteDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getNodaleGpm() {
+        return nodaleGpm;
+    }
+
+    public void setNodaleGpm(String nodaleGpm) {
+        this.nodaleGpm = nodaleGpm;
+    }
+
+    public String getSitePriority() {
+        return sitePriority;
+    }
+
+    public void setSitePriority(String sitePriority) {
+        this.sitePriority = sitePriority;
+    }
+
+    public String getTypeSite() {
+        return typeSite;
+    }
+
+    public void setTypeSite(String typeSite) {
+        this.typeSite = typeSite;
+    }
+
+    public String getRegionSite() {
+        return regionSite;
+    }
+
+    public void setRegionSite(String regionSite) {
+        this.regionSite = regionSite;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
     public VilleDTO getVille() {
         return ville;
     }
@@ -179,6 +228,11 @@ public class SiteDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", nodaleGpm='" + getNodaleGpm() + "'" +
+            ", sitePriority='" + getSitePriority() + "'" +
+            ", typeSite='" + getTypeSite() + "'" +
+            ", regionSite='" + getRegionSite() + "'" +
+            ", zoneId=" + getZoneId() +
             ", ville=" + getVille() +
             ", client=" + getClient() +
             "}";

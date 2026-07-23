@@ -39,4 +39,7 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
     Optional<Affaire> findOneWithToOneRelationships(@Param("id") Long id);
 
     List<Affaire> findByClientId(Long clientId);
+
+    List<Affaire> findByClientIdAndDesignationAffaireContainingIgnoreCase(Long clientId, String designationAffaire);
+
 }

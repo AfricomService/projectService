@@ -1,0 +1,27 @@
+{
+  "microserviceName": "projectService",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "formule",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sequenceId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "pagination",
+  "name": "ParentClassdef",
+  "changelogDate": "20260717094214"
+}

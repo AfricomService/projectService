@@ -188,6 +188,23 @@ public class ContactResource {
     }
 
     /**
+     * {@code GET  /contacts/client/:clientId/search} : search contacts by "clientId" and "raisonSociale".
+     *
+     * @param clientId the id of the client to retrieve contacts for.
+     * @param raisonSociale the search term for raisonSociale.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of matching contactDTO.
+     */
+    @GetMapping("/contacts/client/{clientId}/search")
+    public ResponseEntity<List<ContactDTO>> searchContactsByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String raisonSociale
+    ) {
+        log.debug("REST request to search Contacts by clientId : {} and raisonSociale : {}", clientId, raisonSociale);
+        List<ContactDTO> contacts = contactService.searchContactsByClientId(clientId, raisonSociale);
+        return ResponseEntity.ok().body(contacts);
+    }
+
+    /**
      * {@code DELETE  /contacts/:id} : delete the "id" contact.
      *
      * @param id the id of the contactDTO to delete.

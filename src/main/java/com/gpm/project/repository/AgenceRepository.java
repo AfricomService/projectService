@@ -37,4 +37,8 @@ public interface AgenceRepository extends JpaRepository<Agence, Long> {
 
     @Query("select agence from Agence agence left join fetch agence.societe where agence.id =:id")
     Optional<Agence> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<Agence> findByClientId(Long clientId);
+
+    List<Agence> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation);
 }
