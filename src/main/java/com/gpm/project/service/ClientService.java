@@ -83,7 +83,7 @@ public class ClientService {
         clientDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
         if (clientDTO.getStatus() == null || clientDTO.getStatus().isBlank()) {
-            clientDTO.setStatus("ACTIF");
+            clientDTO.setStatus("DRAFT");
         }
 
         // Initialisation du compteur de contacts (premier contact du client démarrera à 001)
@@ -180,6 +180,50 @@ public class ClientService {
             .findById(id)
             .map(existingClient -> {
                 existingClient.setStatus("DELETED");
+                existingClient.setUpdatedAt(ZonedDateTime.now());
+                existingClient.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+                existingClient.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+                return existingClient;
+            })
+            .map(clientRepository::save)
+            .map(clientMapper::toDto);
+    }
+
+    /**
+     * Active un client en passant son statut à "ACTIF".
+     *
+     * @param id l'id du client à activer.
+     * @return l'entité mise à jour.
+     */
+    public Optional<ClientDTO> activer(Long id) {
+        log.debug("Request to activate Client : {}", id);
+
+        return clientRepository
+            .findById(id)
+            .map(existingClient -> {
+                existingClient.setStatus("ACTIF");
+                existingClient.setUpdatedAt(ZonedDateTime.now());
+                existingClient.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+                existingClient.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+                return existingClient;
+            })
+            .map(clientRepository::save)
+            .map(clientMapper::toDto);
+    }
+
+    /**
+     * Désactive un client en passant son statut à "DEACTIVATED".
+     *
+     * @param id l'id du client à désactiver.
+     * @return l'entité mise à jour.
+     */
+    public Optional<ClientDTO> desactiver(Long id) {
+        log.debug("Request to deactivate Client : {}", id);
+
+        return clientRepository
+            .findById(id)
+            .map(existingClient -> {
+                existingClient.setStatus("DEACTIVATED");
                 existingClient.setUpdatedAt(ZonedDateTime.now());
                 existingClient.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
                 existingClient.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
