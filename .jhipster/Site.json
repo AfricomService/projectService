@@ -48,6 +48,26 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "nodaleGpm",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sitePriority",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "typeSite",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "regionSite",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "zoneId",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,

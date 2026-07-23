@@ -69,6 +69,28 @@ public class ClientResource {
     }
 
     /**
+     * {@code POST  /clients/identifier-et-enregistrer} : Génère l'identifiant unique
+     * du client puis l'enregistre, en une seule requête.
+     *
+     * @param clientDTO le clientDTO à créer (sans id).
+     * @return le {@link ResponseEntity} avec statut {@code 201 (Created)} et le clientDTO créé,
+     * ou statut {@code 400 (Bad Request)} si le client possède déjà un ID.
+     * @throws URISyntaxException si l'URI de localisation est incorrecte.
+     */
+    @PostMapping("/clients/identifier-et-enregistrer")
+    public ResponseEntity<ClientDTO> createClientWithIdentifiant(@RequestBody ClientDTO clientDTO) throws URISyntaxException {
+        log.debug("REST request to identify and save Client : {}", clientDTO);
+        if (clientDTO.getId() != null) {
+            throw new BadRequestAlertException("A new client cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        ClientDTO result = clientService.identifierEtEnregistrer(clientDTO);
+        return ResponseEntity
+            .created(new URI("/api/clients/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * {@code PUT  /clients/:id} : Updates an existing client.
      *
      * @param id the id of the clientDTO to save.
@@ -179,5 +201,29 @@ public class ClientResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code PATCH  /clients/:id/soft-delete} : marque un client comme supprimé (statut "DELETED")
+     * sans le supprimer physiquement de la base.
+     *
+     * @param id l'id du clientDTO à marquer comme supprimé.
+     * @return le {@link ResponseEntity} avec statut {@code 200 (OK)} et le clientDTO mis à jour,
+     * ou statut {@code 404 (Not Found)} si le client n'existe pas.
+     */
+    @PatchMapping("/clients/{id}/soft-delete")
+    public ResponseEntity<ClientDTO> softDeleteClient(@PathVariable Long id) {
+        log.debug("REST request to soft delete Client : {}", id);
+
+        if (!clientRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<ClientDTO> result = clientService.softDelete(id);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
     }
 }

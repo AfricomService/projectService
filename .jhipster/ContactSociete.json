@@ -1,0 +1,35 @@
+{
+  "changelogDate": "20260721101521",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "matricule",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nomPrenom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "numTel",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "societeId",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "projectService",
+  "name": "ContactSociete",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

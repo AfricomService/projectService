@@ -2,7 +2,9 @@ package com.gpm.project.service;
 
 import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Affaire;
+import com.gpm.project.domain.AffaireSocieteAdj;
 import com.gpm.project.repository.AffaireRepository;
+import com.gpm.project.repository.AffaireSocieteAdjRepository;
 import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
@@ -32,10 +34,18 @@ public class AffaireService {
 
     private final UserRestClient userRestClient;
 
-    public AffaireService(AffaireRepository affaireRepository, AffaireMapper affaireMapper, UserRestClient userRestClient) {
+    private final AffaireSocieteAdjRepository affaireSocieteAdjRepository;
+
+    public AffaireService(
+        AffaireRepository affaireRepository,
+        AffaireMapper affaireMapper,
+        UserRestClient userRestClient,
+        AffaireSocieteAdjRepository affaireSocieteAdjRepository
+    ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
         this.userRestClient = userRestClient;
+        this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
     }
 
     /**
@@ -70,6 +80,19 @@ public class AffaireService {
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
         return affaireMapper.toDto(affaire);
+    }
+
+    public void updateSocieteAssociees(Long affaireId, List<Long> societeIds) {
+        affaireSocieteAdjRepository.deleteByAffaireId(affaireId);
+
+        if (!societeIds.isEmpty()) {
+            societeIds.forEach(cl -> {
+                AffaireSocieteAdj affaireSocieteAdj = new AffaireSocieteAdj();
+                affaireSocieteAdj.setSocieteId(cl.longValue());
+                affaireSocieteAdj.setAffaireId(affaireId);
+                affaireSocieteAdjRepository.save(affaireSocieteAdj);
+            });
+        }
     }
 
     /**
@@ -145,5 +168,22 @@ public class AffaireService {
     public void delete(Long id) {
         log.debug("Request to delete Affaire : {}", id);
         affaireRepository.deleteById(id);
+    }
+
+    /**
+     * Search affaires by clientId and designationAffaire (partial, case-insensitive).
+     *
+     * @param clientId the id of the client.
+     * @param designation the search term.
+     * @return the list of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public List<AffaireDTO> searchAffairesByClientIdAndDesignation(Long clientId, String designation) {
+        log.debug("Request to search Affaires by clientId : {} and designation : {}", clientId, designation);
+        return affaireRepository
+            .findByClientIdAndDesignationAffaireContainingIgnoreCase(clientId, designation)
+            .stream()
+            .map(affaireMapper::toDto)
+            .collect(Collectors.toList());
     }
 }

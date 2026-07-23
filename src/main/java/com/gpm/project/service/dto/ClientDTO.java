@@ -8,7 +8,6 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.Client} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ClientDTO implements Serializable {
 
     private Long id;
@@ -39,6 +38,10 @@ public class ClientDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    private String status;
+
+    private Integer nextContactNumber;
 
     public Long getId() {
         return id;
@@ -144,6 +147,22 @@ public class ClientDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getNextContactNumber() {
+        return nextContactNumber;
+    }
+
+    public void setNextContactNumber(Integer nextContactNumber) {
+        this.nextContactNumber = nextContactNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -182,6 +201,8 @@ public class ClientDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", nextContactNumber=" + getNextContactNumber() +
             "}";
     }
 }

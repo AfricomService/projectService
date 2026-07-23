@@ -102,6 +102,12 @@ public class AffaireResource {
             .body(result);
     }
 
+    @GetMapping("/affaires/updateSocieteAssociees")
+    public ResponseEntity<String> updateSocieteAssociees(@RequestParam List<Long> societeIds, @RequestParam("affaireId") Long affaireId) {
+        affaireService.updateSocieteAssociees(affaireId, societeIds);
+        return ResponseEntity.ok("Societes updated successfully");
+    }
+
     /**
      * {@code PATCH  /affaires/:id} : Partial updates given fields of an existing affaire, field will ignore if it is null
      *
@@ -201,5 +207,22 @@ public class AffaireResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code GET  /affaires/client/:clientId/search} : search affaires by clientId and designationAffaire.
+     *
+     * @param clientId the id of the client to retrieve affaires for.
+     * @param designation the search term to filter by designationAffaire.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of matching affaireDTO.
+     */
+    @GetMapping("/affaires/client/{clientId}/search")
+    public ResponseEntity<List<AffaireDTO>> searchAffairesByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String designation
+    ) {
+        log.debug("REST request to search Affaires by clientId : {} and designation : {}", clientId, designation);
+        List<AffaireDTO> affaires = affaireService.searchAffairesByClientIdAndDesignation(clientId, designation);
+        return ResponseEntity.ok().body(affaires);
     }
 }
