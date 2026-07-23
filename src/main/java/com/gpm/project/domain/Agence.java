@@ -16,7 +16,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "agence")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Agence implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,6 +59,12 @@ public class Agence implements Serializable {
 
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
+
+    @Column(name = "client_id")
+    private Long clientId;
+
+    @Column(name = "identifiant_unique")
+    private String identifiantUnique;
 
     @OneToMany(mappedBy = "agence")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -216,6 +221,32 @@ public class Agence implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public Long getClientId() {
+        return this.clientId;
+    }
+
+    public Agence clientId(Long clientId) {
+        this.setClientId(clientId);
+        return this;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getIdentifiantUnique() {
+        return this.identifiantUnique;
+    }
+
+    public Agence identifiantUnique(String identifiantUnique) {
+        this.setIdentifiantUnique(identifiantUnique);
+        return this;
+    }
+
+    public void setIdentifiantUnique(String identifiantUnique) {
+        this.identifiantUnique = identifiantUnique;
+    }
+
     public Set<Vehicule> getVehicules() {
         return this.vehicules;
     }
@@ -294,6 +325,8 @@ public class Agence implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", clientId=" + getClientId() +
+            ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             "}";
     }
 }

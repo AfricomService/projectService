@@ -35,6 +35,8 @@
       "Zone",
       "AffaireSocieteAdj",
       "ContactSociete"
+      "Numsequentielle",
+      "ParentClassdef"
     ],
     "entitySuffix": "",
     "gatewayServerPort": "8080",

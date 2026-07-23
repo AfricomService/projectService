@@ -175,6 +175,36 @@ public class AgenceResource {
     }
 
     /**
+     * {@code GET  /agences/client/:clientId} : get the agences by "clientId".
+     *
+     * @param clientId the id of the client to retrieve agences for.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of agenceDTO.
+     */
+    @GetMapping("/agences/client/{clientId}")
+    public ResponseEntity<List<AgenceDTO>> findAgencesByClientId(@PathVariable Long clientId) {
+        log.debug("REST request to get Agences by clientId : {}", clientId);
+        List<AgenceDTO> agences = agenceService.findAgencesByClientId(clientId);
+        return ResponseEntity.ok().body(agences);
+    }
+
+    /**
+     * {@code GET  /agences/client/:clientId/search} : search agences by clientId and designation.
+     *
+     * @param clientId the id of the client to retrieve agences for.
+     * @param designation the search term to filter by designation.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of matching agenceDTO.
+     */
+    @GetMapping("/agences/client/{clientId}/search")
+    public ResponseEntity<List<AgenceDTO>> searchAgencesByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String designation
+    ) {
+        log.debug("REST request to search Agences by clientId : {} and designation : {}", clientId, designation);
+        List<AgenceDTO> agences = agenceService.searchAgencesByClientIdAndDesignation(clientId, designation);
+        return ResponseEntity.ok().body(agences);
+    }
+
+    /**
      * {@code DELETE  /agences/:id} : delete the "id" agence.
      *
      * @param id the id of the agenceDTO to delete.

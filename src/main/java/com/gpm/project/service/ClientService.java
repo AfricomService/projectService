@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
+// APRÈS
 public class ClientService {
 
     private final Logger log = LoggerFactory.getLogger(ClientService.class);
@@ -32,17 +33,37 @@ public class ClientService {
     private final UserRestClient userRestClient;
 
     private final AclUtilService aclUtilService;
+    private final NumsequentielleService numsequentielleService;
 
     public ClientService(
         ClientRepository clientRepository,
         ClientMapper clientMapper,
         UserRestClient userRestClient,
         AclUtilService aclUtilService
+        NumsequentielleService numsequentielleService
     ) {
         this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
         this.userRestClient = userRestClient;
         this.aclUtilService = aclUtilService;
+        this.numsequentielleService = numsequentielleService;
+    }
+
+    /**
+     * Génère l'identifiant unique du client puis l'enregistre en une seule opération.
+     *
+     * @param clientDTO le client à créer (sans id).
+     * @return le client créé, avec son identifiantUnique généré.
+     */
+    public ClientDTO identifierEtEnregistrer(ClientDTO clientDTO) {
+        log.debug("Request to generate identifiant and save Client : {}", clientDTO);
+
+        // 1. Génération de l'identifiant unique
+        String identifiant = numsequentielleService.genererIdentifiantClient();
+        clientDTO.setIdentifiantUnique(identifiant);
+
+        // 2. Enregistrement du client (réutilise la logique existante de save())
+        return save(clientDTO);
     }
 
     /**
@@ -60,6 +81,13 @@ public class ClientService {
         clientDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
         clientDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
         clientDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
+        if (clientDTO.getStatus() == null || clientDTO.getStatus().isBlank()) {
+            clientDTO.setStatus("ACTIF");
+        }
+
+        // Initialisation du compteur de contacts (premier contact du client démarrera à 001)
+        clientDTO.setNextContactNumber(1);
 
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
@@ -114,7 +142,7 @@ public class ClientService {
     @Transactional(readOnly = true)
     public Page<ClientDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Clients");
-        return clientRepository.findAll(pageable).map(clientMapper::toDto);
+        return clientRepository.findAllByStatusNot("DELETED", pageable).map(clientMapper::toDto);
     }
 
     /**
@@ -138,4 +166,27 @@ public class ClientService {
         log.debug("Request to delete Client : {}", id);
         clientRepository.deleteById(id);
     }
+
+    /**
+     * Marque un client comme supprimé (suppression logique) en passant son statut à "DELETED".
+     *
+     * @param id l'id du client à marquer comme supprimé.
+     * @return l'entité mise à jour.
+     */
+    public Optional<ClientDTO> softDelete(Long id) {
+        log.debug("Request to soft delete Client : {}", id);
+
+        return clientRepository
+            .findById(id)
+            .map(existingClient -> {
+                existingClient.setStatus("DELETED");
+                existingClient.setUpdatedAt(ZonedDateTime.now());
+                existingClient.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+                existingClient.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+                return existingClient;
+            })
+            .map(clientRepository::save)
+            .map(clientMapper::toDto);
+    }
+
 }

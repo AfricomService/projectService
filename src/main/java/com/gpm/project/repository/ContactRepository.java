@@ -39,4 +39,6 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
     Optional<Contact> findOneWithToOneRelationships(@Param("id") Long id);
 
     List<Contact> findByClientId(Long clientId);
+
+    List<Contact> findByClientIdAndRaisonSocialeContainingIgnoreCase(Long clientId, String raisonSociale);
 }
