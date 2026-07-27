@@ -8,12 +8,10 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.Contact} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ContactDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
     private String raisonSociale;
 
     private String identifiantUnique;
@@ -37,6 +35,11 @@ public class ContactDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    @NotNull
+    private String nomPrenom;
+
+    private String matricule;
 
     private ClientDTO client;
 
@@ -144,6 +147,23 @@ public class ContactDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    @NotNull
+    public String getNomPrenom() {
+        return nomPrenom;
+    }
+
+    public void setNomPrenom(String nomPrenom) {
+        this.nomPrenom = nomPrenom;
+    }
+
+    public String getMatricule() {
+        return matricule;
+    }
+
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
+    }
+
     public ClientDTO getClient() {
         return client;
     }
@@ -190,6 +210,8 @@ public class ContactDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", nomPrenom='" + getNomPrenom() + "'" +
+            ", matricule='" + getMatricule() + "'" +
             ", client=" + getClient() +
             "}";
     }

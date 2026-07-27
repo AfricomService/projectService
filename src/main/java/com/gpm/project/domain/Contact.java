@@ -25,9 +25,15 @@ public class Contact implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Column(name = "raison_sociale", nullable = false)
+    @Column(name = "raison_sociale")
     private String raisonSociale;
+
+    @Column(name = "matricule")
+    private String matricule;
+
+    @Column(name = "nom_prenom")
+    private String nomPrenom;
+
 
     @Column(name = "identifiant_unique")
     private String identifiantUnique;
@@ -95,6 +101,32 @@ public class Contact implements Serializable {
         this.raisonSociale = raisonSociale;
     }
 
+    public String getMatricule() {
+        return this.matricule;
+    }
+
+    public Contact matricule(String matricule) {
+        this.setMatricule(matricule);
+        return this;
+    }
+
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
+    }
+
+    public String getNomPrenom() {
+        return this.nomPrenom;
+    }
+
+    public Contact nomPrenom(String nomPrenom) {
+        this.setNomPrenom(nomPrenom);
+        return this;
+    }
+
+    public void setNomPrenom(String nomPrenom) {
+        this.nomPrenom = nomPrenom;
+    }
+
     public String getIdentifiantUnique() {
         return this.identifiantUnique;
     }
@@ -107,6 +139,7 @@ public class Contact implements Serializable {
     public void setIdentifiantUnique(String identifiantUnique) {
         this.identifiantUnique = identifiantUnique;
     }
+
 
     public String getAdresse() {
         return this.adresse;
@@ -276,6 +309,8 @@ public class Contact implements Serializable {
         return "Contact{" +
             "id=" + getId() +
             ", raisonSociale='" + getRaisonSociale() + "'" +
+            ", matricule='" + getMatricule() + "'" +
+            ", nomPrenom='" + getNomPrenom() + "'" +
             ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             ", adresse='" + getAdresse() + "'" +
             ", telephone='" + getTelephone() + "'" +

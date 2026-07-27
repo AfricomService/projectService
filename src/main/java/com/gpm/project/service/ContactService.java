@@ -158,17 +158,17 @@ public class ContactService {
     }
 
     /**
-     * Search contacts by clientId and raisonSociale (partial, case-insensitive).
+     * Search contacts by clientId and nomPrenom (partial, case-insensitive).
      *
      * @param clientId the id of the client.
-     * @param raisonSociale the search term for raisonSociale.
+     * @param nomPrenom the search term for nomPrenom.
      * @return the list of matching entities.
      */
     @Transactional(readOnly = true)
-    public List<ContactDTO> searchContactsByClientId(Long clientId, String raisonSociale) {
-        log.debug("Request to search Contacts by clientId : {} and raisonSociale : {}", clientId, raisonSociale);
+    public List<ContactDTO> searchContactsByClientId(Long clientId, String nomPrenom) {
+        log.debug("Request to search Contacts by clientId : {} and nomPrenom : {}", clientId, nomPrenom);
         return contactRepository
-            .findByClientIdAndRaisonSocialeContainingIgnoreCase(clientId, raisonSociale)
+            .findByClientIdAndNomPrenomContainingIgnoreCase(clientId, nomPrenom)
             .stream()
             .map(contactMapper::toDto)
             .collect(Collectors.toList());
