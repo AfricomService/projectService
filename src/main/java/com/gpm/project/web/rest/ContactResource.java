@@ -2,6 +2,7 @@ package com.gpm.project.web.rest;
 
 import com.gpm.project.repository.ContactRepository;
 import com.gpm.project.service.ContactService;
+import com.gpm.project.service.KeycloakAdminService;
 import com.gpm.project.service.dto.ContactDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -43,9 +44,12 @@ public class ContactResource {
 
     private final ContactRepository contactRepository;
 
-    public ContactResource(ContactService contactService, ContactRepository contactRepository) {
+    private final KeycloakAdminService keycloakAdminService;
+
+    public ContactResource(ContactService contactService, ContactRepository contactRepository, KeycloakAdminService keycloakAdminService) {
         this.contactService = contactService;
         this.contactRepository = contactRepository;
+        this.keycloakAdminService = keycloakAdminService;
     }
 
     /**
@@ -218,5 +222,21 @@ public class ContactResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code POST  /contacts/:id/create-keycloak-user} : crée un utilisateur Keycloak pour ce contact.
+     *
+     * @param id l'id du contact.
+     * @return {@code 200 (OK)} si la création a réussi.
+     */
+    @PostMapping("/contacts/{id}/create-keycloak-user")
+    public ResponseEntity<Void> createKeycloakUser(@PathVariable Long id) {
+        log.debug("REST request to create Keycloak user for Contact : {}", id);
+        ContactDTO contactDTO = contactService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+        keycloakAdminService.createUserFromContact(contactDTO);
+        return ResponseEntity.ok().build();
     }
 }
