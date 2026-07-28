@@ -36,10 +36,11 @@ public class ContactDTO implements Serializable {
 
     private String updatedByUserLogin;
 
-    @NotNull
     private String nomPrenom;
 
     private String matricule;
+
+    private String statusCompteKeycloak;
 
     private ClientDTO client;
 
@@ -147,7 +148,6 @@ public class ContactDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
-    @NotNull
     public String getNomPrenom() {
         return nomPrenom;
     }
@@ -162,6 +162,14 @@ public class ContactDTO implements Serializable {
 
     public void setMatricule(String matricule) {
         this.matricule = matricule;
+    }
+
+    public String getStatusCompteKeycloak() {
+        return statusCompteKeycloak;
+    }
+
+    public void setStatusCompteKeycloak(String statusCompteKeycloak) {
+        this.statusCompteKeycloak = statusCompteKeycloak;
     }
 
     public ClientDTO getClient() {
@@ -212,6 +220,7 @@ public class ContactDTO implements Serializable {
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", nomPrenom='" + getNomPrenom() + "'" +
             ", matricule='" + getMatricule() + "'" +
+            ", statusCompteKeycloak='" + getStatusCompteKeycloak() + "'" +
             ", client=" + getClient() +
             "}";
     }

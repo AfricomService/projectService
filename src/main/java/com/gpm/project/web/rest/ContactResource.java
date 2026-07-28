@@ -231,12 +231,17 @@ public class ContactResource {
      * @return {@code 200 (OK)} si la création a réussi.
      */
     @PostMapping("/contacts/{id}/create-keycloak-user")
-    public ResponseEntity<Void> createKeycloakUser(@PathVariable Long id) {
+    public ResponseEntity<ContactDTO> createKeycloakUser(@PathVariable Long id) {
         log.debug("REST request to create Keycloak user for Contact : {}", id);
         ContactDTO contactDTO = contactService
             .findOne(id)
             .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
         keycloakAdminService.createUserFromContact(contactDTO);
-        return ResponseEntity.ok().build();
+
+        contactDTO.setStatusCompteKeycloak("EN_COURS");
+        ContactDTO updatedContact = contactService.update(contactDTO);
+
+        return ResponseEntity.ok(updatedContact);
     }
 }

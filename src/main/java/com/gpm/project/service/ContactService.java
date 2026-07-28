@@ -52,6 +52,8 @@ public class ContactService {
             contact.setIdentifiantUnique(identifiant);
         }
 
+        contact.setStatusCompteKeycloak("DEACTIVE");
+
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
     }

@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "contact")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Contact implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,15 +24,8 @@ public class Contact implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "raison_sociale")
+    @Column(name = "raison_sociale", nullable = false)
     private String raisonSociale;
-
-    @Column(name = "matricule")
-    private String matricule;
-
-    @Column(name = "nom_prenom")
-    private String nomPrenom;
-
 
     @Column(name = "identifiant_unique")
     private String identifiantUnique;
@@ -68,6 +60,15 @@ public class Contact implements Serializable {
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
 
+    @Column(name = "nom_prenom")
+    private String nomPrenom;
+
+    @Column(name = "matricule")
+    private String matricule;
+
+    @Column(name = "status_compte_keycloak")
+    private String statusCompteKeycloak;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "contacts", "sites" }, allowSetters = true)
@@ -101,32 +102,6 @@ public class Contact implements Serializable {
         this.raisonSociale = raisonSociale;
     }
 
-    public String getMatricule() {
-        return this.matricule;
-    }
-
-    public Contact matricule(String matricule) {
-        this.setMatricule(matricule);
-        return this;
-    }
-
-    public void setMatricule(String matricule) {
-        this.matricule = matricule;
-    }
-
-    public String getNomPrenom() {
-        return this.nomPrenom;
-    }
-
-    public Contact nomPrenom(String nomPrenom) {
-        this.setNomPrenom(nomPrenom);
-        return this;
-    }
-
-    public void setNomPrenom(String nomPrenom) {
-        this.nomPrenom = nomPrenom;
-    }
-
     public String getIdentifiantUnique() {
         return this.identifiantUnique;
     }
@@ -139,7 +114,6 @@ public class Contact implements Serializable {
     public void setIdentifiantUnique(String identifiantUnique) {
         this.identifiantUnique = identifiantUnique;
     }
-
 
     public String getAdresse() {
         return this.adresse;
@@ -271,6 +245,45 @@ public class Contact implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getNomPrenom() {
+        return this.nomPrenom;
+    }
+
+    public Contact nomPrenom(String nomPrenom) {
+        this.setNomPrenom(nomPrenom);
+        return this;
+    }
+
+    public void setNomPrenom(String nomPrenom) {
+        this.nomPrenom = nomPrenom;
+    }
+
+    public String getMatricule() {
+        return this.matricule;
+    }
+
+    public Contact matricule(String matricule) {
+        this.setMatricule(matricule);
+        return this;
+    }
+
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
+    }
+
+    public String getStatusCompteKeycloak() {
+        return this.statusCompteKeycloak;
+    }
+
+    public Contact statusCompteKeycloak(String statusCompteKeycloak) {
+        this.setStatusCompteKeycloak(statusCompteKeycloak);
+        return this;
+    }
+
+    public void setStatusCompteKeycloak(String statusCompteKeycloak) {
+        this.statusCompteKeycloak = statusCompteKeycloak;
+    }
+
     public Client getClient() {
         return this.client;
     }
@@ -309,8 +322,6 @@ public class Contact implements Serializable {
         return "Contact{" +
             "id=" + getId() +
             ", raisonSociale='" + getRaisonSociale() + "'" +
-            ", matricule='" + getMatricule() + "'" +
-            ", nomPrenom='" + getNomPrenom() + "'" +
             ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             ", adresse='" + getAdresse() + "'" +
             ", telephone='" + getTelephone() + "'" +
@@ -322,6 +333,9 @@ public class Contact implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", nomPrenom='" + getNomPrenom() + "'" +
+            ", matricule='" + getMatricule() + "'" +
+            ", statusCompteKeycloak='" + getStatusCompteKeycloak() + "'" +
             "}";
     }
 }
