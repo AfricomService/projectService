@@ -2,6 +2,7 @@ package com.gpm.project.service;
 
 import com.gpm.project.config.KeycloakAdminProperties;
 import com.gpm.project.service.dto.ContactDTO;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class KeycloakAdminService {
      * Crée un utilisateur Keycloak à partir d'un contact.
      * Le username utilisé est l'identifiantUnique du contact.
      */
-    public void createUserFromContact(ContactDTO contact) {
+    public String createUserFromContact(ContactDTO contact) {
         if (contact.getIdentifiantUnique() == null || contact.getIdentifiantUnique().isBlank()) {
             throw new IllegalStateException("Le contact n'a pas encore d'identifiant unique");
         }
@@ -61,7 +62,7 @@ public class KeycloakAdminService {
         String firstName = nameParts.length > 0 ? nameParts[0] : "";
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        String defaultPassword = "123456";
+        String defaultPassword = generateRandomPassword();
 
         Map<String, Object> credentials = new HashMap<>();
         credentials.put("type", "password");
@@ -86,8 +87,45 @@ public class KeycloakAdminService {
         try {
             restTemplate.postForEntity(usersUri, request, Void.class);
             log.info("Utilisateur Keycloak créé pour le contact {}", contact.getIdentifiantUnique());
+            return defaultPassword;
         } catch (HttpClientErrorException.Conflict e) {
             throw new IllegalStateException("Un utilisateur Keycloak avec le username '" + contact.getIdentifiantUnique() + "' existe déjà");
         }
+    }
+
+    /**
+     * Génère un mot de passe aléatoire sécurisé (au moins une majuscule,
+     * une minuscule, un chiffre et un caractère spécial).
+     */
+    private String generateRandomPassword() {
+        String upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        String lower = "abcdefghijkmnopqrstuvwxyz";
+        String digits = "23456789";
+        String special = "!@#$%&*";
+        String allChars = upper + lower + digits + special;
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+
+        password.append(upper.charAt(random.nextInt(upper.length())));
+        password.append(lower.charAt(random.nextInt(lower.length())));
+        password.append(digits.charAt(random.nextInt(digits.length())));
+        password.append(special.charAt(random.nextInt(special.length())));
+
+        int length = 10;
+        for (int i = password.length(); i < length; i++) {
+            password.append(allChars.charAt(random.nextInt(allChars.length())));
+        }
+
+        List<Character> chars = new java.util.ArrayList<>();
+        for (char c : password.toString().toCharArray()) {
+            chars.add(c);
+        }
+        java.util.Collections.shuffle(chars, random);
+
+        StringBuilder shuffled = new StringBuilder();
+        chars.forEach(shuffled::append);
+
+        return shuffled.toString();
     }
 }

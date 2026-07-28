@@ -4,6 +4,7 @@ import com.gpm.project.repository.ContactRepository;
 import com.gpm.project.service.ContactService;
 import com.gpm.project.service.KeycloakAdminService;
 import com.gpm.project.service.dto.ContactDTO;
+import com.gpm.project.service.dto.KeycloakUserCreationResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -231,17 +232,17 @@ public class ContactResource {
      * @return {@code 200 (OK)} si la création a réussi.
      */
     @PostMapping("/contacts/{id}/create-keycloak-user")
-    public ResponseEntity<ContactDTO> createKeycloakUser(@PathVariable Long id) {
+    public ResponseEntity<KeycloakUserCreationResultDTO> createKeycloakUser(@PathVariable Long id) {
         log.debug("REST request to create Keycloak user for Contact : {}", id);
         ContactDTO contactDTO = contactService
             .findOne(id)
             .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
 
-        keycloakAdminService.createUserFromContact(contactDTO);
+        String generatedPassword = keycloakAdminService.createUserFromContact(contactDTO);
 
         contactDTO.setStatusCompteKeycloak("EN_COURS");
         ContactDTO updatedContact = contactService.update(contactDTO);
 
-        return ResponseEntity.ok(updatedContact);
+        return ResponseEntity.ok(new KeycloakUserCreationResultDTO(updatedContact, generatedPassword));
     }
 }
