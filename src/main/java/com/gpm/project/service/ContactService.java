@@ -16,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gpm.project.client.UserRestClient;
+import com.gpm.project.security.SecurityUtils;
+import java.time.ZonedDateTime;
+
 /**
  * Service Implementation for managing {@link Contact}.
  */
@@ -31,10 +35,18 @@ public class ContactService {
 
     private final ClientRepository clientRepository;
 
-    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper, ClientRepository clientRepository) {
+    private final UserRestClient userRestClient;
+
+    public ContactService(
+        ContactRepository contactRepository,
+        ContactMapper contactMapper,
+        ClientRepository clientRepository,
+        UserRestClient userRestClient
+    ) {
         this.contactRepository = contactRepository;
         this.contactMapper = contactMapper;
         this.clientRepository = clientRepository;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -53,6 +65,13 @@ public class ContactService {
         }
 
         contact.setStatusCompteKeycloak("DEACTIVE");
+
+        contact.setCreatedAt(ZonedDateTime.now());
+        contact.setUpdatedAt(ZonedDateTime.now());
+        contact.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        contact.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
@@ -102,6 +121,11 @@ public class ContactService {
     public ContactDTO update(ContactDTO contactDTO) {
         log.debug("Request to update Contact : {}", contactDTO);
         Contact contact = contactMapper.toEntity(contactDTO);
+
+        contact.setUpdatedAt(ZonedDateTime.now());
+        contact.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
     }

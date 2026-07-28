@@ -1,5 +1,6 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Agence;
 import com.gpm.project.repository.AgenceRepository;
 import com.gpm.project.service.dto.AgenceDTO;
@@ -11,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gpm.project.security.SecurityUtils;
+import java.time.ZonedDateTime;
 
 /**
  * Service Implementation for managing {@link Agence}.
@@ -27,10 +31,18 @@ public class AgenceService {
 
     private final NumsequentielleService numsequentielleService;
 
-    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper, NumsequentielleService numsequentielleService) {
+    private final UserRestClient userRestClient;
+
+    public AgenceService(
+        AgenceRepository agenceRepository,
+        AgenceMapper agenceMapper,
+        NumsequentielleService numsequentielleService,
+        UserRestClient userRestClient
+    ) {
         this.agenceRepository = agenceRepository;
         this.agenceMapper = agenceMapper;
         this.numsequentielleService = numsequentielleService;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -45,6 +57,13 @@ public class AgenceService {
         String identifiant = numsequentielleService.genererIdentifiantAgence();
         agenceDTO.setIdentifiantUnique(identifiant);
 
+        agenceDTO.setCreatedAt(ZonedDateTime.now());
+        agenceDTO.setUpdatedAt(ZonedDateTime.now());
+        agenceDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        agenceDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
         return agenceMapper.toDto(agence);
@@ -58,6 +77,11 @@ public class AgenceService {
      */
     public AgenceDTO update(AgenceDTO agenceDTO) {
         log.debug("Request to update Agence : {}", agenceDTO);
+
+        agenceDTO.setUpdatedAt(ZonedDateTime.now());
+        agenceDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
         return agenceMapper.toDto(agence);

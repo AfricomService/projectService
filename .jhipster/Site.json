@@ -68,6 +68,10 @@
     {
       "fieldName": "zoneId",
       "fieldType": "Long"
+    },
+    {
+      "fieldName": "zoneNom",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

@@ -71,6 +71,9 @@ public class Site implements Serializable {
     @Column(name = "zone_id")
     private Long zoneId;
 
+    @Column(name = "zone_nom")
+    private String zoneNom;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "zones" }, allowSetters = true)
@@ -291,6 +294,19 @@ public class Site implements Serializable {
         this.zoneId = zoneId;
     }
 
+    public String getZoneNom() {
+        return this.zoneNom;
+    }
+
+    public Site zoneNom(String zoneNom) {
+        this.setZoneNom(zoneNom);
+        return this;
+    }
+
+    public void setZoneNom(String zoneNom) {
+        this.zoneNom = zoneNom;
+    }
+
     public Ville getVille() {
         return this.ville;
     }
@@ -356,6 +372,7 @@ public class Site implements Serializable {
             ", typeSite='" + getTypeSite() + "'" +
             ", regionSite='" + getRegionSite() + "'" +
             ", zoneId=" + getZoneId() +
+            ", zoneNom='" + getZoneNom() + "'" +
             "}";
     }
 }
