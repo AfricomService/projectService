@@ -1,6 +1,7 @@
 package com.gpm.project.service.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import javax.validation.constraints.*;
@@ -33,6 +34,14 @@ public class ArticleDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    private String codeClient;
+
+    private BigDecimal prixUnitHT;
+
+    private BigDecimal prixAchat;
+
+    private String granularite;
 
     public Long getId() {
         return id;
@@ -114,6 +123,38 @@ public class ArticleDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getCodeClient() {
+        return codeClient;
+    }
+
+    public void setCodeClient(String codeClient) {
+        this.codeClient = codeClient;
+    }
+
+    public BigDecimal getPrixUnitHT() {
+        return prixUnitHT;
+    }
+
+    public void setPrixUnitHT(BigDecimal prixUnitHT) {
+        this.prixUnitHT = prixUnitHT;
+    }
+
+    public BigDecimal getPrixAchat() {
+        return prixAchat;
+    }
+
+    public void setPrixAchat(BigDecimal prixAchat) {
+        this.prixAchat = prixAchat;
+    }
+
+    public String getGranularite() {
+        return granularite;
+    }
+
+    public void setGranularite(String granularite) {
+        this.granularite = granularite;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -149,6 +190,10 @@ public class ArticleDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", codeClient='" + getCodeClient() + "'" +
+            ", prixUnitHT=" + getPrixUnitHT() +
+            ", prixAchat=" + getPrixAchat() +
+            ", granularite='" + getGranularite() + "'" +
             "}";
     }
 }

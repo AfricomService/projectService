@@ -230,4 +230,10 @@ public class AffaireResource {
         List<AffaireDTO> affaires = affaireService.searchAffairesByClientIdAndDesignation(clientId, designation);
         return ResponseEntity.ok().body(affaires);
     }
+
+    @PatchMapping("/affaires/{affaireId}/statut")
+    public ResponseEntity<Void> changeStatut(@PathVariable Long affaireId, @RequestParam String statut) {
+        affaireService.changeStatut(statut, affaireId);
+        return ResponseEntity.ok().build();
+    }
 }
