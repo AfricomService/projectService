@@ -79,6 +79,21 @@ class SiteResourceIT {
     private static final String DEFAULT_UPDATED_BY_USER_LOGIN = "AAAAAAAAAA";
     private static final String UPDATED_UPDATED_BY_USER_LOGIN = "BBBBBBBBBB";
 
+    private static final String DEFAULT_NODALE_GPM = "AAAAAAAAAA";
+    private static final String UPDATED_NODALE_GPM = "BBBBBBBBBB";
+
+    private static final String DEFAULT_SITE_PRIORITY = "AAAAAAAAAA";
+    private static final String UPDATED_SITE_PRIORITY = "BBBBBBBBBB";
+
+    private static final String DEFAULT_TYPE_SITE = "AAAAAAAAAA";
+    private static final String UPDATED_TYPE_SITE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_REGION_SITE = "AAAAAAAAAA";
+    private static final String UPDATED_REGION_SITE = "BBBBBBBBBB";
+
+    private static final Long DEFAULT_ZONE_ID = 1L;
+    private static final Long UPDATED_ZONE_ID = 2L;
+
     private static final String ENTITY_API_URL = "/api/sites";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -122,7 +137,12 @@ class SiteResourceIT {
             .createdBy(DEFAULT_CREATED_BY)
             .createdByUserLogin(DEFAULT_CREATED_BY_USER_LOGIN)
             .updatedBy(DEFAULT_UPDATED_BY)
-            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN)
+            .nodaleGpm(DEFAULT_NODALE_GPM)
+            .sitePriority(DEFAULT_SITE_PRIORITY)
+            .typeSite(DEFAULT_TYPE_SITE)
+            .regionSite(DEFAULT_REGION_SITE)
+            .zoneId(DEFAULT_ZONE_ID);
         // Add required entity
         Ville ville;
         if (TestUtil.findAll(em, Ville.class).isEmpty()) {
@@ -163,7 +183,12 @@ class SiteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .nodaleGpm(UPDATED_NODALE_GPM)
+            .sitePriority(UPDATED_SITE_PRIORITY)
+            .typeSite(UPDATED_TYPE_SITE)
+            .regionSite(UPDATED_REGION_SITE)
+            .zoneId(UPDATED_ZONE_ID);
         // Add required entity
         Ville ville;
         if (TestUtil.findAll(em, Ville.class).isEmpty()) {
@@ -221,6 +246,11 @@ class SiteResourceIT {
         assertThat(testSite.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testSite.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testSite.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testSite.getNodaleGpm()).isEqualTo(DEFAULT_NODALE_GPM);
+        assertThat(testSite.getSitePriority()).isEqualTo(DEFAULT_SITE_PRIORITY);
+        assertThat(testSite.getTypeSite()).isEqualTo(DEFAULT_TYPE_SITE);
+        assertThat(testSite.getRegionSite()).isEqualTo(DEFAULT_REGION_SITE);
+        assertThat(testSite.getZoneId()).isEqualTo(DEFAULT_ZONE_ID);
     }
 
     @Test
@@ -314,7 +344,12 @@ class SiteResourceIT {
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY)))
             .andExpect(jsonPath("$.[*].createdByUserLogin").value(hasItem(DEFAULT_CREATED_BY_USER_LOGIN)))
             .andExpect(jsonPath("$.[*].updatedBy").value(hasItem(DEFAULT_UPDATED_BY)))
-            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)));
+            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)))
+            .andExpect(jsonPath("$.[*].nodaleGpm").value(hasItem(DEFAULT_NODALE_GPM)))
+            .andExpect(jsonPath("$.[*].sitePriority").value(hasItem(DEFAULT_SITE_PRIORITY)))
+            .andExpect(jsonPath("$.[*].typeSite").value(hasItem(DEFAULT_TYPE_SITE)))
+            .andExpect(jsonPath("$.[*].regionSite").value(hasItem(DEFAULT_REGION_SITE)))
+            .andExpect(jsonPath("$.[*].zoneId").value(hasItem(DEFAULT_ZONE_ID.intValue())));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -355,7 +390,12 @@ class SiteResourceIT {
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY))
             .andExpect(jsonPath("$.createdByUserLogin").value(DEFAULT_CREATED_BY_USER_LOGIN))
             .andExpect(jsonPath("$.updatedBy").value(DEFAULT_UPDATED_BY))
-            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN));
+            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN))
+            .andExpect(jsonPath("$.nodaleGpm").value(DEFAULT_NODALE_GPM))
+            .andExpect(jsonPath("$.sitePriority").value(DEFAULT_SITE_PRIORITY))
+            .andExpect(jsonPath("$.typeSite").value(DEFAULT_TYPE_SITE))
+            .andExpect(jsonPath("$.regionSite").value(DEFAULT_REGION_SITE))
+            .andExpect(jsonPath("$.zoneId").value(DEFAULT_ZONE_ID.intValue()));
     }
 
     @Test
@@ -387,7 +427,12 @@ class SiteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .nodaleGpm(UPDATED_NODALE_GPM)
+            .sitePriority(UPDATED_SITE_PRIORITY)
+            .typeSite(UPDATED_TYPE_SITE)
+            .regionSite(UPDATED_REGION_SITE)
+            .zoneId(UPDATED_ZONE_ID);
         SiteDTO siteDTO = siteMapper.toDto(updatedSite);
 
         restSiteMockMvc
@@ -413,6 +458,11 @@ class SiteResourceIT {
         assertThat(testSite.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testSite.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testSite.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testSite.getNodaleGpm()).isEqualTo(UPDATED_NODALE_GPM);
+        assertThat(testSite.getSitePriority()).isEqualTo(UPDATED_SITE_PRIORITY);
+        assertThat(testSite.getTypeSite()).isEqualTo(UPDATED_TYPE_SITE);
+        assertThat(testSite.getRegionSite()).isEqualTo(UPDATED_REGION_SITE);
+        assertThat(testSite.getZoneId()).isEqualTo(UPDATED_ZONE_ID);
     }
 
     @Test
@@ -504,7 +554,8 @@ class SiteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .sitePriority(UPDATED_SITE_PRIORITY);
 
         restSiteMockMvc
             .perform(
@@ -529,6 +580,11 @@ class SiteResourceIT {
         assertThat(testSite.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testSite.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testSite.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testSite.getNodaleGpm()).isEqualTo(DEFAULT_NODALE_GPM);
+        assertThat(testSite.getSitePriority()).isEqualTo(UPDATED_SITE_PRIORITY);
+        assertThat(testSite.getTypeSite()).isEqualTo(DEFAULT_TYPE_SITE);
+        assertThat(testSite.getRegionSite()).isEqualTo(DEFAULT_REGION_SITE);
+        assertThat(testSite.getZoneId()).isEqualTo(DEFAULT_ZONE_ID);
     }
 
     @Test
@@ -553,7 +609,12 @@ class SiteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .nodaleGpm(UPDATED_NODALE_GPM)
+            .sitePriority(UPDATED_SITE_PRIORITY)
+            .typeSite(UPDATED_TYPE_SITE)
+            .regionSite(UPDATED_REGION_SITE)
+            .zoneId(UPDATED_ZONE_ID);
 
         restSiteMockMvc
             .perform(
@@ -578,6 +639,11 @@ class SiteResourceIT {
         assertThat(testSite.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testSite.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testSite.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testSite.getNodaleGpm()).isEqualTo(UPDATED_NODALE_GPM);
+        assertThat(testSite.getSitePriority()).isEqualTo(UPDATED_SITE_PRIORITY);
+        assertThat(testSite.getTypeSite()).isEqualTo(UPDATED_TYPE_SITE);
+        assertThat(testSite.getRegionSite()).isEqualTo(UPDATED_REGION_SITE);
+        assertThat(testSite.getZoneId()).isEqualTo(UPDATED_ZONE_ID);
     }
 
     @Test

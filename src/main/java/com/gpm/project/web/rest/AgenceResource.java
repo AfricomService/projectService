@@ -68,6 +68,13 @@ public class AgenceResource {
             .body(result);
     }
 
+    @GetMapping("/agences/by-client-id")
+    public ResponseEntity<List<AgenceDTO>> getAgencesByClientId(@RequestParam Long clientId) {
+        log.debug("REST request to get Agences by clientId : {}", clientId);
+        List<AgenceDTO> agences = agenceService.findAgencesByClientId(clientId);
+        return ResponseEntity.ok().body(agences);
+    }
+
     /**
      * {@code PUT  /agences/:id} : Updates an existing agence.
      *

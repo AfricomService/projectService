@@ -4,7 +4,6 @@ import com.gpm.project.domain.Numsequentielle;
 import com.gpm.project.repository.NumsequentielleRepository;
 import com.gpm.project.service.dto.NumsequentielleDTO;
 import com.gpm.project.service.mapper.NumsequentielleMapper;
-
 import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -139,6 +138,27 @@ public class NumsequentielleService {
         int shortYear = LocalDate.now().getYear() % 100;
         String prefix = seq.getPrefix() != null ? seq.getPrefix() : "";
         String identifiant = prefix + "-" + numeroFormatte + "-" + String.format("%02d", shortYear);
+
+        seq.setNextNumber(currentNumber + 1);
+        numsequentielleRepository.save(seq);
+
+        log.debug("Identifiant généré pour {} : {}", codeNumSeq, identifiant);
+        return identifiant;
+    }
+
+    String genererIdentifiantAffaire(String codeNumSeq) {
+        Numsequentielle seq = numsequentielleRepository
+            .findByCodeNumSeq(codeNumSeq)
+            .orElseThrow(() -> new RuntimeException("Numsequentielle introuvable pour codeNumSeq : " + codeNumSeq));
+
+        Long currentNumber = seq.getNextNumber();
+
+        String numeroFormatte = String.format("%04d", currentNumber);
+        String annee = String.format("%02d", LocalDate.now().getYear() % 100);
+        String prefix = seq.getPrefix() != null ? seq.getPrefix() : "";
+
+        // Exemple : A260001
+        String identifiant = prefix + annee + numeroFormatte;
 
         seq.setNextNumber(currentNumber + 1);
         numsequentielleRepository.save(seq);

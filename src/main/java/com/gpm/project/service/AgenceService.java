@@ -4,6 +4,7 @@ import com.gpm.project.domain.Agence;
 import com.gpm.project.repository.AgenceRepository;
 import com.gpm.project.service.dto.AgenceDTO;
 import com.gpm.project.service.mapper.AgenceMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,11 @@ public class AgenceService {
      * @param agenceDTO the entity to save.
      * @return the persisted entity.
      */
+
+    public List<AgenceDTO> findAllByClientId(Long clientId) {
+        return agenceMapper.toDto(agenceRepository.findByClientId(clientId));
+    }
+
     public AgenceDTO save(AgenceDTO agenceDTO) {
         log.debug("Request to save Agence : {}", agenceDTO);
 

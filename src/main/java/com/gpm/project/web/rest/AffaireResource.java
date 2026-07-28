@@ -1,5 +1,6 @@
 package com.gpm.project.web.rest;
 
+import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.service.AffaireService;
 import com.gpm.project.service.dto.AffaireDTO;
@@ -9,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -61,6 +63,9 @@ public class AffaireResource {
         if (affaireDTO.getId() != null) {
             throw new BadRequestAlertException("A new affaire cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        int random8Digits = ThreadLocalRandom.current().nextInt(10_000_000, 100_000_000);
+        affaireDTO.setNumAffaire(random8Digits);
+        affaireDTO.setStatut(StatutAffaire.Brouillon);
         AffaireDTO result = affaireService.save(affaireDTO);
         return ResponseEntity
             .created(new URI("/api/affaires/" + result.getId()))

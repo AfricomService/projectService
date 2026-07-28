@@ -16,7 +16,6 @@ public class AffaireDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
     private Integer numAffaire;
 
     @NotNull
@@ -42,7 +41,6 @@ public class AffaireDTO implements Serializable {
 
     private Float montantBudgetaireService;
 
-    @NotNull
     private StatutAffaire statut;
 
     /**
@@ -66,6 +64,8 @@ public class AffaireDTO implements Serializable {
     private String updatedByUserLogin;
 
     private Long societeId;
+
+    private String identifiantUnique;
 
     private ClientDTO client;
 
@@ -253,6 +253,14 @@ public class AffaireDTO implements Serializable {
         this.societeId = societeId;
     }
 
+    public String getIdentifiantUnique() {
+        return identifiantUnique;
+    }
+
+    public void setIdentifiantUnique(String identifiantUnique) {
+        this.identifiantUnique = identifiantUnique;
+    }
+
     public ClientDTO getClient() {
         return client;
     }
@@ -309,6 +317,7 @@ public class AffaireDTO implements Serializable {
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", societeId=" + getSocieteId() +
+            ", identifiantUnique='" + getIdentifiantUnique() + "'" +
             ", client=" + getClient() +
             "}";
     }

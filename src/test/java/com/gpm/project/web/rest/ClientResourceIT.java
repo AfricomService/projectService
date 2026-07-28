@@ -73,6 +73,12 @@ class ClientResourceIT {
     private static final String DEFAULT_UPDATED_BY_USER_LOGIN = "AAAAAAAAAA";
     private static final String UPDATED_UPDATED_BY_USER_LOGIN = "BBBBBBBBBB";
 
+    private static final String DEFAULT_STATUS = "AAAAAAAAAA";
+    private static final String UPDATED_STATUS = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_NEXT_CONTACT_NUMBER = 1;
+    private static final Integer UPDATED_NEXT_CONTACT_NUMBER = 2;
+
     private static final String ENTITY_API_URL = "/api/clients";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -112,7 +118,9 @@ class ClientResourceIT {
             .createdBy(DEFAULT_CREATED_BY)
             .createdByUserLogin(DEFAULT_CREATED_BY_USER_LOGIN)
             .updatedBy(DEFAULT_UPDATED_BY)
-            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN)
+            .status(DEFAULT_STATUS)
+            .nextContactNumber(DEFAULT_NEXT_CONTACT_NUMBER);
         return client;
     }
 
@@ -135,7 +143,9 @@ class ClientResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .status(UPDATED_STATUS)
+            .nextContactNumber(UPDATED_NEXT_CONTACT_NUMBER);
         return client;
     }
 
@@ -175,6 +185,8 @@ class ClientResourceIT {
         assertThat(testClient.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testClient.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testClient.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testClient.getStatus()).isEqualTo(DEFAULT_STATUS);
+        assertThat(testClient.getNextContactNumber()).isEqualTo(DEFAULT_NEXT_CONTACT_NUMBER);
     }
 
     @Test
@@ -293,7 +305,9 @@ class ClientResourceIT {
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY)))
             .andExpect(jsonPath("$.[*].createdByUserLogin").value(hasItem(DEFAULT_CREATED_BY_USER_LOGIN)))
             .andExpect(jsonPath("$.[*].updatedBy").value(hasItem(DEFAULT_UPDATED_BY)))
-            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)));
+            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS)))
+            .andExpect(jsonPath("$.[*].nextContactNumber").value(hasItem(DEFAULT_NEXT_CONTACT_NUMBER)));
     }
 
     @Test
@@ -319,7 +333,9 @@ class ClientResourceIT {
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY))
             .andExpect(jsonPath("$.createdByUserLogin").value(DEFAULT_CREATED_BY_USER_LOGIN))
             .andExpect(jsonPath("$.updatedBy").value(DEFAULT_UPDATED_BY))
-            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN));
+            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS))
+            .andExpect(jsonPath("$.nextContactNumber").value(DEFAULT_NEXT_CONTACT_NUMBER));
     }
 
     @Test
@@ -353,7 +369,9 @@ class ClientResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .status(UPDATED_STATUS)
+            .nextContactNumber(UPDATED_NEXT_CONTACT_NUMBER);
         ClientDTO clientDTO = clientMapper.toDto(updatedClient);
 
         restClientMockMvc
@@ -381,6 +399,8 @@ class ClientResourceIT {
         assertThat(testClient.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testClient.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testClient.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testClient.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testClient.getNextContactNumber()).isEqualTo(UPDATED_NEXT_CONTACT_NUMBER);
     }
 
     @Test
@@ -475,7 +495,9 @@ class ClientResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .status(UPDATED_STATUS)
+            .nextContactNumber(UPDATED_NEXT_CONTACT_NUMBER);
 
         restClientMockMvc
             .perform(
@@ -502,6 +524,8 @@ class ClientResourceIT {
         assertThat(testClient.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testClient.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testClient.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testClient.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testClient.getNextContactNumber()).isEqualTo(UPDATED_NEXT_CONTACT_NUMBER);
     }
 
     @Test
@@ -528,7 +552,9 @@ class ClientResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .status(UPDATED_STATUS)
+            .nextContactNumber(UPDATED_NEXT_CONTACT_NUMBER);
 
         restClientMockMvc
             .perform(
@@ -555,6 +581,8 @@ class ClientResourceIT {
         assertThat(testClient.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testClient.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testClient.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testClient.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testClient.getNextContactNumber()).isEqualTo(UPDATED_NEXT_CONTACT_NUMBER);
     }
 
     @Test

@@ -36,16 +36,20 @@ public class AffaireService {
 
     private final AffaireSocieteAdjRepository affaireSocieteAdjRepository;
 
+    private final NumsequentielleService numsequentielleService;
+
     public AffaireService(
         AffaireRepository affaireRepository,
         AffaireMapper affaireMapper,
         UserRestClient userRestClient,
-        AffaireSocieteAdjRepository affaireSocieteAdjRepository
+        AffaireSocieteAdjRepository affaireSocieteAdjRepository,
+        NumsequentielleService numsequentielleService
     ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
         this.userRestClient = userRestClient;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
+        this.numsequentielleService = numsequentielleService;
     }
 
     /**
@@ -63,6 +67,9 @@ public class AffaireService {
         affaireDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
         affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
         affaireDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
+        String identifiant = numsequentielleService.genererIdentifiantAffaire("AFFAIRE");
+        affaireDTO.setIdentifiantUnique(identifiant);
 
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);

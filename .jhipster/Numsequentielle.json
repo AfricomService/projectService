@@ -1,7 +1,8 @@
 {
-  "microserviceName": "projectService",
+  "changelogDate": "20260717092226",
   "clientRootFolder": "projectService",
   "databaseType": "sql",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "prefix",
@@ -22,12 +23,11 @@
       "fieldValidateRules": ["unique"]
     }
   ],
-  "relationships": [],
-  "service": "serviceClass",
-  "dto": "mapstruct",
   "jpaMetamodelFiltering": false,
-  "readOnly": false,
-  "pagination": "pagination",
+  "microserviceName": "projectService",
   "name": "Numsequentielle",
-  "changelogDate": "20260717092226"
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
 }
