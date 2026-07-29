@@ -47,6 +47,22 @@ public class KeycloakAdminService {
     }
 
     /**
+     * Récupère un token "service account" (client_credentials) réutilisable pour les
+     * appels machine-à-machine (ex: appels Feign lancés depuis un thread @Scheduled,
+     * où il n'y a pas de requête HTTP utilisateur dont propager le token).
+     *
+     * @return le token d'accès, ou null en cas d'échec.
+     */
+    public String getServiceAccountToken() {
+        try {
+            return getAdminToken();
+        } catch (Exception e) {
+            log.warn("Impossible de récupérer un token service account Keycloak : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Crée un utilisateur Keycloak à partir d'un contact.
      * Le username utilisé est l'identifiantUnique du contact.
      */
