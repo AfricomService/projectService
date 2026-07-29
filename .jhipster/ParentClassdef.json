@@ -1,7 +1,8 @@
 {
-  "microserviceName": "projectService",
+  "changelogDate": "20260717094214",
   "clientRootFolder": "projectService",
   "databaseType": "sql",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "type",
@@ -16,12 +17,11 @@
       "fieldType": "Long"
     }
   ],
-  "relationships": [],
-  "service": "serviceClass",
-  "dto": "mapstruct",
   "jpaMetamodelFiltering": false,
-  "readOnly": false,
-  "pagination": "pagination",
+  "microserviceName": "projectService",
   "name": "ParentClassdef",
-  "changelogDate": "20260717094214"
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
 }

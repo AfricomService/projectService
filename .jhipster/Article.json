@@ -45,6 +45,22 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "codeClient",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "prixUnitHT",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "prixAchat",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "granularite",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

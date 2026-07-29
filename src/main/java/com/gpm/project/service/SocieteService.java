@@ -1,18 +1,22 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.AffaireSocieteAdj;
 import com.gpm.project.domain.ContactSociete;
 import com.gpm.project.domain.Societe;
 import com.gpm.project.repository.AffaireSocieteAdjRepository;
 import com.gpm.project.repository.ContactSocieteRepository;
 import com.gpm.project.repository.SocieteRepository;
+import com.gpm.project.security.SecurityUtils;
+import com.gpm.project.service.dto.ClientDTO;
 import com.gpm.project.service.dto.ContactSocieteDTO;
 import com.gpm.project.service.dto.PersonneDTO;
 import com.gpm.project.service.dto.SocieteDTO;
 import com.gpm.project.service.mapper.SocieteMapper;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -37,16 +41,24 @@ public class SocieteService {
 
     private final ContactSocieteRepository contactSocieteRepository;
 
+    private final NumsequentielleService numsequentielleService;
+
+    private final UserRestClient userRestClient;
+
     public SocieteService(
         SocieteRepository societeRepository,
         SocieteMapper societeMapper,
         AffaireSocieteAdjRepository affaireSocieteAdjRepository,
-        ContactSocieteRepository contactSocieteRepository
+        ContactSocieteRepository contactSocieteRepository,
+        NumsequentielleService numsequentielleService,
+        UserRestClient userRestClient
     ) {
         this.societeRepository = societeRepository;
         this.societeMapper = societeMapper;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
         this.contactSocieteRepository = contactSocieteRepository;
+        this.numsequentielleService = numsequentielleService;
+        this.userRestClient = userRestClient;
     }
 
     public List<SocieteDTO> findAllByAffaireId(Long affaireId) {
@@ -65,6 +77,17 @@ public class SocieteService {
      */
     public SocieteDTO save(SocieteDTO societeDTO) {
         log.debug("Request to save Societe : {}", societeDTO);
+
+        societeDTO.setCreatedAt(ZonedDateTime.now());
+        societeDTO.setUpdatedAt(ZonedDateTime.now());
+        societeDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        societeDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        societeDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        societeDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
+        String identifiant = numsequentielleService.genererIdentifiantSociete();
+        societeDTO.setIdentifiantUnique(identifiant);
+
         Societe societe = societeMapper.toEntity(societeDTO);
         societe = societeRepository.save(societe);
         return societeMapper.toDto(societe);
@@ -138,18 +161,31 @@ public class SocieteService {
     }
 
     public void assignContactSocieteFromOrgaCare(List<PersonneDTO> personsToAssign, Long societeId) {
-        List<ContactSociete> contactSocieteList = new LinkedList<ContactSociete>();
+        List<String> matricules = personsToAssign.stream().map(PersonneDTO::getMatricule).collect(Collectors.toList());
 
-        personsToAssign.forEach(person -> {
-            ContactSociete contactSociete = new ContactSociete();
-            contactSociete.setSocieteId(societeId);
-            contactSociete.setEmail(person.getEmail());
-            contactSociete.setMatricule(person.getMatricule());
-            contactSociete.setNomPrenom(person.getNomPrenom());
+        List<ContactSociete> existingContacts = contactSocieteRepository.findBySocieteIdAndMatriculeIn(societeId, matricules);
 
-            contactSocieteList.add(contactSociete);
-        });
+        Map<String, ContactSociete> existingContactsMap = existingContacts
+            .stream()
+            .collect(Collectors.toMap(ContactSociete::getMatricule, Function.identity()));
 
-        contactSocieteRepository.saveAll(contactSocieteList);
+        List<ContactSociete> contactsToSave = new ArrayList<>();
+
+        for (PersonneDTO person : personsToAssign) {
+            ContactSociete contact = existingContactsMap.get(person.getMatricule());
+
+            if (contact == null) {
+                contact = new ContactSociete();
+                contact.setSocieteId(societeId);
+                contact.setMatricule(person.getMatricule());
+            }
+
+            contact.setNomPrenom(person.getNomPrenom());
+            contact.setEmail(person.getEmail());
+
+            contactsToSave.add(contact);
+        }
+
+        contactSocieteRepository.saveAll(contactsToSave);
     }
 }

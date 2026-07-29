@@ -43,4 +43,10 @@ public interface AffaireArticleRepository extends JpaRepository<AffaireArticle, 
     Optional<AffaireArticle> findOneWithToOneRelationships(@Param("id") Long id);
 
     List<AffaireArticle> findByAffaireId(Long affaireId);
+
+    // Deletes a specific relation between an affaire and an article
+    void deleteByAffaireIdAndArticleId(Long affaireId, Long articleId);
+
+    // Deletes all relations for a given affaire (used for the replace method)
+    void deleteByAffaireId(Long affaireId);
 }

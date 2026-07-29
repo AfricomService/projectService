@@ -74,6 +74,8 @@ public class CacheConfiguration {
             createCache(cm, com.gpm.project.domain.Zone.class.getName());
             createCache(cm, com.gpm.project.domain.AffaireSocieteAdj.class.getName());
             createCache(cm, com.gpm.project.domain.ContactSociete.class.getName());
+            createCache(cm, com.gpm.project.domain.Numsequentielle.class.getName());
+            createCache(cm, com.gpm.project.domain.ParentClassdef.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

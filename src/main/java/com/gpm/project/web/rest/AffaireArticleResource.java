@@ -1,5 +1,6 @@
 package com.gpm.project.web.rest;
 
+import com.gpm.project.domain.Article;
 import com.gpm.project.repository.AffaireArticleRepository;
 import com.gpm.project.service.AffaireArticleService;
 import com.gpm.project.service.dto.AffaireArticleDTO;
@@ -202,5 +203,38 @@ public class AffaireArticleResource {
         log.debug("REST request to get AffaireArticles by affaireId : {}", affaireId);
         List<AffaireArticleDTO> result = affaireArticleService.findByAffaireId(affaireId);
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * GET /api/affaires/{affaireId}/articles
+     * Example: /api/affaires/1/articles?searchTerm=cable&page=0&size=10&sort=designation,asc
+     */
+    @GetMapping("/affaire-articles/{affaireId}/articles")
+    public ResponseEntity<Page<Article>> getArticlesByAffaire(
+        @PathVariable Long affaireId,
+        @RequestParam(required = false) String searchTerm,
+        Pageable pageable
+    ) {
+        Page<Article> articles = affaireArticleService.getArticlesByAffaire(affaireId, searchTerm, pageable);
+        return ResponseEntity.ok(articles);
+    }
+
+    /**
+     * DELETE /api/affaires/{affaireId}/articles/{articleId}
+     */
+    @DeleteMapping("/affaire-articles/{affaireId}/articles/{articleId}")
+    public ResponseEntity<Void> removeArticleFromAffaire(@PathVariable Long affaireId, @PathVariable Long articleId) {
+        affaireArticleService.removeRelation(affaireId, articleId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * PUT /api/affaires/{affaireId}/articles
+     * Body: [1, 2, 3] (List of Article IDs)
+     */
+    @PutMapping("/affaire-articles/{affaireId}/articles")
+    public ResponseEntity<Void> replaceArticlesForAffaire(@PathVariable Long affaireId, @RequestBody List<Long> articleIds) {
+        affaireArticleService.replaceArticlesForAffaire(affaireId, articleIds);
+        return ResponseEntity.ok().build();
     }
 }

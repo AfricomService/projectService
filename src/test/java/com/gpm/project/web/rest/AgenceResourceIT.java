@@ -78,6 +78,12 @@ class AgenceResourceIT {
     private static final String DEFAULT_UPDATED_BY_USER_LOGIN = "AAAAAAAAAA";
     private static final String UPDATED_UPDATED_BY_USER_LOGIN = "BBBBBBBBBB";
 
+    private static final Long DEFAULT_CLIENT_ID = 1L;
+    private static final Long UPDATED_CLIENT_ID = 2L;
+
+    private static final String DEFAULT_IDENTIFIANT_UNIQUE = "AAAAAAAAAA";
+    private static final String UPDATED_IDENTIFIANT_UNIQUE = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/agences";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -121,7 +127,9 @@ class AgenceResourceIT {
             .createdBy(DEFAULT_CREATED_BY)
             .createdByUserLogin(DEFAULT_CREATED_BY_USER_LOGIN)
             .updatedBy(DEFAULT_UPDATED_BY)
-            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN)
+            .clientId(DEFAULT_CLIENT_ID)
+            .identifiantUnique(DEFAULT_IDENTIFIANT_UNIQUE);
         // Add required entity
         Societe societe;
         if (TestUtil.findAll(em, Societe.class).isEmpty()) {
@@ -152,7 +160,9 @@ class AgenceResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .clientId(UPDATED_CLIENT_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
         // Add required entity
         Societe societe;
         if (TestUtil.findAll(em, Societe.class).isEmpty()) {
@@ -200,6 +210,8 @@ class AgenceResourceIT {
         assertThat(testAgence.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testAgence.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testAgence.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testAgence.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testAgence.getIdentifiantUnique()).isEqualTo(DEFAULT_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -339,7 +351,9 @@ class AgenceResourceIT {
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY)))
             .andExpect(jsonPath("$.[*].createdByUserLogin").value(hasItem(DEFAULT_CREATED_BY_USER_LOGIN)))
             .andExpect(jsonPath("$.[*].updatedBy").value(hasItem(DEFAULT_UPDATED_BY)))
-            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)));
+            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.intValue())))
+            .andExpect(jsonPath("$.[*].identifiantUnique").value(hasItem(DEFAULT_IDENTIFIANT_UNIQUE)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -380,7 +394,9 @@ class AgenceResourceIT {
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY))
             .andExpect(jsonPath("$.createdByUserLogin").value(DEFAULT_CREATED_BY_USER_LOGIN))
             .andExpect(jsonPath("$.updatedBy").value(DEFAULT_UPDATED_BY))
-            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN));
+            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN))
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.intValue()))
+            .andExpect(jsonPath("$.identifiantUnique").value(DEFAULT_IDENTIFIANT_UNIQUE));
     }
 
     @Test
@@ -412,7 +428,9 @@ class AgenceResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .clientId(UPDATED_CLIENT_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
         AgenceDTO agenceDTO = agenceMapper.toDto(updatedAgence);
 
         restAgenceMockMvc
@@ -438,6 +456,8 @@ class AgenceResourceIT {
         assertThat(testAgence.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testAgence.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testAgence.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testAgence.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testAgence.getIdentifiantUnique()).isEqualTo(UPDATED_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -524,7 +544,7 @@ class AgenceResourceIT {
         Agence partialUpdatedAgence = new Agence();
         partialUpdatedAgence.setId(agence.getId());
 
-        partialUpdatedAgence.ville(UPDATED_VILLE).pays(UPDATED_PAYS);
+        partialUpdatedAgence.ville(UPDATED_VILLE).pays(UPDATED_PAYS).identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
 
         restAgenceMockMvc
             .perform(
@@ -549,6 +569,8 @@ class AgenceResourceIT {
         assertThat(testAgence.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testAgence.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testAgence.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testAgence.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testAgence.getIdentifiantUnique()).isEqualTo(UPDATED_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -573,7 +595,9 @@ class AgenceResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .clientId(UPDATED_CLIENT_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
 
         restAgenceMockMvc
             .perform(
@@ -598,6 +622,8 @@ class AgenceResourceIT {
         assertThat(testAgence.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testAgence.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testAgence.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testAgence.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testAgence.getIdentifiantUnique()).isEqualTo(UPDATED_IDENTIFIANT_UNIQUE);
     }
 
     @Test

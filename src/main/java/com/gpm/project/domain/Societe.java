@@ -82,6 +82,9 @@ public class Societe implements Serializable {
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
 
+    @Column(name = "matricule_fiscale")
+    private String matriculeFiscale;
+
     @OneToMany(mappedBy = "societe")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "vehicules", "societe" }, allowSetters = true)
@@ -323,6 +326,19 @@ public class Societe implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getMatriculeFiscale() {
+        return this.matriculeFiscale;
+    }
+
+    public Societe matriculeFiscale(String matriculeFiscale) {
+        this.setMatriculeFiscale(matriculeFiscale);
+        return this;
+    }
+
+    public void setMatriculeFiscale(String matriculeFiscale) {
+        this.matriculeFiscale = matriculeFiscale;
+    }
+
     public Set<Agence> getAgences() {
         return this.agences;
     }
@@ -395,6 +411,7 @@ public class Societe implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", matriculeFiscale='" + getMatriculeFiscale() + "'" +
             "}";
     }
 }
