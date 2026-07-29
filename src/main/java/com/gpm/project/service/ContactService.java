@@ -16,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gpm.project.client.UserRestClient;
+import com.gpm.project.security.SecurityUtils;
+import java.time.ZonedDateTime;
+
 /**
  * Service Implementation for managing {@link Contact}.
  */
@@ -31,10 +35,18 @@ public class ContactService {
 
     private final ClientRepository clientRepository;
 
-    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper, ClientRepository clientRepository) {
+    private final UserRestClient userRestClient;
+
+    public ContactService(
+        ContactRepository contactRepository,
+        ContactMapper contactMapper,
+        ClientRepository clientRepository,
+        UserRestClient userRestClient
+    ) {
         this.contactRepository = contactRepository;
         this.contactMapper = contactMapper;
         this.clientRepository = clientRepository;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -51,6 +63,15 @@ public class ContactService {
             String identifiant = genererIdentifiantContact(contact.getClient().getId());
             contact.setIdentifiantUnique(identifiant);
         }
+
+        contact.setStatusCompteKeycloak("DEACTIVE");
+
+        contact.setCreatedAt(ZonedDateTime.now());
+        contact.setUpdatedAt(ZonedDateTime.now());
+        contact.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        contact.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
@@ -100,6 +121,11 @@ public class ContactService {
     public ContactDTO update(ContactDTO contactDTO) {
         log.debug("Request to update Contact : {}", contactDTO);
         Contact contact = contactMapper.toEntity(contactDTO);
+
+        contact.setUpdatedAt(ZonedDateTime.now());
+        contact.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        contact.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
     }
@@ -158,17 +184,17 @@ public class ContactService {
     }
 
     /**
-     * Search contacts by clientId and raisonSociale (partial, case-insensitive).
+     * Search contacts by clientId and nomPrenom (partial, case-insensitive).
      *
      * @param clientId the id of the client.
-     * @param raisonSociale the search term for raisonSociale.
+     * @param nomPrenom the search term for nomPrenom.
      * @return the list of matching entities.
      */
     @Transactional(readOnly = true)
-    public List<ContactDTO> searchContactsByClientId(Long clientId, String raisonSociale) {
-        log.debug("Request to search Contacts by clientId : {} and raisonSociale : {}", clientId, raisonSociale);
+    public List<ContactDTO> searchContactsByClientId(Long clientId, String nomPrenom) {
+        log.debug("Request to search Contacts by clientId : {} and nomPrenom : {}", clientId, nomPrenom);
         return contactRepository
-            .findByClientIdAndRaisonSocialeContainingIgnoreCase(clientId, raisonSociale)
+            .findByClientIdAndNomPrenomContainingIgnoreCase(clientId, nomPrenom)
             .stream()
             .map(contactMapper::toDto)
             .collect(Collectors.toList());

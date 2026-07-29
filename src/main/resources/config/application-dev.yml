@@ -130,4 +130,9 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+#application:
+keycloak-admin:
+  server-url: http://localhost:9080
+  realm: Africom
+  client-id: gpm_internal
+  client-secret: pNOoGrrA72931Oe53mjqRNosEXU57UnN
