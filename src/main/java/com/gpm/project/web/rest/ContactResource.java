@@ -2,7 +2,9 @@ package com.gpm.project.web.rest;
 
 import com.gpm.project.repository.ContactRepository;
 import com.gpm.project.service.ContactService;
+import com.gpm.project.service.KeycloakAdminService;
 import com.gpm.project.service.dto.ContactDTO;
+import com.gpm.project.service.dto.KeycloakUserCreationResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,9 +45,12 @@ public class ContactResource {
 
     private final ContactRepository contactRepository;
 
-    public ContactResource(ContactService contactService, ContactRepository contactRepository) {
+    private final KeycloakAdminService keycloakAdminService;
+
+    public ContactResource(ContactService contactService, ContactRepository contactRepository, KeycloakAdminService keycloakAdminService) {
         this.contactService = contactService;
         this.contactRepository = contactRepository;
+        this.keycloakAdminService = keycloakAdminService;
     }
 
     /**
@@ -188,19 +193,19 @@ public class ContactResource {
     }
 
     /**
-     * {@code GET  /contacts/client/:clientId/search} : search contacts by "clientId" and "raisonSociale".
+     * {@code GET  /contacts/client/:clientId/search} : search contacts by "clientId" and "nomPrenom".
      *
      * @param clientId the id of the client to retrieve contacts for.
-     * @param raisonSociale the search term for raisonSociale.
+     * @param nomPrenom the search term for nomPrenom.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of matching contactDTO.
      */
     @GetMapping("/contacts/client/{clientId}/search")
     public ResponseEntity<List<ContactDTO>> searchContactsByClientId(
         @PathVariable Long clientId,
-        @RequestParam(required = false, defaultValue = "") String raisonSociale
+        @RequestParam(required = false, defaultValue = "") String nomPrenom
     ) {
-        log.debug("REST request to search Contacts by clientId : {} and raisonSociale : {}", clientId, raisonSociale);
-        List<ContactDTO> contacts = contactService.searchContactsByClientId(clientId, raisonSociale);
+        log.debug("REST request to search Contacts by clientId : {} and nomPrenom : {}", clientId, nomPrenom);
+        List<ContactDTO> contacts = contactService.searchContactsByClientId(clientId, nomPrenom);
         return ResponseEntity.ok().body(contacts);
     }
 
@@ -218,5 +223,26 @@ public class ContactResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code POST  /contacts/:id/create-keycloak-user} : crée un utilisateur Keycloak pour ce contact.
+     *
+     * @param id l'id du contact.
+     * @return {@code 200 (OK)} si la création a réussi.
+     */
+    @PostMapping("/contacts/{id}/create-keycloak-user")
+    public ResponseEntity<KeycloakUserCreationResultDTO> createKeycloakUser(@PathVariable Long id) {
+        log.debug("REST request to create Keycloak user for Contact : {}", id);
+        ContactDTO contactDTO = contactService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
+        String generatedPassword = keycloakAdminService.createUserFromContact(contactDTO);
+
+        contactDTO.setStatusCompteKeycloak("EN_COURS");
+        ContactDTO updatedContact = contactService.update(contactDTO);
+
+        return ResponseEntity.ok(new KeycloakUserCreationResultDTO(updatedContact, generatedPassword));
     }
 }

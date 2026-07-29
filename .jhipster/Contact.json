@@ -55,6 +55,18 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "nomPrenom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "matricule",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "statusCompteKeycloak",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

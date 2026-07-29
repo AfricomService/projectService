@@ -72,7 +72,6 @@ public class Agence implements Serializable {
     private Set<Vehicule> vehicules = new HashSet<>();
 
     @ManyToOne(optional = false)
-    @NotNull
     @JsonIgnoreProperties(value = { "agences" }, allowSetters = true)
     private Societe societe;
 

@@ -226,4 +226,49 @@ public class ClientResource {
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
         );
     }
+    /**
+     * {@code PATCH  /clients/:id/activer} : active un client (statut "ACTIF").
+     *
+     * @param id l'id du clientDTO à activer.
+     * @return le {@link ResponseEntity} avec statut {@code 200 (OK)} et le clientDTO mis à jour,
+     * ou statut {@code 404 (Not Found)} si le client n'existe pas.
+     */
+    @PatchMapping("/clients/{id}/activer")
+    public ResponseEntity<ClientDTO> activerClient(@PathVariable Long id) {
+        log.debug("REST request to activate Client : {}", id);
+
+        if (!clientRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<ClientDTO> result = clientService.activer(id);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
+    }
+
+    /**
+     * {@code PATCH  /clients/:id/desactiver} : désactive un client (statut "DEACTIVATED").
+     *
+     * @param id l'id du clientDTO à désactiver.
+     * @return le {@link ResponseEntity} avec statut {@code 200 (OK)} et le clientDTO mis à jour,
+     * ou statut {@code 404 (Not Found)} si le client n'existe pas.
+     */
+    @PatchMapping("/clients/{id}/desactiver")
+    public ResponseEntity<ClientDTO> desactiverClient(@PathVariable Long id) {
+        log.debug("REST request to deactivate Client : {}", id);
+
+        if (!clientRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<ClientDTO> result = clientService.desactiver(id);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
+    }
 }

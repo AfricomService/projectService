@@ -44,6 +44,8 @@ public class SiteDTO implements Serializable {
 
     private Long zoneId;
 
+    private String zoneNom;
+
     private VilleDTO ville;
 
     private ClientDTO client;
@@ -176,6 +178,14 @@ public class SiteDTO implements Serializable {
         this.zoneId = zoneId;
     }
 
+    public String getZoneNom() {
+        return zoneNom;
+    }
+
+    public void setZoneNom(String zoneNom) {
+        this.zoneNom = zoneNom;
+    }
+
     public VilleDTO getVille() {
         return ville;
     }
@@ -233,6 +243,7 @@ public class SiteDTO implements Serializable {
             ", typeSite='" + getTypeSite() + "'" +
             ", regionSite='" + getRegionSite() + "'" +
             ", zoneId=" + getZoneId() +
+            ", zoneNom='" + getZoneNom() + "'" +
             ", ville=" + getVille() +
             ", client=" + getClient() +
             "}";

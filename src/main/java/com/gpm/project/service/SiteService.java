@@ -3,11 +3,9 @@ package com.gpm.project.service;
 import com.gpm.project.domain.Client;
 import com.gpm.project.domain.Site;
 import com.gpm.project.domain.Ville;
-import com.gpm.project.domain.Zone;
 import com.gpm.project.repository.ClientRepository;
 import com.gpm.project.repository.SiteRepository;
 import com.gpm.project.repository.VilleRepository;
-import com.gpm.project.repository.ZoneRepository;
 import com.gpm.project.service.dto.SiteDTO;
 import com.gpm.project.service.dto.SiteImportResultDTO;
 import com.gpm.project.service.mapper.SiteMapper;
@@ -16,12 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -30,12 +24,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gpm.project.client.UserRestClient;
+import com.gpm.project.security.SecurityUtils;
+import java.time.ZonedDateTime;
+
 import java.io.ByteArrayOutputStream;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -53,22 +47,22 @@ public class SiteService {
 
     private final VilleRepository villeRepository;
 
-    private final ZoneRepository zoneRepository;
-
     private final ClientRepository clientRepository;
+
+    private final UserRestClient userRestClient;
 
     public SiteService(
         SiteRepository siteRepository,
         SiteMapper siteMapper,
         VilleRepository villeRepository,
-        ZoneRepository zoneRepository,
-        ClientRepository clientRepository
+        ClientRepository clientRepository,
+        UserRestClient userRestClient
     ) {
         this.siteRepository = siteRepository;
         this.siteMapper = siteMapper;
         this.villeRepository = villeRepository;
-        this.zoneRepository = zoneRepository;
         this.clientRepository = clientRepository;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -79,6 +73,14 @@ public class SiteService {
      */
     public SiteDTO save(SiteDTO siteDTO) {
         log.debug("Request to save Site : {}", siteDTO);
+
+        siteDTO.setCreatedAt(ZonedDateTime.now());
+        siteDTO.setUpdatedAt(ZonedDateTime.now());
+        siteDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        siteDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        siteDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        siteDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
         Site site = siteMapper.toEntity(siteDTO);
         site = siteRepository.save(site);
         return siteMapper.toDto(site);
@@ -92,6 +94,11 @@ public class SiteService {
      */
     public SiteDTO update(SiteDTO siteDTO) {
         log.debug("Request to update Site : {}", siteDTO);
+
+        siteDTO.setUpdatedAt(ZonedDateTime.now());
+        siteDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        siteDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         Site site = siteMapper.toEntity(siteDTO);
         site = siteRepository.save(site);
         return siteMapper.toDto(site);
@@ -222,8 +229,17 @@ public class SiteService {
                     String code = getCellString(row, 0, formatter);
                     String designation = getCellString(row, 1, formatter);
                     String villeNom = getCellString(row, 2, formatter);
-                    Float longitude = getCellFloat(row, 3, formatter);
-                    Float latitude = getCellFloat(row, 4, formatter);
+
+                    Float longitude;
+                    Float latitude;
+                    try {
+                        longitude = getCellFloat(row, 3, formatter, "Longitude");
+                        latitude = getCellFloat(row, 4, formatter, "Latitude");
+                    } catch (InvalidNumericCellException e) {
+                        errors.add("Ligne " + excelLine + " : " + e.getMessage());
+                        continue;
+                    }
+
                     String nodaleGpm = getCellString(row, 5, formatter);
                     String sitePriority = getCellString(row, 6, formatter);
                     String typeSite = getCellString(row, 7, formatter);
@@ -246,15 +262,6 @@ public class SiteService {
                         continue;
                     }
 
-                    Zone zone = null;
-                    if (!isBlank(zoneNom)) {
-                        zone = zoneRepository.findByNomIgnoreCaseAndVilleId(zoneNom.trim(), ville.getId()).orElse(null);
-                        if (zone == null) {
-                            errors.add("Ligne " + excelLine + " : zone introuvable '" + zoneNom + "' pour le gouvernorat '" + villeNom + "'");
-                            continue;
-                        }
-                    }
-
                     Site site = new Site();
                     site.setCode(code.trim());
                     site.setDesignation(designation.trim());
@@ -265,9 +272,7 @@ public class SiteService {
                     site.setTypeSite(typeSite);
                     site.setRegionSite(regionSite);
                     site.setVille(ville);
-                    if (zone != null) {
-                        site.setZoneId(zone.getId());
-                    }
+                    site.setZoneNom(zoneNom != null ? zoneNom.trim() : null);
                     site.setClient(client);
 
                     siteRepository.save(site);
@@ -330,6 +335,17 @@ public class SiteService {
         }
     }
 
+    /**
+     * Exception interne utilisée pour signaler qu'une cellule censée contenir un nombre
+     * (GPS X / GPS Y) contient une valeur non convertible en nombre. Distincte d'une cellule
+     * simplement vide, qui reste autorisée (retourne null).
+     */
+    private static class InvalidNumericCellException extends RuntimeException {
+        InvalidNumericCellException(String message) {
+            super(message);
+        }
+    }
+
     private String getCellString(Row row, int idx, DataFormatter formatter) {
         Cell cell = row.getCell(idx);
         if (cell == null) {
@@ -339,15 +355,43 @@ public class SiteService {
         return value.isEmpty() ? null : value;
     }
 
-    private Float getCellFloat(Row row, int idx, DataFormatter formatter) {
+    /**
+     * Lit une valeur numérique (GPS) depuis une cellule, en privilégiant la valeur brute
+     * de la cellule (cell.getNumericCellValue()) plutôt que sa représentation textuelle formatée,
+     * pour éviter les problèmes de notation scientifique, d'arrondi ou de séparateurs de milliers
+     * appliqués par le format d'affichage Excel.
+     *
+     * @param columnLabel libellé lisible de la colonne (ex. "Longitude"), utilisé dans le message d'erreur.
+     * @throws InvalidNumericCellException si la cellule contient une valeur non vide mais non convertible en nombre.
+     */
+    private Float getCellFloat(Row row, int idx, DataFormatter formatter, String columnLabel) {
+        Cell cell = row.getCell(idx);
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+
+        // Cas 1 : la cellule est un vrai nombre Excel -> on lit la valeur brute, sans formatage
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return (float) cell.getNumericCellValue();
+        }
+
+        // Cas 2 : formule dont le résultat est numérique
+        if (cell.getCellType() == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) {
+            return (float) cell.getNumericCellValue();
+        }
+
+        // Cas 3 : la cellule est du texte -> on nettoie et on parse manuellement
         String value = getCellString(row, idx, formatter);
         if (value == null) {
             return null;
         }
         try {
-            return Float.parseFloat(value.replace(",", "."));
+            String normalized = value.trim().replace(" ", "").replace(",", ".");
+            return Float.parseFloat(normalized);
         } catch (NumberFormatException e) {
-            return null;
+            throw new InvalidNumericCellException(
+                "valeur '" + value + "' invalide pour le champ " + columnLabel + " (un nombre est attendu)"
+            );
         }
     }
 
