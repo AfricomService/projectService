@@ -1,9 +1,11 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Agence;
 import com.gpm.project.repository.AgenceRepository;
 import com.gpm.project.service.dto.AgenceDTO;
 import com.gpm.project.service.mapper.AgenceMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gpm.project.security.SecurityUtils;
+import java.time.ZonedDateTime;
 
 /**
  * Service Implementation for managing {@link Agence}.
@@ -27,10 +32,18 @@ public class AgenceService {
 
     private final NumsequentielleService numsequentielleService;
 
-    public AgenceService(AgenceRepository agenceRepository, AgenceMapper agenceMapper, NumsequentielleService numsequentielleService) {
+    private final UserRestClient userRestClient;
+
+    public AgenceService(
+        AgenceRepository agenceRepository,
+        AgenceMapper agenceMapper,
+        NumsequentielleService numsequentielleService,
+        UserRestClient userRestClient
+    ) {
         this.agenceRepository = agenceRepository;
         this.agenceMapper = agenceMapper;
         this.numsequentielleService = numsequentielleService;
+        this.userRestClient = userRestClient;
     }
 
     /**
@@ -39,11 +52,23 @@ public class AgenceService {
      * @param agenceDTO the entity to save.
      * @return the persisted entity.
      */
+
+    public List<AgenceDTO> findAllByClientId(Long clientId) {
+        return agenceMapper.toDto(agenceRepository.findByClientId(clientId));
+    }
+
     public AgenceDTO save(AgenceDTO agenceDTO) {
         log.debug("Request to save Agence : {}", agenceDTO);
 
         String identifiant = numsequentielleService.genererIdentifiantAgence();
         agenceDTO.setIdentifiantUnique(identifiant);
+
+        agenceDTO.setCreatedAt(ZonedDateTime.now());
+        agenceDTO.setUpdatedAt(ZonedDateTime.now());
+        agenceDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        agenceDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
@@ -58,6 +83,11 @@ public class AgenceService {
      */
     public AgenceDTO update(AgenceDTO agenceDTO) {
         log.debug("Request to update Agence : {}", agenceDTO);
+
+        agenceDTO.setUpdatedAt(ZonedDateTime.now());
+        agenceDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        agenceDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         Agence agence = agenceMapper.toEntity(agenceDTO);
         agence = agenceRepository.save(agence);
         return agenceMapper.toDto(agence);

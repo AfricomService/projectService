@@ -41,6 +41,18 @@
             <column name="updated_by_user_login" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="code_client" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="prix_unit_ht" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="prix_achat" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="granularite" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
         <dropDefaultValue tableName="article" columnName="created_at" columnDataType="${datetimeType}"/>
@@ -73,6 +85,10 @@
             <column name="created_by_user_login" type="string"/>
             <column name="updated_by" type="string"/>
             <column name="updated_by_user_login" type="string"/>
+            <column name="code_client" type="string"/>
+            <column name="prix_unit_ht" type="numeric"/>
+            <column name="prix_achat" type="numeric"/>
+            <column name="granularite" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

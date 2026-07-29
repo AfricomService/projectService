@@ -1,10 +1,17 @@
 package com.gpm.project.service;
 
+import com.gpm.project.domain.Affaire;
 import com.gpm.project.domain.AffaireArticle;
+import com.gpm.project.domain.Article;
 import com.gpm.project.repository.AffaireArticleRepository;
+import com.gpm.project.repository.AffaireRepository;
+import com.gpm.project.repository.ArticleRepository;
 import com.gpm.project.service.dto.AffaireArticleDTO;
 import com.gpm.project.service.mapper.AffaireArticleMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -22,12 +29,59 @@ public class AffaireArticleService {
     private final Logger log = LoggerFactory.getLogger(AffaireArticleService.class);
 
     private final AffaireArticleRepository affaireArticleRepository;
-
+    private final ArticleRepository articleRepository;
+    private final AffaireRepository affaireRepository;
     private final AffaireArticleMapper affaireArticleMapper;
 
-    public AffaireArticleService(AffaireArticleRepository affaireArticleRepository, AffaireArticleMapper affaireArticleMapper) {
+    public AffaireArticleService(
+        AffaireArticleRepository affaireArticleRepository,
+        ArticleRepository articleRepository,
+        AffaireRepository affaireRepository,
+        AffaireArticleMapper affaireArticleMapper
+    ) {
         this.affaireArticleRepository = affaireArticleRepository;
+        this.articleRepository = articleRepository;
+        this.affaireRepository = affaireRepository;
         this.affaireArticleMapper = affaireArticleMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Article> getArticlesByAffaire(Long affaireId, String searchTerm, Pageable pageable) {
+        return articleRepository.findArticlesByAffaireIdFiltered(affaireId, searchTerm, pageable);
+    }
+
+    public void removeRelation(Long affaireId, Long articleId) {
+        affaireArticleRepository.deleteByAffaireIdAndArticleId(affaireId, articleId);
+    }
+
+    public void replaceArticlesForAffaire(Long affaireId, List<Long> articleIds) {
+        // 1. Delete old relations
+        affaireArticleRepository.deleteByAffaireId(affaireId);
+
+        // 2. Fetch the Affaire
+        Affaire affaire = affaireRepository
+            .findById(affaireId)
+            .orElseThrow(() -> new EntityNotFoundException("Affaire not found with ID: " + affaireId));
+
+        // 3. Create new relations
+        List<AffaireArticle> newRelations = articleIds
+            .stream()
+            .map(articleId -> {
+                Article article = articleRepository
+                    .findById(articleId)
+                    .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + articleId));
+
+                AffaireArticle affaireArticle = new AffaireArticle();
+                affaireArticle.setAffaire(affaire);
+                affaireArticle.setArticle(article);
+                // Note: quantiteContractuelle and quantiteRealisee will be null.
+
+                return affaireArticle;
+            })
+            .collect(Collectors.toList());
+
+        // 4. Save new relations
+        affaireArticleRepository.saveAll(newRelations);
     }
 
     /**

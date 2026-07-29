@@ -116,6 +116,9 @@ class AffaireResourceIT {
     private static final Long DEFAULT_SOCIETE_ID = 1L;
     private static final Long UPDATED_SOCIETE_ID = 2L;
 
+    private static final String DEFAULT_IDENTIFIANT_UNIQUE = "AAAAAAAAAA";
+    private static final String UPDATED_IDENTIFIANT_UNIQUE = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/affaires";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -171,7 +174,8 @@ class AffaireResourceIT {
             .createdByUserLogin(DEFAULT_CREATED_BY_USER_LOGIN)
             .updatedBy(DEFAULT_UPDATED_BY)
             .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN)
-            .societeId(DEFAULT_SOCIETE_ID);
+            .societeId(DEFAULT_SOCIETE_ID)
+            .identifiantUnique(DEFAULT_IDENTIFIANT_UNIQUE);
         // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
@@ -214,7 +218,8 @@ class AffaireResourceIT {
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
             .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
-            .societeId(UPDATED_SOCIETE_ID);
+            .societeId(UPDATED_SOCIETE_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
         // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
@@ -274,6 +279,7 @@ class AffaireResourceIT {
         assertThat(testAffaire.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testAffaire.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
         assertThat(testAffaire.getSocieteId()).isEqualTo(DEFAULT_SOCIETE_ID);
+        assertThat(testAffaire.getIdentifiantUnique()).isEqualTo(DEFAULT_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -402,7 +408,8 @@ class AffaireResourceIT {
             .andExpect(jsonPath("$.[*].createdByUserLogin").value(hasItem(DEFAULT_CREATED_BY_USER_LOGIN)))
             .andExpect(jsonPath("$.[*].updatedBy").value(hasItem(DEFAULT_UPDATED_BY)))
             .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)))
-            .andExpect(jsonPath("$.[*].societeId").value(hasItem(DEFAULT_SOCIETE_ID.intValue())));
+            .andExpect(jsonPath("$.[*].societeId").value(hasItem(DEFAULT_SOCIETE_ID.intValue())))
+            .andExpect(jsonPath("$.[*].identifiantUnique").value(hasItem(DEFAULT_IDENTIFIANT_UNIQUE)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -455,7 +462,8 @@ class AffaireResourceIT {
             .andExpect(jsonPath("$.createdByUserLogin").value(DEFAULT_CREATED_BY_USER_LOGIN))
             .andExpect(jsonPath("$.updatedBy").value(DEFAULT_UPDATED_BY))
             .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN))
-            .andExpect(jsonPath("$.societeId").value(DEFAULT_SOCIETE_ID.intValue()));
+            .andExpect(jsonPath("$.societeId").value(DEFAULT_SOCIETE_ID.intValue()))
+            .andExpect(jsonPath("$.identifiantUnique").value(DEFAULT_IDENTIFIANT_UNIQUE));
     }
 
     @Test
@@ -499,7 +507,8 @@ class AffaireResourceIT {
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
             .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
-            .societeId(UPDATED_SOCIETE_ID);
+            .societeId(UPDATED_SOCIETE_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
         AffaireDTO affaireDTO = affaireMapper.toDto(updatedAffaire);
 
         restAffaireMockMvc
@@ -537,6 +546,7 @@ class AffaireResourceIT {
         assertThat(testAffaire.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testAffaire.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
         assertThat(testAffaire.getSocieteId()).isEqualTo(UPDATED_SOCIETE_ID);
+        assertThat(testAffaire.getIdentifiantUnique()).isEqualTo(UPDATED_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -670,6 +680,7 @@ class AffaireResourceIT {
         assertThat(testAffaire.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testAffaire.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
         assertThat(testAffaire.getSocieteId()).isEqualTo(DEFAULT_SOCIETE_ID);
+        assertThat(testAffaire.getIdentifiantUnique()).isEqualTo(DEFAULT_IDENTIFIANT_UNIQUE);
     }
 
     @Test
@@ -706,7 +717,8 @@ class AffaireResourceIT {
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
             .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
-            .societeId(UPDATED_SOCIETE_ID);
+            .societeId(UPDATED_SOCIETE_ID)
+            .identifiantUnique(UPDATED_IDENTIFIANT_UNIQUE);
 
         restAffaireMockMvc
             .perform(
@@ -743,6 +755,7 @@ class AffaireResourceIT {
         assertThat(testAffaire.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testAffaire.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
         assertThat(testAffaire.getSocieteId()).isEqualTo(UPDATED_SOCIETE_ID);
+        assertThat(testAffaire.getIdentifiantUnique()).isEqualTo(UPDATED_IDENTIFIANT_UNIQUE);
     }
 
     @Test

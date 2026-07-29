@@ -99,6 +99,10 @@
     {
       "fieldName": "societeId",
       "fieldType": "Long"
+    },
+    {
+      "fieldName": "identifiantUnique",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

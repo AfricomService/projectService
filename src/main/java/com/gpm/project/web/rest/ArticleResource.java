@@ -3,7 +3,10 @@ package com.gpm.project.web.rest;
 import com.gpm.project.repository.ArticleRepository;
 import com.gpm.project.service.ArticleService;
 import com.gpm.project.service.dto.ArticleDTO;
+import com.gpm.project.service.dto.ArticleImportResultDTO;
+import com.gpm.project.service.dto.SiteImportResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -18,8 +21,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -179,5 +184,24 @@ public class ArticleResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/articles/import/template")
+    public ResponseEntity<byte[]> downloadImportTemplate() throws IOException {
+        log.debug("REST request to download Site import template");
+        byte[] content = articleService.generateArticleImportTemplate();
+        return ResponseEntity
+            .ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=modele_import_sites.xlsx")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(content);
+    }
+
+    @PostMapping("/articles/import/{affaireId}")
+    public ResponseEntity<ArticleImportResultDTO> importSites(@PathVariable Long affaireId, @RequestParam("file") MultipartFile file)
+        throws IOException {
+        log.debug("REST request to import Sites for client : {}", affaireId);
+        ArticleImportResultDTO result = articleService.importArticles(file, affaireId);
+        return ResponseEntity.ok(result);
     }
 }

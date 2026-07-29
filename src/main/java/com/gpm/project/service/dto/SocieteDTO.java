@@ -18,7 +18,6 @@ public class SocieteDTO implements Serializable {
 
     private String raisonSocialeAbrege;
 
-    @NotNull
     private String identifiantUnique;
 
     private String registreCommerce;
@@ -50,6 +49,8 @@ public class SocieteDTO implements Serializable {
     private String updatedBy;
 
     private String updatedByUserLogin;
+
+    private String matriculeFiscale;
 
     public Long getId() {
         return id;
@@ -195,6 +196,14 @@ public class SocieteDTO implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getMatriculeFiscale() {
+        return matriculeFiscale;
+    }
+
+    public void setMatriculeFiscale(String matriculeFiscale) {
+        this.matriculeFiscale = matriculeFiscale;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -238,6 +247,7 @@ public class SocieteDTO implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", matriculeFiscale='" + getMatriculeFiscale() + "'" +
             "}";
     }
 }

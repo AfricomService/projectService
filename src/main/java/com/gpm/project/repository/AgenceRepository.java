@@ -41,4 +41,6 @@ public interface AgenceRepository extends JpaRepository<Agence, Long> {
     List<Agence> findByClientId(Long clientId);
 
     List<Agence> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation);
+
+    List<Agence> findAgencesByClientId(Long clientid);
 }

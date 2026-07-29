@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContactSocieteRepository extends JpaRepository<ContactSociete, Long> {
     List<ContactSociete> findAllBySocieteId(Long societeId);
+    List<ContactSociete> findBySocieteIdAndMatriculeIn(Long societeId, List<String> matricules);
 }

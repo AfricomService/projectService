@@ -3,6 +3,7 @@ package com.gpm.project.service;
 import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Affaire;
 import com.gpm.project.domain.AffaireSocieteAdj;
+import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.repository.AffaireSocieteAdjRepository;
 import com.gpm.project.security.SecurityUtils;
@@ -36,16 +37,20 @@ public class AffaireService {
 
     private final AffaireSocieteAdjRepository affaireSocieteAdjRepository;
 
+    private final NumsequentielleService numsequentielleService;
+
     public AffaireService(
         AffaireRepository affaireRepository,
         AffaireMapper affaireMapper,
         UserRestClient userRestClient,
-        AffaireSocieteAdjRepository affaireSocieteAdjRepository
+        AffaireSocieteAdjRepository affaireSocieteAdjRepository,
+        NumsequentielleService numsequentielleService
     ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
         this.userRestClient = userRestClient;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
+        this.numsequentielleService = numsequentielleService;
     }
 
     /**
@@ -54,6 +59,23 @@ public class AffaireService {
      * @param affaireDTO the entity to save.
      * @return the persisted entity.
      */
+
+    public void changeStatut(String newStatut, Long affaireId) {
+        Affaire affaire = affaireRepository.findById(affaireId).orElseThrow(() -> new RuntimeException("Affaire not found"));
+
+        try {
+            StatutAffaire statut = StatutAffaire.valueOf(newStatut);
+            affaire.setStatut(statut);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Statut invalide : " + newStatut);
+        }
+
+        affaire.setUpdatedAt(ZonedDateTime.now());
+        affaire.setUpdatedBy(SecurityUtils.getCurrentUserLogin().orElse("SYSTEM"));
+
+        affaireRepository.save(affaire);
+    }
+
     public AffaireDTO save(AffaireDTO affaireDTO) {
         log.debug("Request to save Affaire : {}", affaireDTO);
 
@@ -63,6 +85,9 @@ public class AffaireService {
         affaireDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
         affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
         affaireDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+
+        String identifiant = numsequentielleService.genererIdentifiantAffaire("AFFAIRE");
+        affaireDTO.setIdentifiantUnique(identifiant);
 
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);

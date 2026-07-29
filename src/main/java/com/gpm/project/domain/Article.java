@@ -1,6 +1,7 @@
 package com.gpm.project.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -53,6 +54,18 @@ public class Article implements Serializable {
 
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
+
+    @Column(name = "code_client")
+    private String codeClient;
+
+    @Column(name = "prix_unit_ht", precision = 21, scale = 2)
+    private BigDecimal prixUnitHT;
+
+    @Column(name = "prix_achat", precision = 21, scale = 2)
+    private BigDecimal prixAchat;
+
+    @Column(name = "granularite")
+    private String granularite;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -186,6 +199,58 @@ public class Article implements Serializable {
         this.updatedByUserLogin = updatedByUserLogin;
     }
 
+    public String getCodeClient() {
+        return this.codeClient;
+    }
+
+    public Article codeClient(String codeClient) {
+        this.setCodeClient(codeClient);
+        return this;
+    }
+
+    public void setCodeClient(String codeClient) {
+        this.codeClient = codeClient;
+    }
+
+    public BigDecimal getPrixUnitHT() {
+        return this.prixUnitHT;
+    }
+
+    public Article prixUnitHT(BigDecimal prixUnitHT) {
+        this.setPrixUnitHT(prixUnitHT);
+        return this;
+    }
+
+    public void setPrixUnitHT(BigDecimal prixUnitHT) {
+        this.prixUnitHT = prixUnitHT;
+    }
+
+    public BigDecimal getPrixAchat() {
+        return this.prixAchat;
+    }
+
+    public Article prixAchat(BigDecimal prixAchat) {
+        this.setPrixAchat(prixAchat);
+        return this;
+    }
+
+    public void setPrixAchat(BigDecimal prixAchat) {
+        this.prixAchat = prixAchat;
+    }
+
+    public String getGranularite() {
+        return this.granularite;
+    }
+
+    public Article granularite(String granularite) {
+        this.setGranularite(granularite);
+        return this;
+    }
+
+    public void setGranularite(String granularite) {
+        this.granularite = granularite;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -219,6 +284,10 @@ public class Article implements Serializable {
             ", createdByUserLogin='" + getCreatedByUserLogin() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
+            ", codeClient='" + getCodeClient() + "'" +
+            ", prixUnitHT=" + getPrixUnitHT() +
+            ", prixAchat=" + getPrixAchat() +
+            ", granularite='" + getGranularite() + "'" +
             "}";
     }
 }
