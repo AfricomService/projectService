@@ -151,3 +151,8 @@ jhipster:
 # ===================================================================
 
 # application:
+keycloak-admin:
+  server-url: http://172.30.1.111:9080
+  realm: AfricomProd
+  client-id: gpm
+  client-secret: QLroHEHr0lYnWPl1BlUybXs1Twu0Z6Cw
