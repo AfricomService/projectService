@@ -78,6 +78,10 @@
     {
       "fieldName": "updatedByUserLogin",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "matriculeFiscale",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

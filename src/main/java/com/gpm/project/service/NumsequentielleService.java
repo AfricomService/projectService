@@ -109,6 +109,11 @@ public class NumsequentielleService {
         return genererIdentifiant("CLIENT");
     }
 
+    public String genererIdentifiantSociete() {
+        log.debug("Request to generate identifiant for Societe");
+        return genererIdentifiant("SOCIETE");
+    }
+
     /**
      * Génère et incrémente l'identifiant unique agence.
      * Format attendu : A-00001-26

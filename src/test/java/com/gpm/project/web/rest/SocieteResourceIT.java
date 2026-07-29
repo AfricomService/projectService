@@ -88,6 +88,9 @@ class SocieteResourceIT {
     private static final String DEFAULT_UPDATED_BY_USER_LOGIN = "AAAAAAAAAA";
     private static final String UPDATED_UPDATED_BY_USER_LOGIN = "BBBBBBBBBB";
 
+    private static final String DEFAULT_MATRICULE_FISCALE = "AAAAAAAAAA";
+    private static final String UPDATED_MATRICULE_FISCALE = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/societes";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -132,7 +135,8 @@ class SocieteResourceIT {
             .createdBy(DEFAULT_CREATED_BY)
             .createdByUserLogin(DEFAULT_CREATED_BY_USER_LOGIN)
             .updatedBy(DEFAULT_UPDATED_BY)
-            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(DEFAULT_UPDATED_BY_USER_LOGIN)
+            .matriculeFiscale(DEFAULT_MATRICULE_FISCALE);
         return societe;
     }
 
@@ -160,7 +164,8 @@ class SocieteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .matriculeFiscale(UPDATED_MATRICULE_FISCALE);
         return societe;
     }
 
@@ -205,6 +210,7 @@ class SocieteResourceIT {
         assertThat(testSociete.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testSociete.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testSociete.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testSociete.getMatriculeFiscale()).isEqualTo(DEFAULT_MATRICULE_FISCALE);
     }
 
     @Test
@@ -351,7 +357,8 @@ class SocieteResourceIT {
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY)))
             .andExpect(jsonPath("$.[*].createdByUserLogin").value(hasItem(DEFAULT_CREATED_BY_USER_LOGIN)))
             .andExpect(jsonPath("$.[*].updatedBy").value(hasItem(DEFAULT_UPDATED_BY)))
-            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)));
+            .andExpect(jsonPath("$.[*].updatedByUserLogin").value(hasItem(DEFAULT_UPDATED_BY_USER_LOGIN)))
+            .andExpect(jsonPath("$.[*].matriculeFiscale").value(hasItem(DEFAULT_MATRICULE_FISCALE)));
     }
 
     @Test
@@ -382,7 +389,8 @@ class SocieteResourceIT {
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY))
             .andExpect(jsonPath("$.createdByUserLogin").value(DEFAULT_CREATED_BY_USER_LOGIN))
             .andExpect(jsonPath("$.updatedBy").value(DEFAULT_UPDATED_BY))
-            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN));
+            .andExpect(jsonPath("$.updatedByUserLogin").value(DEFAULT_UPDATED_BY_USER_LOGIN))
+            .andExpect(jsonPath("$.matriculeFiscale").value(DEFAULT_MATRICULE_FISCALE));
     }
 
     @Test
@@ -421,7 +429,8 @@ class SocieteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .matriculeFiscale(UPDATED_MATRICULE_FISCALE);
         SocieteDTO societeDTO = societeMapper.toDto(updatedSociete);
 
         restSocieteMockMvc
@@ -454,6 +463,7 @@ class SocieteResourceIT {
         assertThat(testSociete.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testSociete.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testSociete.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testSociete.getMatriculeFiscale()).isEqualTo(UPDATED_MATRICULE_FISCALE);
     }
 
     @Test
@@ -579,6 +589,7 @@ class SocieteResourceIT {
         assertThat(testSociete.getCreatedByUserLogin()).isEqualTo(DEFAULT_CREATED_BY_USER_LOGIN);
         assertThat(testSociete.getUpdatedBy()).isEqualTo(DEFAULT_UPDATED_BY);
         assertThat(testSociete.getUpdatedByUserLogin()).isEqualTo(DEFAULT_UPDATED_BY_USER_LOGIN);
+        assertThat(testSociete.getMatriculeFiscale()).isEqualTo(DEFAULT_MATRICULE_FISCALE);
     }
 
     @Test
@@ -610,7 +621,8 @@ class SocieteResourceIT {
             .createdBy(UPDATED_CREATED_BY)
             .createdByUserLogin(UPDATED_CREATED_BY_USER_LOGIN)
             .updatedBy(UPDATED_UPDATED_BY)
-            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN);
+            .updatedByUserLogin(UPDATED_UPDATED_BY_USER_LOGIN)
+            .matriculeFiscale(UPDATED_MATRICULE_FISCALE);
 
         restSocieteMockMvc
             .perform(
@@ -642,6 +654,7 @@ class SocieteResourceIT {
         assertThat(testSociete.getCreatedByUserLogin()).isEqualTo(UPDATED_CREATED_BY_USER_LOGIN);
         assertThat(testSociete.getUpdatedBy()).isEqualTo(UPDATED_UPDATED_BY);
         assertThat(testSociete.getUpdatedByUserLogin()).isEqualTo(UPDATED_UPDATED_BY_USER_LOGIN);
+        assertThat(testSociete.getMatriculeFiscale()).isEqualTo(UPDATED_MATRICULE_FISCALE);
     }
 
     @Test
