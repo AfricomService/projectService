@@ -144,4 +144,71 @@ public class KeycloakAdminService {
 
         return shuffled.toString();
     }
+
+    /**
+     * Réinitialise le mot de passe d'un utilisateur Keycloak existant.
+     * Génère un nouveau mot de passe temporaire que l'utilisateur devra changer
+     * à sa prochaine connexion.
+     *
+     * @param username le username Keycloak (= identifiantUnique du contact).
+     * @return le nouveau mot de passe généré.
+     */
+    public String resetPasswordForUser(String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalStateException("Le contact n'a pas d'identifiant unique");
+        }
+
+        String token = getAdminToken();
+        String userId = findUserIdByUsername(username, token);
+
+        if (userId == null) {
+            throw new IllegalStateException("Aucun utilisateur Keycloak trouvé pour le username '" + username + "'");
+        }
+
+        String resetPasswordUri = properties.getServerUrl() + "/admin/realms/" + properties.getRealm() + "/users/" + userId + "/reset-password";
+
+        String newPassword = generateRandomPassword();
+
+        Map<String, Object> credential = new HashMap<>();
+        credential.put("type", "password");
+        credential.put("value", newPassword);
+        credential.put("temporary", true); // forcé de changer au prochain login
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(credential, headers);
+
+        restTemplate.put(resetPasswordUri, request);
+        log.info("Mot de passe réinitialisé pour l'utilisateur Keycloak {}", username);
+
+        return newPassword;
+    }
+
+    /**
+     * Recherche l'id interne Keycloak (UUID) d'un utilisateur à partir de son username.
+     *
+     * @param username le username à rechercher.
+     * @param token le token admin déjà obtenu.
+     * @return l'id Keycloak, ou null si non trouvé.
+     */
+    private String findUserIdByUsername(String username, String token) {
+        String searchUri =
+            properties.getServerUrl() + "/admin/realms/" + properties.getRealm() + "/users?username=" + username + "&exact=true";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<List> response = restTemplate.exchange(searchUri, org.springframework.http.HttpMethod.GET, request, List.class);
+
+        List body = response.getBody();
+        if (body == null || body.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Object> user = (Map<String, Object>) body.get(0);
+        return (String) user.get("id");
+    }
 }
