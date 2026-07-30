@@ -245,4 +245,23 @@ public class ContactResource {
 
         return ResponseEntity.ok(new KeycloakUserCreationResultDTO(updatedContact, generatedPassword));
     }
+
+    /**
+     * {@code POST  /contacts/:id/reset-keycloak-password} : réinitialise le mot de passe
+     * du compte Keycloak de ce contact.
+     *
+     * @param id l'id du contact.
+     * @return {@code 200 (OK)} avec le nouveau mot de passe généré.
+     */
+    @PostMapping("/contacts/{id}/reset-keycloak-password")
+    public ResponseEntity<KeycloakUserCreationResultDTO> resetKeycloakPassword(@PathVariable Long id) {
+        log.debug("REST request to reset Keycloak password for Contact : {}", id);
+        ContactDTO contactDTO = contactService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
+        String newPassword = keycloakAdminService.resetPasswordForUser(contactDTO.getIdentifiantUnique());
+
+        return ResponseEntity.ok(new KeycloakUserCreationResultDTO(contactDTO, newPassword));
+    }
 }

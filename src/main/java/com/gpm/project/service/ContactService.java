@@ -113,6 +113,29 @@ public class ContactService {
     }
 
     /**
+     * Vérifie si un utilisateur existe déjà dans la table user du gateway
+     * (i.e. le contact s'est connecté au moins une fois via Keycloak),
+     * en comparant à l'identifiantUnique du contact (en minuscules, car
+     * le login est stocké en minuscules côté gateway - cf. UserService.getUser()).
+     *
+     * @param identifiantUnique l'identifiant unique du contact.
+     * @return true si un user existe avec ce login, false sinon.
+     */
+    public boolean getUserByIdentifiantUnique(String identifiantUnique) {
+        if (identifiantUnique == null || identifiantUnique.isBlank()) {
+            return false;
+        }
+        String login = identifiantUnique.toLowerCase();
+        log.debug("Vérification de l'existence d'un user gateway pour le login : {}", login);
+        try {
+            return Boolean.TRUE.equals(userRestClient.existsByLogin(login));
+        } catch (Exception e) {
+            log.warn("Impossible de vérifier l'existence du user gateway pour le login {} : {}", login, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Update a contact.
      *
      * @param contactDTO the entity to save.
@@ -220,5 +243,48 @@ public class ContactService {
     public void delete(Long id) {
         log.debug("Request to delete Contact : {}", id);
         contactRepository.deleteById(id);
+    }
+
+    /**
+     * Récupère tous les contacts dont le statusCompteKeycloak est "EN_COURS",
+     * vérifie pour chacun si l'utilisateur correspondant existe désormais dans
+     * la table user du gateway, et passe leur statut à "ACTIF" le cas échéant.
+     * L'ensemble du traitement s'exécute dans une seule transaction.
+     *
+     * @return le nombre de contacts effectivement passés à "ACTIF".
+     */
+    @Transactional
+    public int refreshKeycloakStatusesEnCours() {
+        List<Contact> contactsEnCours = contactRepository.findByStatusCompteKeycloak("EN_COURS");
+
+        if (contactsEnCours.isEmpty()) {
+            log.debug("Aucun contact avec statusCompteKeycloak=EN_COURS à vérifier");
+            return 0;
+        }
+
+        log.info("Vérification du statut Keycloak pour {} contact(s) EN_COURS", contactsEnCours.size());
+
+        int updatedCount = 0;
+        for (Contact contact : contactsEnCours) {
+            try {
+                boolean userExists = getUserByIdentifiantUnique(contact.getIdentifiantUnique());
+                if (userExists) {
+                    contact.setStatusCompteKeycloak("ACTIF");
+                    contact.setUpdatedAt(ZonedDateTime.now());
+                    contactRepository.save(contact);
+                    updatedCount++;
+                    log.info("Contact {} : statusCompteKeycloak passé de EN_COURS à ACTIF", contact.getIdentifiantUnique());
+                }
+            } catch (Exception e) {
+                log.warn(
+                    "Erreur lors de la vérification du statut Keycloak pour le contact {} : {}",
+                    contact.getIdentifiantUnique(),
+                    e.getMessage()
+                );
+            }
+        }
+
+        log.info("{} contact(s) passé(s) à ACTIF sur {} vérifié(s)", updatedCount, contactsEnCours.size());
+        return updatedCount;
     }
 }
