@@ -186,4 +186,15 @@ public class ContactSocieteResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/contact-societes/search")
+    public ResponseEntity<List<ContactSocieteDTO>> searchContactSocietes(
+        @RequestParam(required = false) Long societeId,
+        @RequestParam(required = false) String nomPrenom,
+        @RequestParam(required = false) String matricule
+    ) {
+        log.debug("REST request to search ContactSocietes : societeId={}, nomPrenom={}, matricule={}", societeId, nomPrenom, matricule);
+        List<ContactSocieteDTO> result = contactSocieteService.search(societeId, nomPrenom, matricule);
+        return ResponseEntity.ok().body(result);
+    }
 }
