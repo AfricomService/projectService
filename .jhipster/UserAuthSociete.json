@@ -1,0 +1,27 @@
+{
+  "changelogDate": "20260804081230",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "societeId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "roleContactSocieteId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "contactSocieteId",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "projectService",
+  "name": "UserAuthSociete",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}
