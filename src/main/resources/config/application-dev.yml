@@ -135,4 +135,4 @@ keycloak-admin:
   server-url: http://localhost:9080
   realm: Africom
   client-id: gpm_internal
-  client-secret: pNOoGrrA72931Oe53mjqRNosEXU57UnN
+  client-secret: d74PAeCgp134Bo1eDzW29npWzJPQqtcU
