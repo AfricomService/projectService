@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface ContactSocieteRepository extends JpaRepository<ContactSociete, Long> {
-    List<ContactSociete> findAllBySocieteId(Long societeId);
+    List<ContactSociete> findAllBySocieteIdOrderByIdDesc(Long societeId);
     List<ContactSociete> findBySocieteIdAndMatriculeIn(Long societeId, List<String> matricules);
 
     @Query(

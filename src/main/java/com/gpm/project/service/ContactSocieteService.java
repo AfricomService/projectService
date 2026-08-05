@@ -34,7 +34,7 @@ public class ContactSocieteService {
 
     public List<ContactSocieteDTO> findAllBySocieteId(Long societeId) {
         log.debug("Request to get all ContactSocietes by SocieteId: {}", societeId);
-        List<ContactSociete> contactSocietes = contactSocieteRepository.findAllBySocieteId(societeId);
+        List<ContactSociete> contactSocietes = contactSocieteRepository.findAllBySocieteIdOrderByIdDesc(societeId);
         return contactSocieteMapper.toDto(contactSocietes);
     }
 
