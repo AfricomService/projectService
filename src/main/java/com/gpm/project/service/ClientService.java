@@ -8,6 +8,8 @@ import com.gpm.project.service.dto.ClientDTO;
 import com.gpm.project.service.mapper.ClientMapper;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -74,6 +76,10 @@ public class ClientService {
      */
     public ClientDTO save(ClientDTO clientDTO) {
         log.debug("Request to save Client : {}", clientDTO);
+
+        if (clientRepository.existsByRaisonSociale(clientDTO.getRaisonSociale())) {
+            throw new BadRequestAlertException("Un client avec cette raison sociale existe déjà", "projectServiceClient", "raisonsocialeexists");
+        }
 
         clientDTO.setCreatedAt(ZonedDateTime.now());
         clientDTO.setUpdatedAt(ZonedDateTime.now());
