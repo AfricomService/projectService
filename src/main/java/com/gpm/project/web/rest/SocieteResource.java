@@ -174,19 +174,6 @@ public class SocieteResource {
         return ResponseUtil.wrapOrNotFound(societeDTO);
     }
 
-    //    @PostMapping("/societes/identifier-et-enregistrer")
-    //    public ResponseEntity<SocieteDTO> createClientWithIdentifiant(@RequestBody SocieteDTO societeDTO) throws URISyntaxException {
-    //        log.debug("REST request to identify and save Client : {}", societeDTO);
-    //        if (societeDTO.getId() != null) {
-    //            throw new BadRequestAlertException("A new client cannot already have an ID", ENTITY_NAME, "idexists");
-    //        }
-    //        SocieteDTO result = societeService.identifierEtEnregistrer(societeDTO);
-    //        return ResponseEntity
-    //            .created(new URI("/api/clients/" + result.getId()))
-    //            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-    //            .body(result);
-    //    }
-
     /**
      * {@code DELETE  /societes/:id} : delete the "id" societe.
      *

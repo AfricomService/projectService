@@ -21,6 +21,8 @@ public class ContactSocieteDTO implements Serializable {
 
     private Long societeId;
 
+    private String statusCompteKeycloak;
+
     public Long getId() {
         return id;
     }
@@ -69,6 +71,14 @@ public class ContactSocieteDTO implements Serializable {
         this.societeId = societeId;
     }
 
+    public String getStatusCompteKeycloak() {
+        return statusCompteKeycloak;
+    }
+
+    public void setStatusCompteKeycloak(String statusCompteKeycloak) {
+        this.statusCompteKeycloak = statusCompteKeycloak;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -100,6 +110,7 @@ public class ContactSocieteDTO implements Serializable {
             ", email='" + getEmail() + "'" +
             ", numTel='" + getNumTel() + "'" +
             ", societeId=" + getSocieteId() +
+            ", statusCompteKeycloak='" + getStatusCompteKeycloak() + "'" +
             "}";
     }
 }

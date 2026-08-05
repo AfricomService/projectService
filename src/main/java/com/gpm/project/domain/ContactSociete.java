@@ -37,6 +37,9 @@ public class ContactSociete implements Serializable {
     @Column(name = "societe_id")
     private Long societeId;
 
+    @Column(name = "status_compte_keycloak")
+    private String statusCompteKeycloak;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -117,6 +120,19 @@ public class ContactSociete implements Serializable {
         this.societeId = societeId;
     }
 
+    public String getStatusCompteKeycloak() {
+        return this.statusCompteKeycloak;
+    }
+
+    public ContactSociete statusCompteKeycloak(String statusCompteKeycloak) {
+        this.setStatusCompteKeycloak(statusCompteKeycloak);
+        return this;
+    }
+
+    public void setStatusCompteKeycloak(String statusCompteKeycloak) {
+        this.statusCompteKeycloak = statusCompteKeycloak;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -146,6 +162,7 @@ public class ContactSociete implements Serializable {
             ", email='" + getEmail() + "'" +
             ", numTel='" + getNumTel() + "'" +
             ", societeId=" + getSocieteId() +
+            ", statusCompteKeycloak='" + getStatusCompteKeycloak() + "'" +
             "}";
     }
 }

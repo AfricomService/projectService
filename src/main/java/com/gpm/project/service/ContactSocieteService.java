@@ -6,6 +6,7 @@ import com.gpm.project.service.dto.ContactSocieteDTO;
 import com.gpm.project.service.mapper.ContactSocieteMapper;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class ContactSocieteService {
 
     public List<ContactSocieteDTO> findAllBySocieteId(Long societeId) {
         log.debug("Request to get all ContactSocietes by SocieteId: {}", societeId);
-        List<ContactSociete> contactSocietes = contactSocieteRepository.findAllBySocieteId(societeId);
+        List<ContactSociete> contactSocietes = contactSocieteRepository.findAllBySocieteIdOrderByIdDesc(societeId);
         return contactSocieteMapper.toDto(contactSocietes);
     }
 
@@ -109,5 +110,15 @@ public class ContactSocieteService {
     public void delete(Long id) {
         log.debug("Request to delete ContactSociete : {}", id);
         contactSocieteRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContactSocieteDTO> search(Long societeId, String nomPrenom, String matricule) {
+        log.debug("Request to search ContactSocietes : societeId={}, nomPrenom={}, matricule={}", societeId, nomPrenom, matricule);
+        return contactSocieteRepository
+            .search(societeId, nomPrenom, matricule)
+            .stream()
+            .map(contactSocieteMapper::toDto)
+            .collect(Collectors.toList());
     }
 }
