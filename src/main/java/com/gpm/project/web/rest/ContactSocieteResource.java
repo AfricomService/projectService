@@ -2,7 +2,9 @@ package com.gpm.project.web.rest;
 
 import com.gpm.project.repository.ContactSocieteRepository;
 import com.gpm.project.service.ContactSocieteService;
+import com.gpm.project.service.KeycloakAdminService;
 import com.gpm.project.service.dto.ContactSocieteDTO;
+import com.gpm.project.service.dto.ContactSocieteKeycloakUserCreationResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,9 +43,16 @@ public class ContactSocieteResource {
 
     private final ContactSocieteRepository contactSocieteRepository;
 
-    public ContactSocieteResource(ContactSocieteService contactSocieteService, ContactSocieteRepository contactSocieteRepository) {
+    private final KeycloakAdminService keycloakAdminService;
+
+    public ContactSocieteResource(
+        ContactSocieteService contactSocieteService,
+        ContactSocieteRepository contactSocieteRepository,
+        KeycloakAdminService keycloakAdminService
+    ) {
         this.contactSocieteService = contactSocieteService;
         this.contactSocieteRepository = contactSocieteRepository;
+        this.keycloakAdminService = keycloakAdminService;
     }
 
     /**
@@ -196,5 +205,38 @@ public class ContactSocieteResource {
         log.debug("REST request to search ContactSocietes : societeId={}, nomPrenom={}, matricule={}", societeId, nomPrenom, matricule);
         List<ContactSocieteDTO> result = contactSocieteService.search(societeId, nomPrenom, matricule);
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * {@code POST  /contact-societes/:id/create-keycloak-user} : crée un utilisateur Keycloak pour ce contact société.
+     */
+    @PostMapping("/contact-societes/{id}/create-keycloak-user")
+    public ResponseEntity<ContactSocieteKeycloakUserCreationResultDTO> createKeycloakUser(@PathVariable Long id) {
+        log.debug("REST request to create Keycloak user for ContactSociete : {}", id);
+        ContactSocieteDTO contactSocieteDTO = contactSocieteService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
+        String generatedPassword = keycloakAdminService.createUserFromContactSociete(contactSocieteDTO);
+
+        contactSocieteDTO.setStatusCompteKeycloak("EN_COURS");
+        ContactSocieteDTO updated = contactSocieteService.update(contactSocieteDTO);
+
+        return ResponseEntity.ok(new ContactSocieteKeycloakUserCreationResultDTO(updated, generatedPassword));
+    }
+
+    /**
+     * {@code POST  /contact-societes/:id/reset-keycloak-password} : réinitialise le mot de passe Keycloak.
+     */
+    @PostMapping("/contact-societes/{id}/reset-keycloak-password")
+    public ResponseEntity<ContactSocieteKeycloakUserCreationResultDTO> resetKeycloakPassword(@PathVariable Long id) {
+        log.debug("REST request to reset Keycloak password for ContactSociete : {}", id);
+        ContactSocieteDTO contactSocieteDTO = contactSocieteService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
+        String newPassword = keycloakAdminService.resetPasswordForUser(contactSocieteDTO.getMatricule());
+
+        return ResponseEntity.ok(new ContactSocieteKeycloakUserCreationResultDTO(contactSocieteDTO, newPassword));
     }
 }

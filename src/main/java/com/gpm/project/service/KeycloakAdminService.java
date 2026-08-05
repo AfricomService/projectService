@@ -42,8 +42,14 @@ public class KeycloakAdminService {
         body.add("client_secret", properties.getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUri, request, Map.class);
-        return (String) response.getBody().get("access_token");
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(tokenUri, request, Map.class);
+            return (String) response.getBody().get("access_token");
+        } catch (HttpClientErrorException.Unauthorized e) {
+            throw new IllegalStateException(
+                "Impossible de s'authentifier auprès de Keycloak (client_id/client_secret invalide ou service account désactivé)"
+            );
+        }
     }
 
     /**
@@ -66,15 +72,36 @@ public class KeycloakAdminService {
      * Crée un utilisateur Keycloak à partir d'un contact.
      * Le username utilisé est l'identifiantUnique du contact.
      */
+    /**
+     * Crée un utilisateur Keycloak à partir d'un contact "classique" (Client).
+     * Le username utilisé est l'identifiantUnique du contact.
+     */
     public String createUserFromContact(ContactDTO contact) {
         if (contact.getIdentifiantUnique() == null || contact.getIdentifiantUnique().isBlank()) {
             throw new IllegalStateException("Le contact n'a pas encore d'identifiant unique");
         }
+        return createKeycloakUser(contact.getIdentifiantUnique(), contact.getNomPrenom(), contact.getEmail());
+    }
 
+    /**
+     * Crée un utilisateur Keycloak à partir d'un ContactSociete.
+     * Le username utilisé est le matricule du contact société.
+     */
+    public String createUserFromContactSociete(com.gpm.project.service.dto.ContactSocieteDTO contactSociete) {
+        if (contactSociete.getMatricule() == null || contactSociete.getMatricule().isBlank()) {
+            throw new IllegalStateException("Le contact société n'a pas encore de matricule");
+        }
+        return createKeycloakUser(contactSociete.getMatricule(), contactSociete.getNomPrenom(), contactSociete.getEmail());
+    }
+
+    /**
+     * Logique commune de création d'un utilisateur Keycloak.
+     */
+    private String createKeycloakUser(String username, String nomPrenom, String email) {
         String token = getAdminToken();
         String usersUri = properties.getServerUrl() + "/admin/realms/" + properties.getRealm() + "/users";
 
-        String[] nameParts = contact.getNomPrenom() != null ? contact.getNomPrenom().trim().split("\\s+", 2) : new String[] { "", "" };
+        String[] nameParts = nomPrenom != null ? nomPrenom.trim().split("\\s+", 2) : new String[] { "", "" };
         String firstName = nameParts.length > 0 ? nameParts[0] : "";
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
@@ -83,13 +110,13 @@ public class KeycloakAdminService {
         Map<String, Object> credentials = new HashMap<>();
         credentials.put("type", "password");
         credentials.put("value", defaultPassword);
-        credentials.put("temporary", true); // forcé de changer au premier login
+        credentials.put("temporary", true);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("username", contact.getIdentifiantUnique());
+        body.put("username", username);
         body.put("firstName", firstName);
         body.put("lastName", lastName);
-        body.put("email", contact.getEmail());
+        body.put("email", email);
         body.put("emailVerified", true);
         body.put("enabled", true);
         body.put("credentials", List.of(credentials));
@@ -102,10 +129,10 @@ public class KeycloakAdminService {
 
         try {
             restTemplate.postForEntity(usersUri, request, Void.class);
-            log.info("Utilisateur Keycloak créé pour le contact {}", contact.getIdentifiantUnique());
+            log.info("Utilisateur Keycloak créé pour {}", username);
             return defaultPassword;
         } catch (HttpClientErrorException.Conflict e) {
-            throw new IllegalStateException("Un utilisateur Keycloak avec le username '" + contact.getIdentifiantUnique() + "' existe déjà");
+            throw new IllegalStateException("Un utilisateur Keycloak avec le username '" + username + "' existe déjà");
         }
     }
 
@@ -165,7 +192,8 @@ public class KeycloakAdminService {
             throw new IllegalStateException("Aucun utilisateur Keycloak trouvé pour le username '" + username + "'");
         }
 
-        String resetPasswordUri = properties.getServerUrl() + "/admin/realms/" + properties.getRealm() + "/users/" + userId + "/reset-password";
+        String resetPasswordUri =
+            properties.getServerUrl() + "/admin/realms/" + properties.getRealm() + "/users/" + userId + "/reset-password";
 
         String newPassword = generateRandomPassword();
 
