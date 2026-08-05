@@ -27,7 +27,7 @@ public class Client implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "raison_sociale", nullable = false)
+    @Column(name = "raison_sociale", nullable = false, unique = true)
     private String raisonSociale;
 
     @NotNull
