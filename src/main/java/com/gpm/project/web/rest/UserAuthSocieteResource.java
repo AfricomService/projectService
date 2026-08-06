@@ -187,6 +187,22 @@ public class UserAuthSocieteResource {
         return ResponseEntity.ok(result);
     }
 
+    @DeleteMapping("/user-auth-societes/unassign-role")
+    public ResponseEntity<Void> unassignRole(
+        @RequestParam Long societeId,
+        @RequestParam Long contactSocieteId,
+        @RequestParam Long roleContactSocieteId
+    ) {
+        log.debug(
+            "REST request to unassign role : societeId={}, contactSocieteId={}, roleContactSocieteId={}",
+            societeId,
+            contactSocieteId,
+            roleContactSocieteId
+        );
+        userAuthSocieteService.unassignRole(societeId, contactSocieteId, roleContactSocieteId);
+        return ResponseEntity.noContent().build();
+    }
+
     /**
      * {@code GET /user-auth-societes/by-societe/{societeId}} : get user auth societes by société.
      *
