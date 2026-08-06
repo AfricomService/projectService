@@ -117,14 +117,24 @@ public class UserAuthSocieteService {
 
     public UserAuthSocieteDTO assignRole(AssignRoleDTO dto) {
         UserAuthSociete auth = userAuthSocieteRepository
-            .findBySocieteIdAndContactSocieteId(dto.getSocieteId(), dto.getContactSocieteId())
-            .orElse(new UserAuthSociete());
+            .findBySocieteIdAndContactSocieteIdAndRoleContactSocieteId(
+                dto.getSocieteId(),
+                dto.getContactSocieteId(),
+                dto.getRoleContactSocieteId()
+            )
+            .orElseGet(UserAuthSociete::new);
 
         auth.setSocieteId(dto.getSocieteId());
         auth.setContactSocieteId(dto.getContactSocieteId());
         auth.setRoleContactSocieteId(dto.getRoleContactSocieteId());
 
         return userAuthSocieteMapper.toDto(userAuthSocieteRepository.save(auth));
+    }
+
+    public void unassignRole(Long societeId, Long contactSocieteId, Long roleContactSocieteId) {
+        userAuthSocieteRepository
+            .findBySocieteIdAndContactSocieteIdAndRoleContactSocieteId(societeId, contactSocieteId, roleContactSocieteId)
+            .ifPresent(userAuthSocieteRepository::delete);
     }
 
     @Transactional(readOnly = true)
