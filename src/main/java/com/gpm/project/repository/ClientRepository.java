@@ -16,4 +16,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("select c from Client c where c.status is null or c.status <> :status")
     Page<Client> findAllByStatusNot(@Param("status") String status, Pageable pageable);
+
+    boolean existsByRaisonSociale(String raisonSociale);
 }
