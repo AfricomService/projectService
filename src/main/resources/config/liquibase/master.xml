@@ -32,6 +32,7 @@
     <include file="config/liquibase/changelog/20260717094214_added_entity_ParentClassdef.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260804080407_added_entity_RoleContactSociete.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260804081230_added_entity_UserAuthSociete.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260818091415_added_entity_Ressource.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20260312131439_added_entity_constraints_Affaire.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260312131539_added_entity_constraints_AffaireArticle.xml" relativeToChangelogFile="false"/>
