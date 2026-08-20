@@ -151,6 +151,19 @@ public class TypeRessourceResource {
     }
 
     /**
+     * {@code GET  /type-ressources/list} : get all the typeRessources as a simple list (id, type, code),
+     * without pagination. Useful for dropdowns/select inputs.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the full list of typeRessources in body.
+     */
+    @GetMapping("/type-ressources/list")
+    public ResponseEntity<List<TypeRessourceDTO>> getAllTypeRessourcesList() {
+        log.debug("REST request to get all TypeRessources as list");
+        List<TypeRessourceDTO> list = typeRessourceService.findAllList();
+        return ResponseEntity.ok().body(list);
+    }
+
+    /**
      * {@code GET  /type-ressources/:id} : get the "id" typeRessource.
      *
      * @param id the id of the typeRessourceDTO to retrieve.

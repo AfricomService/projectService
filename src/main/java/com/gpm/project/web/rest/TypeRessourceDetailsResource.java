@@ -2,6 +2,7 @@ package com.gpm.project.web.rest;
 
 import com.gpm.project.repository.TypeRessourceDetailsRepository;
 import com.gpm.project.service.TypeRessourceDetailsService;
+import com.gpm.project.service.dto.DetailRessourceDTO;
 import com.gpm.project.service.dto.TypeRessourceDetailsDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -172,5 +173,61 @@ public class TypeRessourceDetailsResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code GET  /type-ressources/:typeRessourceId/details} : récupère les DetailRessource affectés à un TypeRessource.
+     *
+     * @param typeRessourceId l'id du TypeRessource.
+     * @return la liste des DetailRessourceDTO affectés.
+     */
+    @GetMapping("/type-ressources/{typeRessourceId}/details")
+    public ResponseEntity<List<DetailRessourceDTO>> getDetailsForType(@PathVariable Long typeRessourceId) {
+        log.debug("REST request to get details for TypeRessource : {}", typeRessourceId);
+        return ResponseEntity.ok(typeRessourceDetailsService.getDetailsForType(typeRessourceId));
+    }
+
+    /**
+     * {@code PUT  /type-ressources/:typeRessourceId/details} : remplace toute la sélection en une fois.
+     *
+     * @param typeRessourceId    l'id du TypeRessource.
+     * @param detailRessourceIds la nouvelle liste d'ids de DetailRessource à affecter.
+     * @return la liste des DetailRessourceDTO affectés après remplacement.
+     */
+    @PutMapping("/type-ressources/{typeRessourceId}/details")
+    public ResponseEntity<List<DetailRessourceDTO>> replaceDetails(
+        @PathVariable Long typeRessourceId,
+        @RequestBody List<Long> detailRessourceIds
+    ) {
+        log.debug("REST request to replace details for TypeRessource {} with {}", typeRessourceId, detailRessourceIds);
+        return ResponseEntity.ok(typeRessourceDetailsService.replaceDetails(typeRessourceId, detailRessourceIds));
+    }
+
+    /**
+     * {@code POST  /type-ressources/:typeRessourceId/details/:detailRessourceId} : ajoute une affectation unique.
+     *
+     * @param typeRessourceId   l'id du TypeRessource.
+     * @param detailRessourceId l'id du DetailRessource à affecter.
+     * @return {@code 204 (No Content)}.
+     */
+    @PostMapping("/type-ressources/{typeRessourceId}/details/{detailRessourceId}")
+    public ResponseEntity<Void> addDetail(@PathVariable Long typeRessourceId, @PathVariable Long detailRessourceId) {
+        log.debug("REST request to add detail {} to TypeRessource {}", detailRessourceId, typeRessourceId);
+        typeRessourceDetailsService.addDetail(typeRessourceId, detailRessourceId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * {@code DELETE  /type-ressources/:typeRessourceId/details/:detailRessourceId} : retire une affectation unique.
+     *
+     * @param typeRessourceId   l'id du TypeRessource.
+     * @param detailRessourceId l'id du DetailRessource à retirer.
+     * @return {@code 204 (No Content)}.
+     */
+    @DeleteMapping("/type-ressources/{typeRessourceId}/details/{detailRessourceId}")
+    public ResponseEntity<Void> removeDetail(@PathVariable Long typeRessourceId, @PathVariable Long detailRessourceId) {
+        log.debug("REST request to remove detail {} from TypeRessource {}", detailRessourceId, typeRessourceId);
+        typeRessourceDetailsService.removeDetail(typeRessourceId, detailRessourceId);
+        return ResponseEntity.noContent().build();
     }
 }

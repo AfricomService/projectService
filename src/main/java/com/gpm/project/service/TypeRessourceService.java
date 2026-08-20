@@ -4,7 +4,11 @@ import com.gpm.project.domain.TypeRessource;
 import com.gpm.project.repository.TypeRessourceRepository;
 import com.gpm.project.service.dto.TypeRessourceDTO;
 import com.gpm.project.service.mapper.TypeRessourceMapper;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -85,6 +89,17 @@ public class TypeRessourceService {
     public Optional<TypeRessourceDTO> findOne(Long id) {
         log.debug("Request to get TypeRessource : {}", id);
         return typeRessourceRepository.findById(id).map(typeRessourceMapper::toDto);
+    }
+
+    /**
+     * Get all the typeRessources as a simple list (id, type, code), without pagination.
+     *
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<TypeRessourceDTO> findAllList() {
+        log.debug("Request to get all TypeRessources as list");
+        return typeRessourceRepository.findAll().stream().map(typeRessourceMapper::toDto).collect(Collectors.toList());
     }
 
     /**
