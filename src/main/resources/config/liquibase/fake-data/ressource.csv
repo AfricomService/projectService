@@ -1,11 +1,11 @@
-id;nom;code;categorie;description;date_mise_en_service;date_derniere_maintenance;date_prochaine_maintenance;type_ressource_id;statut
-1;Outdoors Idaho;Stravenue Handcrafted;Berkshire;interface;2026-08-18T07:12:23;2026-08-17T14:43:07;2026-08-17T23:24:50;97622;value-added Generic state
-2;channels Legacy;Avon Pennsylvania Metal;Koruna;Account Iranian Pizza;2026-08-17T11:28:44;2026-08-17T11:43:57;2026-08-18T08:02:48;47310;Account
-3;and;communities;Cambridgeshire Multi-lateral grey;engineer Kong override;2026-08-17T13:52:43;2026-08-17T11:37:06;2026-08-17T10:00:18;85604;magenta
-4;Tuna Fresh orchid;Rustic;Officer;lime Account distributed;2026-08-17T23:27:54;2026-08-18T03:55:31;2026-08-18T03:14:28;23204;toolset Internal
-5;payment;complexity EXE transmitting;Wooden rich;Intuitive Grocery;2026-08-17T21:47:16;2026-08-17T18:59:16;2026-08-17T14:53:05;39058;deposit azure tangible
-6;optical revolutionize Soap;Concrete migration overriding;system-worthy deposit Cotton;Unbranded District Identity;2026-08-17T16:06:55;2026-08-17T15:07:02;2026-08-18T03:46:00;4461;Shoes supply-chains Bahamas
-7;deposit program card;Idaho;plum;card withdrawal B2C;2026-08-17T19:36:54;2026-08-17T09:57:30;2026-08-18T02:42:25;30913;Account navigating
-8;Future-proofed;Cheese Architect;haptic Dynamic Shoes;out-of-the-box withdrawal Chicken;2026-08-18T02:03:40;2026-08-17T11:34:01;2026-08-17T22:14:56;41719;hacking
-9;RAM haptic Account;RAM generating Security;parse;Interactions;2026-08-17T19:10:17;2026-08-18T08:17:06;2026-08-17T10:29:22;80808;Sausages Assistant
-10;Awesome Jewelery;Account Coordinator Rubber;Borders Regional;convergence software Ergonomic;2026-08-18T06:29:14;2026-08-17T22:10:18;2026-08-17T12:43:15;48789;Handcrafted Tasty enable
+id;nom;code;categorie;description;date_mise_en_service;date_derniere_maintenance;date_prochaine_maintenance;type_ressource_id;statut;additional_info
+1;Outdoors Idaho;Stravenue Handcrafted;Berkshire;interface;2026-08-18T07:12:23;2026-08-17T14:43:07;2026-08-17T23:24:50;97622;value-added Generic state;channels Legacy
+2;Avon Pennsylvania Metal;Koruna;Account Iranian Pizza;Senior matrices Florida;2026-08-18T08:23:22;2026-08-17T18:28:06;2026-08-18T08:50:54;41363;scalable;Intelligent synergistic engineer
+3;deliver cyan;Facilitator magenta Aruban;payment SDD;leading-edge Frozen;2026-08-17T09:39:16;2026-08-18T04:47:48;2026-08-17T14:21:28;87509;port;cross-platform Administrator
+4;Profound;reboot Front-line Account;green;invoice target;2026-08-17T18:48:35;2026-08-18T05:11:58;2026-08-17T16:51:28;52802;Designer Intuitive;blockchains
+5;index deposit;Accounts;Cambridgeshire EXE calculating;plug-and-play Up-sized;2026-08-17T18:00:27;2026-08-17T09:46:17;2026-08-17T13:33:15;20432;port;deposit
+6;synthesize;Mobility;XSS wireless;Licensed;2026-08-17T22:38:43;2026-08-17T21:40:39;2026-08-17T19:22:36;55406;invoice;input
+7;card;Idaho;plum;card withdrawal B2C;2026-08-17T19:36:54;2026-08-17T09:57:30;2026-08-18T02:42:25;30913;Account navigating;Future-proofed
+8;Cheese Architect;haptic Dynamic Shoes;out-of-the-box withdrawal Chicken;Central;2026-08-18T06:13:29;2026-08-17T13:13:11;2026-08-18T06:02:45;8042;RAM haptic Account;RAM generating Security
+9;parse;Interactions;Tasty support;Assistant deposit architectures;2026-08-18T08:26:40;2026-08-17T14:39:14;2026-08-17T15:42:38;76909;bandwidth cultivate;Carolina Luxembourg
+10;Regional navigating National;Ergonomic;Terrace;Handcrafted Tasty enable;2026-08-17T18:18:19;2026-08-17T16:48:16;2026-08-17T09:37:34;8495;Lead access;Beauty system generation

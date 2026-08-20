@@ -2,15 +2,24 @@ package com.gpm.project.domain;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Ressource.
  */
 @Entity
 @Table(name = "ressource")
+@TypeDefs({
+    @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Ressource implements Serializable {
 
@@ -48,6 +57,10 @@ public class Ressource implements Serializable {
 
     @Column(name = "statut")
     private String statut;
+
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "additional_info")
+    private List<Map<String, String>> additionalInfo;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -181,6 +194,19 @@ public class Ressource implements Serializable {
         this.statut = statut;
     }
 
+    public List<Map<String, String>> getAdditionalInfo() {
+        return this.additionalInfo;
+    }
+
+    public Ressource additionalInfo(List<Map<String, String>> additionalInfo) {
+        this.setAdditionalInfo(additionalInfo);
+        return this;
+    }
+
+    public void setAdditionalInfo(List<Map<String, String>> additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -214,6 +240,7 @@ public class Ressource implements Serializable {
             ", dateProchaineMaintenance='" + getDateProchaineMaintenance() + "'" +
             ", typeRessourceId=" + getTypeRessourceId() +
             ", statut='" + getStatut() + "'" +
+            ", additionalInfo='" + getAdditionalInfo() + "'" +
             "}";
     }
 }

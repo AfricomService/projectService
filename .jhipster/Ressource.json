@@ -38,6 +38,10 @@
     {
       "fieldName": "statut",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "additionalInfo",
+      "fieldType": "String"
     }
   ],
   "relationships": [],

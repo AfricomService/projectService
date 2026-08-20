@@ -38,6 +38,12 @@ public class RessourceService {
      */
     public RessourceDTO save(RessourceDTO ressourceDTO) {
         log.debug("Request to save Ressource : {}", ressourceDTO);
+
+        // Statut rempli automatiquement à la création uniquement
+        if (ressourceDTO.getId() == null) {
+            ressourceDTO.setStatut("ACTIF");
+        }
+
         Ressource ressource = ressourceMapper.toEntity(ressourceDTO);
         ressource = ressourceRepository.save(ressource);
         return ressourceMapper.toDto(ressource);
