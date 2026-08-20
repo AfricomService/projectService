@@ -1,9 +1,13 @@
 package com.gpm.project.service;
 
+import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Vehicule;
 import com.gpm.project.repository.VehiculeRepository;
+import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.VehiculeDTO;
 import com.gpm.project.service.mapper.VehiculeMapper;
+
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * Service Implementation for managing {@link Vehicule}.
@@ -25,9 +30,16 @@ public class VehiculeService {
 
     private final VehiculeMapper vehiculeMapper;
 
-    public VehiculeService(VehiculeRepository vehiculeRepository, VehiculeMapper vehiculeMapper) {
+    private final UserRestClient userRestClient;   // ← ce champ doit exister
+
+    public VehiculeService(
+        VehiculeRepository vehiculeRepository,
+        VehiculeMapper vehiculeMapper,
+        UserRestClient userRestClient               // ← et ce paramètre dans le constructeur
+    ) {
         this.vehiculeRepository = vehiculeRepository;
         this.vehiculeMapper = vehiculeMapper;
+        this.userRestClient = userRestClient;        // ← et cette affectation
     }
 
     /**
@@ -38,6 +50,14 @@ public class VehiculeService {
      */
     public VehiculeDTO save(VehiculeDTO vehiculeDTO) {
         log.debug("Request to save Vehicule : {}", vehiculeDTO);
+
+        vehiculeDTO.setCreatedAt(ZonedDateTime.now());
+        vehiculeDTO.setUpdatedAt(ZonedDateTime.now());
+        vehiculeDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
+        vehiculeDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        vehiculeDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+        vehiculeDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         Vehicule vehicule = vehiculeMapper.toEntity(vehiculeDTO);
         vehicule = vehiculeRepository.save(vehicule);
         return vehiculeMapper.toDto(vehicule);
@@ -51,6 +71,11 @@ public class VehiculeService {
      */
     public VehiculeDTO update(VehiculeDTO vehiculeDTO) {
         log.debug("Request to update Vehicule : {}", vehiculeDTO);
+
+        vehiculeDTO.setUpdatedAt(ZonedDateTime.now());
+        vehiculeDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
+        vehiculeDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+
         Vehicule vehicule = vehiculeMapper.toEntity(vehiculeDTO);
         vehicule = vehiculeRepository.save(vehicule);
         return vehiculeMapper.toDto(vehicule);
