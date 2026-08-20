@@ -1,0 +1,23 @@
+{
+  "microserviceName": "projectService",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "typeRessourceId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "detailRessourceId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "no",
+  "name": "TypeRessourceDetails",
+  "changelogDate": "20260818101503"
+}
