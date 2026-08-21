@@ -178,4 +178,28 @@ public class RessourceResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    /**
+     * {@code PATCH  /ressources/:id/changer-statut} : change le statut d'une ressource.
+     *
+     * @param id l'id de la ressourceDTO.
+     * @param statut le nouveau statut (Disponible, EnMission, EnMaintenance, HorsService).
+     * @return le {@link ResponseEntity} avec statut {@code 200 (OK)} et la ressourceDTO mise à jour,
+     * ou statut {@code 404 (Not Found)} si la ressource n'existe pas.
+     */
+    @PatchMapping("/ressources/{id}/changer-statut")
+    public ResponseEntity<RessourceDTO> changerStatutRessource(@PathVariable Long id, @RequestParam String statut) {
+        log.debug("REST request to change status of Ressource : {} to {}", id, statut);
+
+        if (!ressourceRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<RessourceDTO> result = ressourceService.changerStatut(id, statut);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
+    }
 }

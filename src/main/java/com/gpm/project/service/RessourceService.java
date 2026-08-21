@@ -50,6 +50,26 @@ public class RessourceService {
     }
 
     /**
+     * Change le statut d'une ressource.
+     *
+     * @param id l'id de la ressource.
+     * @param statut le nouveau statut (Disponible, EnMission, EnMaintenance, HorsService).
+     * @return l'entité mise à jour.
+     */
+    public Optional<RessourceDTO> changerStatut(Long id, String statut) {
+        log.debug("Request to change status of Ressource : {} to {}", id, statut);
+
+        return ressourceRepository
+            .findById(id)
+            .map(existingRessource -> {
+                existingRessource.setStatut(statut);
+                return existingRessource;
+            })
+            .map(ressourceRepository::save)
+            .map(ressourceMapper::toDto);
+    }
+
+    /**
      * Partially update a ressource.
      *
      * @param ressourceDTO the entity to update partially.
