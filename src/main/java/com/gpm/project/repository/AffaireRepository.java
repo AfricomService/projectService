@@ -3,6 +3,8 @@ package com.gpm.project.repository;
 import com.gpm.project.domain.Affaire;
 import java.util.List;
 import java.util.Optional;
+
+import com.gpm.project.domain.enumeration.StatutAffaire;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -41,5 +43,23 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
     List<Affaire> findByClientId(Long clientId);
 
     List<Affaire> findByClientIdAndDesignationAffaireContainingIgnoreCase(Long clientId, String designationAffaire);
+
+    @Query(
+        value = "select distinct affaire from Affaire affaire left join fetch affaire.client " +
+            "where affaire.statut = :statut " +
+            "and (:search is null or :search = '' " +
+            "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
+            "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
+            "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
+            "     or str(affaire.numAffaire) like concat('%', :search, '%'))",
+        countQuery = "select count(distinct affaire) from Affaire affaire " +
+            "where affaire.statut = :statut " +
+            "and (:search is null or :search = '' " +
+            "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
+            "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
+            "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
+            "     or str(affaire.numAffaire) like concat('%', :search, '%'))"
+    )
+    Page<Affaire> findByStatutAndSearch(@Param("statut") StatutAffaire statut, @Param("search") String search, Pageable pageable);
 
 }
