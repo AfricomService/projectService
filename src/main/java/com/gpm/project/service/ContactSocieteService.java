@@ -3,6 +3,7 @@ package com.gpm.project.service;
 import com.gpm.project.domain.ContactSociete;
 import com.gpm.project.repository.ContactSocieteRepository;
 import com.gpm.project.service.dto.ContactSocieteDTO;
+import com.gpm.project.service.dto.UserAuthSocieteDTO;
 import com.gpm.project.service.mapper.ContactSocieteMapper;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +28,16 @@ public class ContactSocieteService {
 
     private final ContactSocieteMapper contactSocieteMapper;
 
-    public ContactSocieteService(ContactSocieteRepository contactSocieteRepository, ContactSocieteMapper contactSocieteMapper) {
+    private final UserAuthSocieteService userAuthSocieteService;
+
+    public ContactSocieteService(
+        ContactSocieteRepository contactSocieteRepository,
+        ContactSocieteMapper contactSocieteMapper,
+        UserAuthSocieteService userAuthSocieteService
+    ) {
         this.contactSocieteRepository = contactSocieteRepository;
         this.contactSocieteMapper = contactSocieteMapper;
+        this.userAuthSocieteService = userAuthSocieteService;
     }
 
     public List<ContactSocieteDTO> findAllBySocieteId(Long societeId) {
@@ -120,5 +128,29 @@ public class ContactSocieteService {
             .stream()
             .map(contactSocieteMapper::toDto)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Get all ContactSocietes having a given role (via UserAuthSociete), ex: "MANAGER".
+     *
+     * @param roleCode the code of the role to filter by.
+     * @return the list of matching ContactSocieteDTO.
+     */
+    @Transactional(readOnly = true)
+    public List<ContactSocieteDTO> findAllByRoleCode(String roleCode) {
+        log.debug("Request to get all ContactSocietes by role code : {}", roleCode);
+
+        List<Long> contactSocieteIds = userAuthSocieteService
+            .findByRoleCode(roleCode)
+            .stream()
+            .map(UserAuthSocieteDTO::getContactSocieteId)
+            .distinct()
+            .collect(Collectors.toList());
+
+        if (contactSocieteIds.isEmpty()) {
+            return List.of();
+        }
+
+        return contactSocieteRepository.findAllById(contactSocieteIds).stream().map(contactSocieteMapper::toDto).collect(Collectors.toList());
     }
 }

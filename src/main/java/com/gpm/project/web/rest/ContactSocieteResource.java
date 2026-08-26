@@ -168,6 +168,19 @@ public class ContactSocieteResource {
     }
 
     /**
+     * {@code GET  /contact-societes/by-role/{roleCode}} : get all contacts having the given role (ex: MANAGER).
+     *
+     * @param roleCode the role code.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of matching ContactSocieteDTO.
+     */
+    @GetMapping("/contact-societes/by-role/{roleCode}")
+    public ResponseEntity<List<ContactSocieteDTO>> getContactSocietesByRole(@PathVariable String roleCode) {
+        log.debug("REST request to get ContactSocietes by role code : {}", roleCode);
+        List<ContactSocieteDTO> result = contactSocieteService.findAllByRoleCode(roleCode);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
      * {@code GET  /contact-societes/:id} : get the "id" contactSociete.
      *
      * @param id the id of the contactSocieteDTO to retrieve.

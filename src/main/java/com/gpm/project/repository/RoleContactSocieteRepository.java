@@ -4,9 +4,13 @@ import com.gpm.project.domain.RoleContactSociete;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Spring Data JPA repository for the RoleContactSociete entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RoleContactSocieteRepository extends JpaRepository<RoleContactSociete, Long> {}
+public interface RoleContactSocieteRepository extends JpaRepository<RoleContactSociete, Long> {
+    Optional<RoleContactSociete> findByCode(String code);
+}
