@@ -1,6 +1,7 @@
 package com.gpm.project.service;
 
 import com.gpm.project.domain.UserAuthSociete;
+import com.gpm.project.repository.RoleContactSocieteRepository;
 import com.gpm.project.repository.UserAuthSocieteRepository;
 import com.gpm.project.service.dto.AssignRoleDTO;
 import com.gpm.project.service.dto.UserAuthSocieteDTO;
@@ -25,10 +26,17 @@ public class UserAuthSocieteService {
 
     private final UserAuthSocieteRepository userAuthSocieteRepository;
 
+    private final RoleContactSocieteRepository roleContactSocieteRepository;
+
     private final UserAuthSocieteMapper userAuthSocieteMapper;
 
-    public UserAuthSocieteService(UserAuthSocieteRepository userAuthSocieteRepository, UserAuthSocieteMapper userAuthSocieteMapper) {
+    public UserAuthSocieteService(
+        UserAuthSocieteRepository userAuthSocieteRepository,
+        RoleContactSocieteRepository roleContactSocieteRepository,
+        UserAuthSocieteMapper userAuthSocieteMapper
+    ) {
         this.userAuthSocieteRepository = userAuthSocieteRepository;
+        this.roleContactSocieteRepository = roleContactSocieteRepository;
         this.userAuthSocieteMapper = userAuthSocieteMapper;
     }
 
@@ -142,5 +150,24 @@ public class UserAuthSocieteService {
         log.debug("Request to get UserAuthSocietes by societeId : {}", societeId);
 
         return userAuthSocieteRepository.findBySocieteId(societeId).stream().map(userAuthSocieteMapper::toDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Get all UserAuthSocietes whose role matches the given role code (ex: "MANAGER").
+     *
+     * @param roleCode the code of the role to filter by.
+     * @return the list of entities having that role.
+     */
+    @Transactional(readOnly = true)
+    public List<UserAuthSocieteDTO> findByRoleCode(String roleCode) {
+        log.debug("Request to get UserAuthSocietes by role code : {}", roleCode);
+
+        return roleContactSocieteRepository
+            .findByCode(roleCode)
+            .map(role -> userAuthSocieteRepository.findByRoleContactSocieteId(role.getId()))
+            .orElse(List.of())
+            .stream()
+            .map(userAuthSocieteMapper::toDto)
+            .collect(Collectors.toList());
     }
 }

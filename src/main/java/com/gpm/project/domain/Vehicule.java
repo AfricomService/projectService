@@ -82,8 +82,7 @@ public class Vehicule implements Serializable {
     @Column(name = "updated_by_user_login")
     private String updatedByUserLogin;
 
-    @ManyToOne(optional = false)
-    @NotNull
+    @ManyToOne
     @JsonIgnoreProperties(value = { "vehicules", "societe" }, allowSetters = true)
     private Agence agence;
 
