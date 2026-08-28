@@ -16,7 +16,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "affaire")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Affaire implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -102,6 +101,9 @@ public class Affaire implements Serializable {
 
     @Column(name = "identifiant_unique")
     private String identifiantUnique;
+
+    @Column(name = "client_commande")
+    private Long clientCommande;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -422,6 +424,19 @@ public class Affaire implements Serializable {
         this.identifiantUnique = identifiantUnique;
     }
 
+    public Long getClientCommande() {
+        return this.clientCommande;
+    }
+
+    public Affaire clientCommande(Long clientCommande) {
+        this.setClientCommande(clientCommande);
+        return this;
+    }
+
+    public void setClientCommande(Long clientCommande) {
+        this.clientCommande = clientCommande;
+    }
+
     public Client getClient() {
         return this.client;
     }
@@ -482,6 +497,7 @@ public class Affaire implements Serializable {
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", societeId=" + getSocieteId() +
             ", identifiantUnique='" + getIdentifiantUnique() + "'" +
+            ", clientCommande=" + getClientCommande() +
             "}";
     }
 }

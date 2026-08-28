@@ -67,6 +67,8 @@ public class AffaireDTO implements Serializable {
 
     private String identifiantUnique;
 
+    private Long clientCommande;
+
     private ClientDTO client;
 
     public Long getId() {
@@ -261,6 +263,14 @@ public class AffaireDTO implements Serializable {
         this.identifiantUnique = identifiantUnique;
     }
 
+    public Long getClientCommande() {
+        return clientCommande;
+    }
+
+    public void setClientCommande(Long clientCommande) {
+        this.clientCommande = clientCommande;
+    }
+
     public ClientDTO getClient() {
         return client;
     }
@@ -318,6 +328,7 @@ public class AffaireDTO implements Serializable {
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", societeId=" + getSocieteId() +
             ", identifiantUnique='" + getIdentifiantUnique() + "'" +
+            ", clientCommande=" + getClientCommande() +
             ", client=" + getClient() +
             "}";
     }

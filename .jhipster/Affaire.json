@@ -103,6 +103,10 @@
     {
       "fieldName": "identifiantUnique",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "clientCommande",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,
