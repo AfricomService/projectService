@@ -187,4 +187,10 @@ public class NumsequentielleResource {
         String identifiant = numsequentielleService.genererIdentifiantClient();
         return ResponseEntity.ok(identifiant);
     }
+
+    @PostMapping("/numsequentielles/generate-identifiant-bon-commande")
+    public ResponseEntity<String> generateIdentifiantBonCommande() {
+        String identifiant = numsequentielleService.genererIdentifiantBonCommande();
+        return ResponseEntity.ok(identifiant);
+    }
 }

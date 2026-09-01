@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -188,5 +189,33 @@ public class PieceJointeResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    // Ajouts au contrôleur existant
+
+    @PostMapping("/piece-jointes/upload")
+    public ResponseEntity<PieceJointeDTO> uploadPieceJointe(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("bonCommandeId") Long bonCommandeId,
+        @RequestParam("uniqueName") String uniqueName
+    ) {
+        log.debug("REST request to upload PieceJointe for BonCommande : {}", bonCommandeId);
+        try {
+            PieceJointeDTO result = pieceJointeService.uploadForBonCommande(file, bonCommandeId, uniqueName);
+            return ResponseEntity.ok(result);
+        } catch (java.io.IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/piece-jointes/by-bon-commande/{bonCommandeId}")
+    public List<PieceJointeDTO> getPieceJointesByBonCommande(@PathVariable Long bonCommandeId) {
+        log.debug("REST request to get PieceJointes by BonCommande : {}", bonCommandeId);
+        return pieceJointeService.findByBonCommandeId(bonCommandeId);
+    }
+
+    @GetMapping("/piece-jointes/getFile")
+    public ResponseEntity<org.springframework.core.io.Resource> getFile(@RequestParam(name = "id") Long id) {
+        return pieceJointeService.getFile(id);
     }
 }

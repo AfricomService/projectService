@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "piece_jointe")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class PieceJointe implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,6 +45,9 @@ public class PieceJointe implements Serializable {
      */
     @Column(name = "work_order_id")
     private Long workOrderId;
+
+    @Column(name = "bon_commande_id")
+    private Long bonCommandeId;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "client" }, allowSetters = true)
@@ -131,6 +133,19 @@ public class PieceJointe implements Serializable {
         this.workOrderId = workOrderId;
     }
 
+    public Long getBonCommandeId() {
+        return this.bonCommandeId;
+    }
+
+    public PieceJointe bonCommandeId(Long bonCommandeId) {
+        this.setBonCommandeId(bonCommandeId);
+        return this;
+    }
+
+    public void setBonCommandeId(Long bonCommandeId) {
+        this.bonCommandeId = bonCommandeId;
+    }
+
     public Affaire getAffaire() {
         return this.affaire;
     }
@@ -173,6 +188,7 @@ public class PieceJointe implements Serializable {
             ", fichierURL='" + getFichierURL() + "'" +
             ", dateUpload='" + getDateUpload() + "'" +
             ", workOrderId=" + getWorkOrderId() +
+            ", bonCommandeId=" + getBonCommandeId() +
             "}";
     }
 }
