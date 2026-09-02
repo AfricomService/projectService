@@ -218,4 +218,25 @@ public class PieceJointeResource {
     public ResponseEntity<org.springframework.core.io.Resource> getFile(@RequestParam(name = "id") Long id) {
         return pieceJointeService.getFile(id);
     }
+
+    /**
+     * {@code PATCH /piece-jointes/:id/rename} : Renomme une pièce jointe.
+     */
+    @PatchMapping("/piece-jointes/{id}/rename")
+    public ResponseEntity<PieceJointeDTO> renamePieceJointe(
+        @PathVariable Long id,
+        @Valid @RequestBody com.gpm.project.service.dto.PieceJointeRenameDTO renameDTO
+    ) {
+        log.debug("REST request to rename PieceJointe {} : {}", id, renameDTO.getNomFichier());
+
+        if (!pieceJointeRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        PieceJointeDTO result = pieceJointeService.renamePieceJointe(id, renameDTO.getNomFichier());
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .body(result);
+    }
 }

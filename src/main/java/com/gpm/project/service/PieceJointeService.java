@@ -215,4 +215,29 @@ public class PieceJointeService {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * Renomme une pièce jointe (champ nomFichier uniquement — l'extension et
+     * le chemin physique du fichier sur disque ne changent pas).
+     *
+     * @param id l'id de la PieceJointe.
+     * @param newName le nouveau nom (sans extension).
+     * @return la PieceJointeDTO mise à jour.
+     */
+    public PieceJointeDTO renamePieceJointe(Long id, String newName) {
+        log.debug("Request to rename PieceJointe {} -> {}", id, newName);
+
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Le nom ne peut pas être vide");
+        }
+
+        PieceJointe pieceJointe = pieceJointeRepository
+            .findById(id)
+            .orElseThrow(() -> new javax.persistence.EntityNotFoundException("PieceJointe not found with id " + id));
+
+        pieceJointe.setNomFichier(newName.trim());
+
+        PieceJointe saved = pieceJointeRepository.save(pieceJointe);
+        return pieceJointeMapper.toDto(saved);
+    }
 }
