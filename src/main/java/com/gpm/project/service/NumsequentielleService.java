@@ -126,6 +126,17 @@ public class NumsequentielleService {
     }
 
     /**
+     * Génère et incrémente l'identifiant unique bon de commande.
+     * Format attendu : BC-0001-26
+     *
+     * @return l'identifiant généré.
+     */
+    public String genererIdentifiantBonCommande() {
+        log.debug("Request to generate identifiant for BonCommande");
+        return genererIdentifiant("BONCOMMANDE");
+    }
+
+    /**
      * Génère et incrémente un identifiant unique à partir d'un codeNumSeq donné.
      * Format attendu : {prefix}-{numero sur 5 chiffres}-{2 derniers chiffres de l'année}
      *

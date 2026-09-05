@@ -28,6 +28,11 @@ eureka:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+      enabled: true
   devtools:
     restart:
       enabled: true
@@ -136,3 +141,6 @@ keycloak-admin:
   realm: Africom
   client-id: gpm_app
   client-secret: O59yB3ltLQ4vbAT2QLh9rEWnLP3mz1tD
+
+application:
+  dir-piece-jointe: D:\CODE\GPM\piecesJointes
