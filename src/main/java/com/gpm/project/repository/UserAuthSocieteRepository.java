@@ -18,4 +18,6 @@ public interface UserAuthSocieteRepository extends JpaRepository<UserAuthSociete
     );
 
     List<UserAuthSociete> findBySocieteId(Long societeId);
+
+    List<UserAuthSociete> findByRoleContactSocieteId(Long roleContactSocieteId);
 }

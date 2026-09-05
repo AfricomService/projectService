@@ -37,4 +37,6 @@ public interface PieceJointeRepository extends JpaRepository<PieceJointe, Long> 
 
     @Query("select pieceJointe from PieceJointe pieceJointe left join fetch pieceJointe.affaire where pieceJointe.id =:id")
     Optional<PieceJointe> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<PieceJointe> findAllByBonCommandeId(Long bonCommandeId);
 }

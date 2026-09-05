@@ -199,6 +199,26 @@ public class AffaireResource {
     }
 
     /**
+     * {@code GET  /affaires/by-statut} : get affaires filtered by statut, with optional search, paginated.
+     *
+     * @param statut   the statut to filter by (ex: ExecutionDesTravaux).
+     * @param search   optional free-text search term.
+     * @param pageable pagination info.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of matching affaires.
+     */
+    @GetMapping("/affaires/by-statut")
+    public ResponseEntity<List<AffaireDTO>> getAffairesByStatut(
+        @RequestParam StatutAffaire statut,
+        @RequestParam(required = false, defaultValue = "") String search,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to get Affaires by statut : {} and search : {}", statut, search);
+        Page<AffaireDTO> page = affaireService.findByStatutAndSearch(statut, search, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code DELETE  /affaires/:id} : delete the "id" affaire.
      *
      * @param id the id of the affaireDTO to delete.

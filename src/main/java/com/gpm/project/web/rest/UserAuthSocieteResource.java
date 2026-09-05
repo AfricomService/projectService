@@ -215,4 +215,17 @@ public class UserAuthSocieteResource {
 
         return userAuthSocieteService.findBySocieteId(societeId);
     }
+
+    /**
+     * {@code GET /user-auth-societes/by-role/{roleCode}} : get user auth societes by role code (ex: MANAGER).
+     *
+     * @param roleCode the role code.
+     * @return the list of UserAuthSocieteDTO having that role.
+     */
+    @GetMapping("/user-auth-societes/by-role/{roleCode}")
+    public List<UserAuthSocieteDTO> getUserAuthSocietesByRole(@PathVariable String roleCode) {
+        log.debug("REST request to get UserAuthSocietes by role code : {}", roleCode);
+
+        return userAuthSocieteService.findByRoleCode(roleCode);
+    }
 }

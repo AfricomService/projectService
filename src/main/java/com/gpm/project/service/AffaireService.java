@@ -174,6 +174,20 @@ public class AffaireService {
     }
 
     /**
+     * Get affaires filtered by statut with a free-text search (designation or numAffaire), paginated.
+     *
+     * @param statut   the statut to filter on.
+     * @param search   the free text search term (can be null/empty).
+     * @param pageable the pagination information.
+     * @return a page of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<AffaireDTO> findByStatutAndSearch(StatutAffaire statut, String search, Pageable pageable) {
+        log.debug("Request to search Affaires by statut : {} and search : {}", statut, search);
+        return affaireRepository.findByStatutAndSearch(statut, search, pageable).map(affaireMapper::toDto);
+    }
+
+    /**
      * Get one affaire by id.
      *
      * @param id the id of the entity.

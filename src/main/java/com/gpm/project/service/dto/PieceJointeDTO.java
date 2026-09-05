@@ -9,7 +9,6 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.PieceJointe} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class PieceJointeDTO implements Serializable {
 
     private Long id;
@@ -31,6 +30,8 @@ public class PieceJointeDTO implements Serializable {
      */
     @Schema(description = "Cross-service FK → WorkOrder (operationsService)")
     private Long workOrderId;
+
+    private Long bonCommandeId;
 
     private AffaireDTO affaire;
 
@@ -82,6 +83,14 @@ public class PieceJointeDTO implements Serializable {
         this.workOrderId = workOrderId;
     }
 
+    public Long getBonCommandeId() {
+        return bonCommandeId;
+    }
+
+    public void setBonCommandeId(Long bonCommandeId) {
+        this.bonCommandeId = bonCommandeId;
+    }
+
     public AffaireDTO getAffaire() {
         return affaire;
     }
@@ -121,6 +130,7 @@ public class PieceJointeDTO implements Serializable {
             ", fichierURL='" + getFichierURL() + "'" +
             ", dateUpload='" + getDateUpload() + "'" +
             ", workOrderId=" + getWorkOrderId() +
+            ", bonCommandeId=" + getBonCommandeId() +
             ", affaire=" + getAffaire() +
             "}";
     }
