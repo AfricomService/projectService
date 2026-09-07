@@ -150,6 +150,8 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+application:
+  dir-piece-jointe: /home/gpm/piecesJointes
 # application:
 keycloak-admin:
   server-url: http://172.30.1.111:9080
