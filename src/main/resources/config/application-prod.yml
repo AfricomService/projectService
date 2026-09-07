@@ -139,4 +139,5 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  dir-piece-jointe: /home/gpm/piecesJointes

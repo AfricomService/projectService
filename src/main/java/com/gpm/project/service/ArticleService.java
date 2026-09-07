@@ -8,6 +8,8 @@ import com.gpm.project.repository.AffaireArticleRepository;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.repository.AffaireSocieteAdjRepository;
 import com.gpm.project.repository.ArticleRepository;
+import com.gpm.project.security.AuthoritiesConstants;
+import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireArticleDTO;
 import com.gpm.project.service.dto.ArticleDTO;
 import com.gpm.project.service.dto.ArticleImportResultDTO;
@@ -113,7 +115,9 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Articles");
-        return articleRepository.findAll(pageable).map(articleMapper::toDto);
+        Page<ArticleDTO> page = articleRepository.findAll(pageable).map(articleMapper::toDto);
+        maskPriceIfNotAllowed(page.getContent());
+        return page;
     }
 
     /**
@@ -125,7 +129,9 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Optional<ArticleDTO> findOne(Long id) {
         log.debug("Request to get Article : {}", id);
-        return articleRepository.findById(id).map(articleMapper::toDto);
+        Optional<ArticleDTO> result = articleRepository.findById(id).map(articleMapper::toDto);
+        result.ifPresent(dto -> maskPriceIfNotAllowed(List.of(dto)));
+        return result;
     }
 
     /**
@@ -215,7 +221,7 @@ public class ArticleService {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Articles");
 
-            String[] headers = { "Label", "Code", "Unité", "Code Client", "PUHT", "Granularite", "PrixAchat" };
+            String[] headers = {"Label", "Code", "Unité", "Code Client", "PUHT", "Granularite", "PrixAchat"};
 
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();
@@ -280,5 +286,18 @@ public class ArticleService {
 
     private boolean isBlank(String s) {
         return s == null || s.isBlank();
+    }
+
+    /**
+     * Masque les champs de prix (prixUnitHT, prixAchat) pour les utilisateurs
+     * qui n'ont pas l'autorité ROLE_CAN_SEE_PRICE.
+     */
+    private void maskPriceIfNotAllowed(List<ArticleDTO> dtos) {
+        if (!SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.CAN_SEE_PRICE)) {
+            dtos.forEach(dto -> {
+                dto.setPrixUnitHT(null);
+                dto.setPrixAchat(null);
+            });
+        }
     }
 }
