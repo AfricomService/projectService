@@ -193,4 +193,10 @@ public class NumsequentielleResource {
         String identifiant = numsequentielleService.genererIdentifiantBonCommande();
         return ResponseEntity.ok(identifiant);
     }
+
+    @PostMapping("/numsequentielles/generate-identifiant-ot-externe")
+    public ResponseEntity<String> generateIdentifiantOtExterne() {
+        String identifiant = numsequentielleService.genererIdentifiantOtExterne();
+        return ResponseEntity.ok(identifiant);
+    }
 }
