@@ -39,4 +39,7 @@ public interface PieceJointeRepository extends JpaRepository<PieceJointe, Long> 
     Optional<PieceJointe> findOneWithToOneRelationships(@Param("id") Long id);
 
     List<PieceJointe> findAllByBonCommandeId(Long bonCommandeId);
+
+    @org.springframework.data.jpa.repository.Query("select p from PieceJointe p where p.oTExterneId = :otExterneId")
+    List<PieceJointe> findAllByOtExterneId(@org.springframework.data.repository.query.Param("otExterneId") Long otExterneId);
 }

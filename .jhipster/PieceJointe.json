@@ -35,6 +35,10 @@
     {
       "fieldName": "bonCommandeId",
       "fieldType": "Long"
+    },
+    {
+      "fieldName": "oTExterneId",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,

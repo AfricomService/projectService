@@ -49,6 +49,9 @@ public class PieceJointe implements Serializable {
     @Column(name = "bon_commande_id")
     private Long bonCommandeId;
 
+    @Column(name = "o_t_externe_id")
+    private Long oTExterneId;
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "client" }, allowSetters = true)
     private Affaire affaire;
@@ -146,6 +149,19 @@ public class PieceJointe implements Serializable {
         this.bonCommandeId = bonCommandeId;
     }
 
+    public Long getoTExterneId() {
+        return this.oTExterneId;
+    }
+
+    public PieceJointe oTExterneId(Long oTExterneId) {
+        this.setoTExterneId(oTExterneId);
+        return this;
+    }
+
+    public void setoTExterneId(Long oTExterneId) {
+        this.oTExterneId = oTExterneId;
+    }
+
     public Affaire getAffaire() {
         return this.affaire;
     }
@@ -189,6 +205,7 @@ public class PieceJointe implements Serializable {
             ", dateUpload='" + getDateUpload() + "'" +
             ", workOrderId=" + getWorkOrderId() +
             ", bonCommandeId=" + getBonCommandeId() +
+            ", oTExterneId=" + getoTExterneId() +
             "}";
     }
 }

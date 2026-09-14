@@ -198,6 +198,49 @@ public class PieceJointeService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Upload physique d'un fichier lié à un OtExterne — même logique que uploadForBonCommande.
+     */
+    public PieceJointeDTO uploadForOtExterne(MultipartFile file, Long otExterneId, String uniqueName) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+
+        String dirPath =
+            Paths.get(applicationProperties.getDirPieceJointe()) +
+                File.separator +
+                ZonedDateTime.now().getYear() +
+                File.separator +
+                ZonedDateTime.now().getMonth() +
+                File.separator +
+                ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        Path finalDir = Paths.get(dirPath);
+        if (!Files.exists(finalDir)) {
+            Files.createDirectories(finalDir);
+        }
+
+        Path filePath = finalDir.resolve(uniqueName + "." + extension);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        PieceJointeDTO dto = new PieceJointeDTO();
+        dto.setNomFichier(originalFilename.substring(0, originalFilename.lastIndexOf(".")));
+        dto.setType(extension);
+        dto.setFichierURL(filePath.toString());
+        dto.setDateUpload(ZonedDateTime.now());
+        dto.setoTExterneId(otExterneId);
+
+        return save(dto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PieceJointeDTO> findByOtExterneId(Long otExterneId) {
+        log.debug("Request to get PieceJointes by OtExterne : {}", otExterneId);
+        return pieceJointeRepository.findAllByOtExterneId(otExterneId)
+            .stream()
+            .map(pieceJointeMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
     public ResponseEntity<Resource> getFile(Long pieceJointeId) {
         try {
             PieceJointeDTO dto = findOne(pieceJointeId).orElseThrow();
