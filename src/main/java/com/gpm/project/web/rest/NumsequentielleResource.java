@@ -199,4 +199,10 @@ public class NumsequentielleResource {
         String identifiant = numsequentielleService.genererIdentifiantOtExterne();
         return ResponseEntity.ok(identifiant);
     }
+
+    @PostMapping("/numsequentielles/generate-identifiant-work-order")
+    public ResponseEntity<String> generateIdentifiantWorkOrder() {
+        String identifiant = numsequentielleService.genererIdentifiantWorkOrder();
+        return ResponseEntity.ok(identifiant);
+    }
 }

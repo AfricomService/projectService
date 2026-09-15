@@ -42,4 +42,6 @@ public interface PieceJointeRepository extends JpaRepository<PieceJointe, Long> 
 
     @org.springframework.data.jpa.repository.Query("select p from PieceJointe p where p.oTExterneId = :otExterneId")
     List<PieceJointe> findAllByOtExterneId(@org.springframework.data.repository.query.Param("otExterneId") Long otExterneId);
+
+    List<PieceJointe> findAllByWorkOrderId(Long workOrderId);
 }

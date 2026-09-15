@@ -148,6 +148,17 @@ public class NumsequentielleService {
     }
 
     /**
+     * Génère et incrémente l'identifiant unique WorkOrder.
+     * Format attendu : WO-0001-26
+     *
+     * @return l'identifiant généré.
+     */
+    public String genererIdentifiantWorkOrder() {
+        log.debug("Request to generate identifiant for WorkOrder");
+        return genererIdentifiant("WORK_ORDER");
+    }
+
+    /**
      * Génère et incrémente un identifiant unique à partir d'un codeNumSeq donné.
      * Format attendu : {prefix}-{numero sur 5 chiffres}-{2 derniers chiffres de l'année}
      *
