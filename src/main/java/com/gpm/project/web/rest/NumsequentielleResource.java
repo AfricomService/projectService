@@ -205,4 +205,13 @@ public class NumsequentielleResource {
         String identifiant = numsequentielleService.genererIdentifiantWorkOrder();
         return ResponseEntity.ok(identifiant);
     }
+
+    @PostMapping("/numsequentielles/preview-format")
+    public ResponseEntity<String> previewFormat(@RequestParam String format, @RequestParam String codeNumSeq) {
+        try {
+            return ResponseEntity.ok(numsequentielleService.previewFormat(format, codeNumSeq));
+        } catch (RuntimeException e) {
+            throw new BadRequestAlertException(e.getMessage(), ENTITY_NAME, "invalidformat");
+        }
+    }
 }
