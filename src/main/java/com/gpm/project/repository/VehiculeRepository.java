@@ -37,4 +37,13 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
 
     @Query("select vehicule from Vehicule vehicule left join fetch vehicule.agence where vehicule.id =:id")
     Optional<Vehicule> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query(
+        value = "select distinct vehicule from Vehicule vehicule left join fetch vehicule.agence agence where agence.societe.id = :societeId",
+        countQuery = "select count(distinct vehicule) from Vehicule vehicule where vehicule.agence.societe.id = :societeId"
+    )
+    Page<Vehicule> findAllBySocieteId(@Param("societeId") Long societeId, Pageable pageable);
+
+    @Query("select distinct vehicule from Vehicule vehicule left join fetch vehicule.agence agence where agence.societe.id = :societeId")
+    List<Vehicule> findAllBySocieteId(@Param("societeId") Long societeId);
 }

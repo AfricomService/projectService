@@ -42,6 +42,10 @@
     {
       "fieldName": "additionalInfo",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "agenceId",
+      "fieldType": "Long"
     }
   ],
   "relationships": [],

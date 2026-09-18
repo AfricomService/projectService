@@ -2,8 +2,6 @@ package com.gpm.project.service.dto;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,7 +29,9 @@ public class RessourceDTO implements Serializable {
 
     private String statut;
 
-    private List<Map<String, String>> additionalInfo;
+    private String additionalInfo;
+
+    private Long agenceId;
 
     public Long getId() {
         return id;
@@ -113,12 +113,20 @@ public class RessourceDTO implements Serializable {
         this.statut = statut;
     }
 
-    public List<Map<String, String>> getAdditionalInfo() {
+    public String getAdditionalInfo() {
         return additionalInfo;
     }
 
-    public void setAdditionalInfo(List<Map<String, String>> additionalInfo) {
+    public void setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
+    }
+
+    public Long getAgenceId() {
+        return agenceId;
+    }
+
+    public void setAgenceId(Long agenceId) {
+        this.agenceId = agenceId;
     }
 
     @Override
@@ -157,6 +165,7 @@ public class RessourceDTO implements Serializable {
             ", typeRessourceId=" + getTypeRessourceId() +
             ", statut='" + getStatut() + "'" +
             ", additionalInfo='" + getAdditionalInfo() + "'" +
+            ", agenceId=" + getAgenceId() +
             "}";
     }
 }

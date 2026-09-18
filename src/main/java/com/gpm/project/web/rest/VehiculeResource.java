@@ -162,6 +162,24 @@ public class VehiculeResource {
     }
 
     /**
+     * {@code GET  /vehicules/by-societe/:societeId} : get all the vehicules belonging to a societe (via its agences).
+     *
+     * @param societeId the id of the societe to filter by.
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of vehicules in body.
+     */
+    @GetMapping("/vehicules/by-societe/{societeId}")
+    public ResponseEntity<List<VehiculeDTO>> getVehiculesBySociete(
+        @PathVariable Long societeId,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to get a page of Vehicules for Societe : {}", societeId);
+        Page<VehiculeDTO> page = vehiculeService.findAllBySocieteId(societeId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code GET  /vehicules/:id} : get the "id" vehicule.
      *
      * @param id the id of the vehiculeDTO to retrieve.

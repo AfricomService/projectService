@@ -1,9 +1,12 @@
 package com.gpm.project.service;
 
 import com.gpm.project.domain.Ressource;
+import com.gpm.project.repository.AgenceRepository;
 import com.gpm.project.repository.RessourceRepository;
 import com.gpm.project.service.dto.RessourceDTO;
 import com.gpm.project.service.mapper.RessourceMapper;
+
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +28,18 @@ public class RessourceService {
 
     private final RessourceMapper ressourceMapper;
 
-    public RessourceService(RessourceRepository ressourceRepository, RessourceMapper ressourceMapper) {
+    private final AgenceRepository agenceRepository;
+
+    public RessourceService(
+        RessourceRepository ressourceRepository,
+        RessourceMapper ressourceMapper,
+        AgenceRepository agenceRepository
+    ) {
         this.ressourceRepository = ressourceRepository;
         this.ressourceMapper = ressourceMapper;
+        this.agenceRepository = agenceRepository;
     }
+
 
     /**
      * Save a ressource.
@@ -121,5 +132,25 @@ public class RessourceService {
     public void delete(Long id) {
         log.debug("Request to delete Ressource : {}", id);
         ressourceRepository.deleteById(id);
+    }
+
+    /**
+     * Get all the ressources belonging to the agences of a given societe.
+     *
+     * @param societeId the id of the societe.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<RessourceDTO> findAllBySocieteId(Long societeId, Pageable pageable) {
+        log.debug("Request to get all Ressources for Societe : {}", societeId);
+
+        List<Long> agenceIds = agenceRepository.findIdsBySocieteId(societeId);
+
+        if (agenceIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        return ressourceRepository.findAllByAgenceIdIn(agenceIds, pageable).map(ressourceMapper::toDto);
     }
 }

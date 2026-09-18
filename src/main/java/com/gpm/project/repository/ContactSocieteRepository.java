@@ -15,6 +15,8 @@ public interface ContactSocieteRepository extends JpaRepository<ContactSociete, 
     List<ContactSociete> findAllBySocieteIdOrderByIdDesc(Long societeId);
     List<ContactSociete> findBySocieteIdAndMatriculeIn(Long societeId, List<String> matricules);
 
+    List<ContactSociete> findByIdInAndSocieteId(List<Long> ids, Long societeId);
+
     @Query(
         "select c from ContactSociete c where " +
         "(:societeId is null or c.societeId = :societeId) and " +
