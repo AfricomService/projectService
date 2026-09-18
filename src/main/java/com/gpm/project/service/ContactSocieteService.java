@@ -137,8 +137,8 @@ public class ContactSocieteService {
      * @return the list of matching ContactSocieteDTO.
      */
     @Transactional(readOnly = true)
-    public List<ContactSocieteDTO> findAllByRoleCode(String roleCode) {
-        log.debug("Request to get all ContactSocietes by role code : {}", roleCode);
+    public List<ContactSocieteDTO> findAllByRoleCode(String roleCode, Long societeId) {
+        log.debug("Request to get all ContactSocietes by role code : {} and societeId : {}", roleCode, societeId);
 
         List<Long> contactSocieteIds = userAuthSocieteService
             .findByRoleCode(roleCode)
@@ -151,6 +151,10 @@ public class ContactSocieteService {
             return List.of();
         }
 
-        return contactSocieteRepository.findAllById(contactSocieteIds).stream().map(contactSocieteMapper::toDto).collect(Collectors.toList());
+        List<ContactSociete> contactSocietes = (societeId != null)
+            ? contactSocieteRepository.findByIdInAndSocieteId(contactSocieteIds, societeId)
+            : contactSocieteRepository.findAllById(contactSocieteIds);
+
+        return contactSocietes.stream().map(contactSocieteMapper::toDto).collect(Collectors.toList());
     }
 }

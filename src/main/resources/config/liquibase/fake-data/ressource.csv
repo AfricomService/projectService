@@ -1,11 +1,11 @@
-id;nom;code;categorie;description;date_mise_en_service;date_derniere_maintenance;date_prochaine_maintenance;type_ressource_id;statut;additional_info
-1;Outdoors Idaho;Stravenue Handcrafted;Berkshire;interface;2026-08-18T07:12:23;2026-08-17T14:43:07;2026-08-17T23:24:50;97622;value-added Generic state;channels Legacy
-2;Avon Pennsylvania Metal;Koruna;Account Iranian Pizza;Senior matrices Florida;2026-08-18T08:23:22;2026-08-17T18:28:06;2026-08-18T08:50:54;41363;scalable;Intelligent synergistic engineer
-3;deliver cyan;Facilitator magenta Aruban;payment SDD;leading-edge Frozen;2026-08-17T09:39:16;2026-08-18T04:47:48;2026-08-17T14:21:28;87509;port;cross-platform Administrator
-4;Profound;reboot Front-line Account;green;invoice target;2026-08-17T18:48:35;2026-08-18T05:11:58;2026-08-17T16:51:28;52802;Designer Intuitive;blockchains
-5;index deposit;Accounts;Cambridgeshire EXE calculating;plug-and-play Up-sized;2026-08-17T18:00:27;2026-08-17T09:46:17;2026-08-17T13:33:15;20432;port;deposit
-6;synthesize;Mobility;XSS wireless;Licensed;2026-08-17T22:38:43;2026-08-17T21:40:39;2026-08-17T19:22:36;55406;invoice;input
-7;card;Idaho;plum;card withdrawal B2C;2026-08-17T19:36:54;2026-08-17T09:57:30;2026-08-18T02:42:25;30913;Account navigating;Future-proofed
-8;Cheese Architect;haptic Dynamic Shoes;out-of-the-box withdrawal Chicken;Central;2026-08-18T06:13:29;2026-08-17T13:13:11;2026-08-18T06:02:45;8042;RAM haptic Account;RAM generating Security
-9;parse;Interactions;Tasty support;Assistant deposit architectures;2026-08-18T08:26:40;2026-08-17T14:39:14;2026-08-17T15:42:38;76909;bandwidth cultivate;Carolina Luxembourg
-10;Regional navigating National;Ergonomic;Terrace;Handcrafted Tasty enable;2026-08-17T18:18:19;2026-08-17T16:48:16;2026-08-17T09:37:34;8495;Lead access;Beauty system generation
+id;nom;code;categorie;description;date_mise_en_service;date_derniere_maintenance;date_prochaine_maintenance;type_ressource_id;statut;additional_info;agence_id
+1;Outdoors Idaho;Stravenue Handcrafted;Berkshire;interface;2026-08-18T07:12:23;2026-08-17T14:43:07;2026-08-17T23:24:50;97622;value-added Generic state;channels Legacy;68171
+2;Plastic navigate;Functionality ivory;Proactive harness;bus Human Harbors;2026-08-18T06:09:10;2026-08-17T19:52:51;2026-08-18T05:02:32;54767;Checking;scalable;94658
+3;Multi-lateral;synergistic;auxiliary deliver;SAS;2026-08-17T10:00:18;2026-08-17T12:41:32;2026-08-18T01:23:12;20376;synthesize synthesize panel;orchid;11173
+4;Frozen;Cheese lime Account;Loan white;toolset Internal;2026-08-18T01:49:32;2026-08-17T17:23:05;2026-08-17T18:30:41;18897;complexity EXE transmitting;Wooden rich;45684
+5;synergies;Architect index;Jewelery Accounts;Cambridgeshire EXE calculating;2026-08-17T19:04:05;2026-08-18T00:27:27;2026-08-17T11:03:49;12425;Product;overriding port Metal;5089
+6;synthesize;Mobility;XSS wireless;Licensed;2026-08-17T22:38:43;2026-08-17T21:40:39;2026-08-17T19:22:36;55406;invoice;input;13606
+7;structure Idaho Mouse;Producer;withdrawal B2C;Engineer systems;2026-08-17T21:14:13;2026-08-17T12:53:07;2026-08-17T22:49:32;12153;Future-proofed;Cheese Architect;94444
+8;Buckinghamshire invoice Berkshire;parse systems;Reactive;Central;2026-08-18T06:13:29;2026-08-17T13:13:11;2026-08-18T06:02:45;8042;RAM haptic Account;RAM generating Security;9767
+9;Orchestrator Interactions Alaska;robust Principal Assistant;Awesome Jewelery;Account Coordinator Rubber;2026-08-17T20:42:07;2026-08-17T20:54:11;2026-08-17T19:18:13;69919;e-enable convergence software;Ameliorated;46106
+10;Buckinghamshire Yen Compatible;enable Account;Personal;access up Card;2026-08-17T19:26:49;2026-08-18T02:32:44;2026-08-17T16:11:19;75255;Accounts white Designer;Avon Mississippi Wooden;69980

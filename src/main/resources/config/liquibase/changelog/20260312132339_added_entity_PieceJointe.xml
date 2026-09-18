@@ -32,6 +32,9 @@
             <column name="bon_commande_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="o_t_externe_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <column name="affaire_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -63,6 +66,7 @@
             <column name="date_upload" type="date"/>
             <column name="work_order_id" type="numeric"/>
             <column name="bon_commande_id" type="numeric"/>
+            <column name="o_t_externe_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

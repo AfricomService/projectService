@@ -1,6 +1,9 @@
 package com.gpm.project.repository;
 
 import com.gpm.project.domain.Ressource;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +12,8 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RessourceRepository extends JpaRepository<Ressource, Long> {}
+public interface RessourceRepository extends JpaRepository<Ressource, Long> {
+    Page<Ressource> findAllByAgenceIdIn(List<Long> agenceIds, Pageable pageable);
+
+    List<Ressource> findAllByAgenceIdIn(List<Long> agenceIds);
+}

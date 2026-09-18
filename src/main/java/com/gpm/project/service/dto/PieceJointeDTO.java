@@ -33,6 +33,8 @@ public class PieceJointeDTO implements Serializable {
 
     private Long bonCommandeId;
 
+    private Long oTExterneId;
+
     private AffaireDTO affaire;
 
     public Long getId() {
@@ -91,6 +93,14 @@ public class PieceJointeDTO implements Serializable {
         this.bonCommandeId = bonCommandeId;
     }
 
+    public Long getoTExterneId() {
+        return oTExterneId;
+    }
+
+    public void setoTExterneId(Long oTExterneId) {
+        this.oTExterneId = oTExterneId;
+    }
+
     public AffaireDTO getAffaire() {
         return affaire;
     }
@@ -131,6 +141,7 @@ public class PieceJointeDTO implements Serializable {
             ", dateUpload='" + getDateUpload() + "'" +
             ", workOrderId=" + getWorkOrderId() +
             ", bonCommandeId=" + getBonCommandeId() +
+            ", oTExterneId=" + getoTExterneId() +
             ", affaire=" + getAffaire() +
             "}";
     }

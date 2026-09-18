@@ -174,9 +174,12 @@ public class ContactSocieteResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of matching ContactSocieteDTO.
      */
     @GetMapping("/contact-societes/by-role/{roleCode}")
-    public ResponseEntity<List<ContactSocieteDTO>> getContactSocietesByRole(@PathVariable String roleCode) {
-        log.debug("REST request to get ContactSocietes by role code : {}", roleCode);
-        List<ContactSocieteDTO> result = contactSocieteService.findAllByRoleCode(roleCode);
+    public ResponseEntity<List<ContactSocieteDTO>> getContactSocietesByRole(
+        @PathVariable String roleCode,
+        @RequestParam(required = false) Long societeId
+    ) {
+        log.debug("REST request to get ContactSocietes by role code : {} and societeId : {}", roleCode, societeId);
+        List<ContactSocieteDTO> result = contactSocieteService.findAllByRoleCode(roleCode, societeId);
         return ResponseEntity.ok().body(result);
     }
 

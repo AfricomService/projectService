@@ -123,6 +123,19 @@ public class VehiculeService {
     }
 
     /**
+     * Get all the vehicules belonging to the agences of a given societe.
+     *
+     * @param societeId the id of the societe.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<VehiculeDTO> findAllBySocieteId(Long societeId, Pageable pageable) {
+        log.debug("Request to get all Vehicules for Societe : {}", societeId);
+        return vehiculeRepository.findAllBySocieteId(societeId, pageable).map(vehiculeMapper::toDto);
+    }
+
+    /**
      * Get one vehicule by id.
      *
      * @param id the id of the entity.

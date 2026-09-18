@@ -214,6 +214,27 @@ public class PieceJointeResource {
         return pieceJointeService.findByBonCommandeId(bonCommandeId);
     }
 
+    @PostMapping("/piece-jointes/upload-ot-externe")
+    public ResponseEntity<PieceJointeDTO> uploadPieceJointeOtExterne(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("otExterneId") Long otExterneId,
+        @RequestParam("uniqueName") String uniqueName
+    ) {
+        log.debug("REST request to upload PieceJointe for OtExterne : {}", otExterneId);
+        try {
+            PieceJointeDTO result = pieceJointeService.uploadForOtExterne(file, otExterneId, uniqueName);
+            return ResponseEntity.ok(result);
+        } catch (java.io.IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/piece-jointes/by-ot-externe/{otExterneId}")
+    public List<PieceJointeDTO> getPieceJointesByOtExterne(@PathVariable Long otExterneId) {
+        log.debug("REST request to get PieceJointes by OtExterne : {}", otExterneId);
+        return pieceJointeService.findByOtExterneId(otExterneId);
+    }
+
     @GetMapping("/piece-jointes/getFile")
     public ResponseEntity<org.springframework.core.io.Resource> getFile(@RequestParam(name = "id") Long id) {
         return pieceJointeService.getFile(id);
@@ -238,5 +259,26 @@ public class PieceJointeResource {
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .body(result);
+    }
+
+    @PostMapping("/piece-jointes/upload-work-order")
+    public ResponseEntity<PieceJointeDTO> uploadPieceJointeWorkOrder(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("workOrderId") Long workOrderId,
+        @RequestParam("uniqueName") String uniqueName
+    ) {
+        log.debug("REST request to upload PieceJointe for WorkOrder : {}", workOrderId);
+        try {
+            PieceJointeDTO result = pieceJointeService.uploadForWorkOrder(file, workOrderId, uniqueName);
+            return ResponseEntity.ok(result);
+        } catch (java.io.IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/piece-jointes/by-work-order/{workOrderId}")
+    public List<PieceJointeDTO> getPieceJointesByWorkOrder(@PathVariable Long workOrderId) {
+        log.debug("REST request to get PieceJointes by WorkOrder : {}", workOrderId);
+        return pieceJointeService.findByWorkOrderId(workOrderId);
     }
 }
