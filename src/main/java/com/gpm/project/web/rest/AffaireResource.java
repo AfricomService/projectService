@@ -219,6 +219,18 @@ public class AffaireResource {
     }
 
     /**
+     * {@code GET  /affaires/search-ids} : ids des affaires correspondant à un terme de recherche.
+     *
+     * @param search le terme recherché (désignation, identifiant unique ou numéro).
+     * @return la liste des ids (vide si le terme est vide).
+     */
+    @GetMapping("/affaires/search-ids")
+    public ResponseEntity<List<Long>> searchAffaireIds(@RequestParam(required = false, defaultValue = "") String search) {
+        log.debug("REST request to search Affaire ids : {}", search);
+        return ResponseEntity.ok().body(affaireService.findIdsBySearch(search));
+    }
+
+    /**
      * {@code DELETE  /affaires/:id} : delete the "id" affaire.
      *
      * @param id the id of the affaireDTO to delete.

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -185,6 +186,19 @@ public class AffaireService {
     public Page<AffaireDTO> findByStatutAndSearch(StatutAffaire statut, String search, Pageable pageable) {
         log.debug("Request to search Affaires by statut : {} and search : {}", statut, search);
         return affaireRepository.findByStatutAndSearch(statut, search, pageable).map(affaireMapper::toDto);
+    }
+
+    /**
+     * Retourne les ids des affaires dont la désignation, l'identifiant unique
+     * ou le numéro contient le terme recherché (plafonné à 200 résultats).
+     */
+    @Transactional(readOnly = true)
+    public List<Long> findIdsBySearch(String search) {
+        String term = search == null ? "" : search.trim();
+        if (term.isEmpty()) {
+            return List.of();
+        }
+        return affaireRepository.findIdsBySearch(term, PageRequest.of(0, 200));
     }
 
     /**
