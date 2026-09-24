@@ -62,4 +62,11 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
     )
     Page<Affaire> findByStatutAndSearch(@Param("statut") StatutAffaire statut, @Param("search") String search, Pageable pageable);
 
+    @Query(
+        "select a.id from Affaire a " +
+            "where lower(a.designationAffaire) like lower(concat('%', :search, '%')) " +
+            "   or lower(a.identifiantUnique) like lower(concat('%', :search, '%')) " +
+            "   or str(a.numAffaire) like concat('%', :search, '%')"
+    )
+    List<Long> findIdsBySearch(@Param("search") String search, Pageable pageable);
 }
