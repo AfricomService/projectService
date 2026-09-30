@@ -1,0 +1,33 @@
+{
+  "changelogDate": "20260930150122",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "project_id",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "sid_id",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "sid",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "can_read",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "can_write",
+      "fieldType": "Boolean"
+    }
+  ],
+  "microserviceName": "projectService",
+  "name": "AclEntryProjet",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "no"
+}
