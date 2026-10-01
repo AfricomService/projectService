@@ -1,3 +1,7 @@
 package com.gpm.project.domain.enumeration;
 
-public class SidType {}
+/** Kind of security identity an ACL entry is granted to. */
+public enum SidType {
+    USER,
+    ROLE,
+}
