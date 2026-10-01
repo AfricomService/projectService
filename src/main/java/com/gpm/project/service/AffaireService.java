@@ -10,7 +10,6 @@ import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,9 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,22 +40,18 @@ public class AffaireService {
 
     private final NumsequentielleService numsequentielleService;
 
-    private final ProjetAclService projetAclService;
-
     public AffaireService(
         AffaireRepository affaireRepository,
         AffaireMapper affaireMapper,
         UserRestClient userRestClient,
         AffaireSocieteAdjRepository affaireSocieteAdjRepository,
-        NumsequentielleService numsequentielleService,
-        ProjetAclService projetAclService
+        NumsequentielleService numsequentielleService
     ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
         this.userRestClient = userRestClient;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
         this.numsequentielleService = numsequentielleService;
-        this.projetAclService = projetAclService;
     }
 
     /**
@@ -68,27 +60,6 @@ public class AffaireService {
      * @param affaireDTO the entity to save.
      * @return the persisted entity.
      */
-
-    // Extract current user SIDs (e.g., ["john.doe", "ROLE_USER", "ROLE_MANAGER"])
-    private List<String> getCurrentUserSids() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<String> sids = new ArrayList<>();
-        sids.add(auth.getName()); // Username
-        auth.getAuthorities().forEach(grantedAuthority -> sids.add(grantedAuthority.getAuthority())); // Roles
-        return sids;
-    }
-
-    public void updateProject(Long projectId, AffaireDTO dto) {
-        // 1. Enforce permission check
-        if (!projetAclService.canWrite(projectId, getCurrentUserSids())) {
-            throw new AccessDeniedException("You do not have write access to this project.");
-        }
-        // 2. Perform update logic...
-    }
-
-    public List<Long> getMyAccessibleProjectIds() {
-        return projetAclService.getReadableProjectIds(getCurrentUserSids());
-    }
 
     public void changeStatut(String newStatut, Long affaireId) {
         Affaire affaire = affaireRepository.findById(affaireId).orElseThrow(() -> new RuntimeException("Affaire not found"));
