@@ -1,23 +1,17 @@
 package com.gpm.project.domain;
 
-import com.gpm.project.domain.enumeration.SidType;
 import java.io.Serializable;
-import java.util.Locale;
-import java.util.Objects;
 import javax.persistence.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A security identity (a user or a role).
- *
- * Identity is the canonical {@code sidKey} ("USER:john.doe" / "ROLE:ROLE_MANAGER"),
- * which is unique in the database. Type is part of the key, so a user named
- * "ROLE_ADMIN" can never match a role entry.
- *
- * No second-level cache on purpose: permission changes must be visible immediately
- * on every node.
+ * A AclSid.
  */
 @Entity
 @Table(name = "acl_sid")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class AclSid implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,54 +22,53 @@ public class AclSid implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "sid_type", nullable = false)
-    private SidType sidType;
+    @Column(name = "sid_type")
+    private String sidType;
 
-    @Column(name = "sid_value", nullable = false)
+    @Column(name = "sid_value")
     private String sidValue;
 
-    @Column(name = "sid_key", nullable = false, unique = true, length = 300)
+    @Column(name = "sid_key")
     private String sidKey;
 
     @Column(name = "nom_descriptif")
     private String nomDescriptif;
 
-    /** Canonical key used for every permission lookup. Usernames are case-insensitive, roles are not. */
-    public static String buildKey(SidType type, String value) {
-        Objects.requireNonNull(type, "sidType");
-        Objects.requireNonNull(value, "sidValue");
-        String v = value.trim();
-        if (type == SidType.USER) {
-            v = v.toLowerCase(Locale.ROOT);
-        }
-        return type.name() + ":" + v;
-    }
-
-    @PrePersist
-    @PreUpdate
-    void computeSidKey() {
-        this.sidKey = buildKey(sidType, sidValue);
-    }
+    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public AclSid id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public SidType getSidType() {
-        return sidType;
+    public String getSidType() {
+        return this.sidType;
     }
 
-    public void setSidType(SidType sidType) {
+    public AclSid sidType(String sidType) {
+        this.setSidType(sidType);
+        return this;
+    }
+
+    public void setSidType(String sidType) {
         this.sidType = sidType;
     }
 
     public String getSidValue() {
-        return sidValue;
+        return this.sidValue;
+    }
+
+    public AclSid sidValue(String sidValue) {
+        this.setSidValue(sidValue);
+        return this;
     }
 
     public void setSidValue(String sidValue) {
@@ -83,16 +76,32 @@ public class AclSid implements Serializable {
     }
 
     public String getSidKey() {
-        return sidKey;
+        return this.sidKey;
+    }
+
+    public AclSid sidKey(String sidKey) {
+        this.setSidKey(sidKey);
+        return this;
+    }
+
+    public void setSidKey(String sidKey) {
+        this.sidKey = sidKey;
     }
 
     public String getNomDescriptif() {
-        return nomDescriptif;
+        return this.nomDescriptif;
+    }
+
+    public AclSid nomDescriptif(String nomDescriptif) {
+        this.setNomDescriptif(nomDescriptif);
+        return this;
     }
 
     public void setNomDescriptif(String nomDescriptif) {
         this.nomDescriptif = nomDescriptif;
     }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -107,11 +116,19 @@ public class AclSid implements Serializable {
 
     @Override
     public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return "AclSid{id=" + id + ", sidKey='" + sidKey + "', nomDescriptif='" + nomDescriptif + "'}";
+        return "AclSid{" +
+            "id=" + getId() +
+            ", sidType='" + getSidType() + "'" +
+            ", sidValue='" + getSidValue() + "'" +
+            ", sidKey='" + getSidKey() + "'" +
+            ", nomDescriptif='" + getNomDescriptif() + "'" +
+            "}";
     }
 }
