@@ -1,12 +1,12 @@
 package com.gpm.project.repository;
 
 import com.gpm.project.domain.AclSid;
-import org.springframework.data.jpa.repository.*;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-/**
- * Spring Data JPA repository for the AclSid entity.
- */
-@SuppressWarnings("unused")
 @Repository
-public interface AclSidRepository extends JpaRepository<AclSid, Long> {}
+public interface AclSidRepository extends JpaRepository<AclSid, Long> {
+    Optional<AclSid> findBySidTypeAndSidValue(String sidType, String sidValue);
+    Optional<AclSid> findBySidValue(String sidValue);
+}
