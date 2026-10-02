@@ -1,11 +1,13 @@
 package com.gpm.project.service;
 
 import com.gpm.project.client.UserRestClient;
+import com.gpm.project.domain.AclSid;
 import com.gpm.project.domain.Affaire;
 import com.gpm.project.domain.AffaireSocieteAdj;
 import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.repository.AffaireSocieteAdjRepository;
+import com.gpm.project.security.AuthoritiesConstants; // << ACL
 import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException; // << ACL
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class AffaireService {
+
+    private static final String OBJECT_TYPE = "AFFAIRE"; // matches acl_entry.object_type
 
     private final Logger log = LoggerFactory.getLogger(AffaireService.class);
 
@@ -40,28 +45,27 @@ public class AffaireService {
 
     private final NumsequentielleService numsequentielleService;
 
+    private final AclUtilService aclUtilService;
+
     public AffaireService(
         AffaireRepository affaireRepository,
         AffaireMapper affaireMapper,
         UserRestClient userRestClient,
         AffaireSocieteAdjRepository affaireSocieteAdjRepository,
-        NumsequentielleService numsequentielleService
+        NumsequentielleService numsequentielleService,
+        AclUtilService aclUtilService
     ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
         this.userRestClient = userRestClient;
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
         this.numsequentielleService = numsequentielleService;
+        this.aclUtilService = aclUtilService;
     }
 
-    /**
-     * Save a affaire.
-     *
-     * @param affaireDTO the entity to save.
-     * @return the persisted entity.
-     */
-
     public void changeStatut(String newStatut, Long affaireId) {
+        assertWrite(affaireId); // << ACL
+
         Affaire affaire = affaireRepository.findById(affaireId).orElseThrow(() -> new RuntimeException("Affaire not found"));
 
         try {
@@ -77,6 +81,12 @@ public class AffaireService {
         affaireRepository.save(affaire);
     }
 
+    /**
+     * Save a affaire.
+     *
+     * @param affaireDTO the entity to save.
+     * @return the persisted entity.
+     */
     public AffaireDTO save(AffaireDTO affaireDTO) {
         log.debug("Request to save Affaire : {}", affaireDTO);
 
@@ -92,6 +102,11 @@ public class AffaireService {
 
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
+
+        // << ACL : le créateur devient propriétaire (READ + WRITE)
+        Affaire finalAffaire = affaire;
+        SecurityUtils.getCurrentUserLogin().ifPresent(login -> aclUtilService.grantOwner(OBJECT_TYPE, finalAffaire.getId(), login));
+
         return affaireMapper.toDto(affaire);
     }
 
@@ -103,12 +118,15 @@ public class AffaireService {
      */
     public AffaireDTO update(AffaireDTO affaireDTO) {
         log.debug("Request to update Affaire : {}", affaireDTO);
+        assertWrite(affaireDTO.getId()); // << ACL
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
         return affaireMapper.toDto(affaire);
     }
 
     public void updateSocieteAssociees(Long affaireId, List<Long> societeIds) {
+        assertWrite(affaireId); // << ACL
+
         affaireSocieteAdjRepository.deleteByAffaireId(affaireId);
 
         if (!societeIds.isEmpty()) {
@@ -129,6 +147,7 @@ public class AffaireService {
      */
     public Optional<AffaireDTO> partialUpdate(AffaireDTO affaireDTO) {
         log.debug("Request to partially update Affaire : {}", affaireDTO);
+        assertWrite(affaireDTO.getId()); // << ACL
 
         return affaireRepository
             .findById(affaireDTO.getId())
@@ -150,7 +169,18 @@ public class AffaireService {
     @Transactional(readOnly = true)
     public Page<AffaireDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Affaires");
-        return affaireRepository.findAll(pageable).map(affaireMapper::toDto);
+
+        // << ACL : bypass admin
+        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            return affaireRepository.findAll(pageable).map(affaireMapper::toDto);
+        }
+
+        // << ACL : seulement les affaires accessibles (filtrage en base, pagination préservée)
+        List<Long> sidIds = aclUtilService.getCurrentUserSids().stream().map(AclSid::getId).collect(Collectors.toList());
+        if (sidIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return affaireRepository.findAllAccessible(sidIds, pageable).map(affaireMapper::toDto);
     }
 
     /**
@@ -210,6 +240,12 @@ public class AffaireService {
     @Transactional(readOnly = true)
     public Optional<AffaireDTO> findOne(Long id) {
         log.debug("Request to get Affaire : {}", id);
+
+        // << ACL : contrôle d'accès en lecture
+        if (!aclUtilService.canRead(OBJECT_TYPE, id)) {
+            throw new AccessDeniedException("Pas d'accès en lecture à l'affaire " + id);
+        }
+
         return affaireRepository.findOneWithEagerRelationships(id).map(affaireMapper::toDto);
     }
 
@@ -220,7 +256,9 @@ public class AffaireService {
      */
     public void delete(Long id) {
         log.debug("Request to delete Affaire : {}", id);
+        assertWrite(id); // << ACL
         affaireRepository.deleteById(id);
+        aclUtilService.deleteAcl(OBJECT_TYPE, id); // << ACL : nettoyage des droits
     }
 
     /**
@@ -238,5 +276,12 @@ public class AffaireService {
             .stream()
             .map(affaireMapper::toDto)
             .collect(Collectors.toList());
+    }
+
+    // << ACL : helper privé — lève une 403 si l'utilisateur courant n'a pas le droit WRITE
+    private void assertWrite(Long id) {
+        if (!aclUtilService.canWrite(OBJECT_TYPE, id)) {
+            throw new AccessDeniedException("Pas d'accès en écriture à l'affaire " + id);
+        }
     }
 }
