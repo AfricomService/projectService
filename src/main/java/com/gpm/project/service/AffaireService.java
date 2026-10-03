@@ -1,17 +1,16 @@
 package com.gpm.project.service;
 
 import com.gpm.project.client.UserRestClient;
-import com.gpm.project.domain.AclSid;
-import com.gpm.project.domain.Affaire;
-import com.gpm.project.domain.AffaireSocieteAdj;
+import com.gpm.project.domain.*;
+import com.gpm.project.domain.enumeration.AclPermission;
 import com.gpm.project.domain.enumeration.StatutAffaire;
-import com.gpm.project.repository.AffaireRepository;
-import com.gpm.project.repository.AffaireSocieteAdjRepository;
+import com.gpm.project.repository.*;
 import com.gpm.project.security.AuthoritiesConstants; // << ACL
 import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,13 +46,22 @@ public class AffaireService {
 
     private final AclUtilService aclUtilService;
 
+    private final RoleContactSocieteRepository roleContactSocieteRepository;
+
+    private final UserAuthSocieteRepository userAuthSocieteRepository;
+
+    private final ContactSocieteRepository contactSocieteRepository;
+
     public AffaireService(
         AffaireRepository affaireRepository,
         AffaireMapper affaireMapper,
         UserRestClient userRestClient,
         AffaireSocieteAdjRepository affaireSocieteAdjRepository,
         NumsequentielleService numsequentielleService,
-        AclUtilService aclUtilService
+        AclUtilService aclUtilService,
+        RoleContactSocieteRepository roleContactSocieteRepository,
+        UserAuthSocieteRepository userAuthSocieteRepository,
+        ContactSocieteRepository contactSocieteRepository
     ) {
         this.affaireRepository = affaireRepository;
         this.affaireMapper = affaireMapper;
@@ -61,6 +69,9 @@ public class AffaireService {
         this.affaireSocieteAdjRepository = affaireSocieteAdjRepository;
         this.numsequentielleService = numsequentielleService;
         this.aclUtilService = aclUtilService;
+        this.roleContactSocieteRepository = roleContactSocieteRepository;
+        this.userAuthSocieteRepository = userAuthSocieteRepository;
+        this.contactSocieteRepository = contactSocieteRepository;
     }
 
     public void changeStatut(String newStatut, Long affaireId) {
@@ -87,27 +98,57 @@ public class AffaireService {
      * @param affaireDTO the entity to save.
      * @return the persisted entity.
      */
+
     public AffaireDTO save(AffaireDTO affaireDTO) {
         log.debug("Request to save Affaire : {}", affaireDTO);
 
-        affaireDTO.setCreatedAt(ZonedDateTime.now());
-        affaireDTO.setUpdatedAt(ZonedDateTime.now());
-        affaireDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
-        affaireDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
-        affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        ZonedDateTime now = ZonedDateTime.now();
+        String currentLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new RuntimeException("Current user login not found"));
+
+        affaireDTO.setCreatedAt(now);
+        affaireDTO.setUpdatedAt(now);
+        affaireDTO.setCreatedBy(currentLogin);
+        affaireDTO.setUpdatedBy(currentLogin);
         affaireDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
+        affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        affaireDTO.setIdentifiantUnique(numsequentielleService.genererIdentifiantAffaire("AFFAIRE"));
 
-        String identifiant = numsequentielleService.genererIdentifiantAffaire("AFFAIRE");
-        affaireDTO.setIdentifiantUnique(identifiant);
+        Affaire affaire = affaireRepository.save(affaireMapper.toEntity(affaireDTO));
+        Long affaireId = affaire.getId();
+        Long societeId = affaire.getSocieteId();
 
-        Affaire affaire = affaireMapper.toEntity(affaireDTO);
-        affaire = affaireRepository.save(affaire);
+        // 1. Creator: READ + WRITE
+        aclUtilService.grantOwner(OBJECT_TYPE, affaireId, currentLogin);
 
-        // << ACL : le créateur devient propriétaire (READ + WRITE)
-        Affaire finalAffaire = affaire;
-        SecurityUtils.getCurrentUserLogin().ifPresent(login -> aclUtilService.grantOwner(OBJECT_TYPE, finalAffaire.getId(), login));
+        // 2. Company logistics contacts: WRITE
+        grantRolePermission("LOGISTIQUE", societeId, affaireId, AclPermission.WRITE);
+
+        // 3. Project manager: READ
+        aclUtilService.grantToUser(OBJECT_TYPE, affaireId, affaireDTO.getResponsableProjetUserLogin(), AclPermission.READ);
+
+        // 4. Company managers: READ
+        grantRolePermission("MANAGER", societeId, affaireId, AclPermission.READ);
 
         return affaireMapper.toDto(affaire);
+    }
+
+    private void grantRolePermission(String roleCode, Long societeId, Long affaireId, AclPermission permission) {
+        RoleContactSociete role = roleContactSocieteRepository
+            .findByCode(roleCode)
+            .orElseThrow(() -> new RuntimeException("RoleContactSociete " + roleCode + " not found"));
+
+        List<UserAuthSociete> userAuthSocietes = userAuthSocieteRepository.findAllByRoleContactSocieteIdAndSocieteId(
+            role.getId(),
+            societeId
+        );
+
+        for (UserAuthSociete userAuthSociete : userAuthSocietes) {
+            contactSocieteRepository
+                .findById(userAuthSociete.getContactSocieteId())
+                .map(ContactSociete::getMatricule)
+                .filter(matricule -> matricule != null && !matricule.trim().isEmpty())
+                .ifPresent(matricule -> aclUtilService.grantToUser(OBJECT_TYPE, affaireId, matricule, permission));
+        }
     }
 
     /**
