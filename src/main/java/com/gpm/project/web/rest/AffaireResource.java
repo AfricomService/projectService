@@ -163,11 +163,11 @@ public class AffaireResource {
     ) {
         log.debug("REST request to get a page of Affaires");
         Page<AffaireDTO> page;
-        if (eagerload) {
-            page = affaireService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = affaireService.findAll(pageable);
-        }
+        //        if (eagerload) {
+        //            page = affaireService.findAllWithEagerRelationships(pageable);
+        //        } else {
+        page = affaireService.findAll(pageable);
+        //        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

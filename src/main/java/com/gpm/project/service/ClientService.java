@@ -6,10 +6,9 @@ import com.gpm.project.repository.ClientRepository;
 import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.ClientDTO;
 import com.gpm.project.service.mapper.ClientMapper;
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-
-import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -78,7 +77,11 @@ public class ClientService {
         log.debug("Request to save Client : {}", clientDTO);
 
         if (clientRepository.existsByRaisonSociale(clientDTO.getRaisonSociale())) {
-            throw new BadRequestAlertException("Un client avec cette raison sociale existe déjà", "projectServiceClient", "raisonsocialeexists");
+            throw new BadRequestAlertException(
+                "Un client avec cette raison sociale existe déjà",
+                "projectServiceClient",
+                "raisonsocialeexists"
+            );
         }
 
         clientDTO.setCreatedAt(ZonedDateTime.now());
@@ -98,10 +101,10 @@ public class ClientService {
         Client client = clientMapper.toEntity(clientDTO);
         client = clientRepository.save(client);
 
-        aclUtilService.createAcl(client);
-
-        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.READ);
-        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.WRITE);
+        //        aclUtilService.createAcl(client);
+        //
+        //        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.READ);
+        //        aclUtilService.addPermission(client, client.getIdentifiantUnique(), BasePermission.WRITE);
 
         return clientMapper.toDto(client);
     }
@@ -238,5 +241,4 @@ public class ClientService {
             .map(clientRepository::save)
             .map(clientMapper::toDto);
     }
-
 }

@@ -1,0 +1,35 @@
+{
+  "changelogDate": "20261001133543",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "dto": "no",
+  "fields": [
+    {
+      "fieldName": "objectType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "objectId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "sidId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "canRead",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canWrite",
+      "fieldType": "Boolean"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "projectService",
+  "name": "AclEntry",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

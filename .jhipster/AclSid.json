@@ -1,0 +1,31 @@
+{
+  "changelogDate": "20261001132207",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "dto": "no",
+  "fields": [
+    {
+      "fieldName": "sidType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sidValue",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sidKey",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nomDescriptif",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "projectService",
+  "name": "AclSid",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}
