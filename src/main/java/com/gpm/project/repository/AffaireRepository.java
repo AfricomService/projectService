@@ -1,10 +1,9 @@
 package com.gpm.project.repository;
 
 import com.gpm.project.domain.Affaire;
+import com.gpm.project.domain.enumeration.StatutAffaire;
 import java.util.List;
 import java.util.Optional;
-
-import com.gpm.project.domain.enumeration.StatutAffaire;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -45,28 +44,36 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
     List<Affaire> findByClientIdAndDesignationAffaireContainingIgnoreCase(Long clientId, String designationAffaire);
 
     @Query(
+        "select a from Affaire a where a.id in (" +
+        "  select e.objectId from AclEntry e where e.objectType = 'AFFAIRE'" +
+        "  and e.sidId in :sidIds and (e.canRead = true or e.canWrite = true)" +
+        ")"
+    )
+    Page<Affaire> findAllAccessible(@Param("sidIds") List<Long> sidIds, Pageable pageable);
+
+    @Query(
         value = "select distinct affaire from Affaire affaire left join fetch affaire.client " +
-            "where affaire.statut = :statut " +
-            "and (:search is null or :search = '' " +
-            "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
-            "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
-            "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
-            "     or str(affaire.numAffaire) like concat('%', :search, '%'))",
+        "where affaire.statut = :statut " +
+        "and (:search is null or :search = '' " +
+        "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
+        "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
+        "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
+        "     or str(affaire.numAffaire) like concat('%', :search, '%'))",
         countQuery = "select count(distinct affaire) from Affaire affaire " +
-            "where affaire.statut = :statut " +
-            "and (:search is null or :search = '' " +
-            "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
-            "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
-            "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
-            "     or str(affaire.numAffaire) like concat('%', :search, '%'))"
+        "where affaire.statut = :statut " +
+        "and (:search is null or :search = '' " +
+        "     or lower(affaire.designationAffaire) like lower(concat('%', :search, '%')) " +
+        "     or lower(affaire.identifiantUnique) like lower(concat('%', :search, '%')) " +
+        "     or lower(affaire.client.raisonSociale) like lower(concat('%', :search, '%')) " +
+        "     or str(affaire.numAffaire) like concat('%', :search, '%'))"
     )
     Page<Affaire> findByStatutAndSearch(@Param("statut") StatutAffaire statut, @Param("search") String search, Pageable pageable);
 
     @Query(
         "select a.id from Affaire a " +
-            "where lower(a.designationAffaire) like lower(concat('%', :search, '%')) " +
-            "   or lower(a.identifiantUnique) like lower(concat('%', :search, '%')) " +
-            "   or str(a.numAffaire) like concat('%', :search, '%')"
+        "where lower(a.designationAffaire) like lower(concat('%', :search, '%')) " +
+        "   or lower(a.identifiantUnique) like lower(concat('%', :search, '%')) " +
+        "   or str(a.numAffaire) like concat('%', :search, '%')"
     )
     List<Long> findIdsBySearch(@Param("search") String search, Pageable pageable);
 }
