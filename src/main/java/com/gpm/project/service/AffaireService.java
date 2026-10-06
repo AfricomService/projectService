@@ -176,7 +176,7 @@ public class AffaireService {
         // 4. Company managers: READ
         grantRolePermission("MANAGER", societeId, affaireId, AclPermission.READ);
 
-        return affaireMapper.toDto(affaire);
+        return withPermissions(affaireMapper.toDto(affaire));
     }
 
     private void grantRolePermission(String roleCode, Long societeId, Long affaireId, AclPermission permission) {
@@ -209,7 +209,7 @@ public class AffaireService {
         assertWrite(affaireDTO.getId()); // << ACL
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
-        return affaireMapper.toDto(affaire);
+        return withPermissions(affaireMapper.toDto(affaire));
     }
 
     public void updateSocieteAssociees(Long affaireId, List<Long> societeIds) {
@@ -245,7 +245,8 @@ public class AffaireService {
                 return existingAffaire;
             })
             .map(affaireRepository::save)
-            .map(affaireMapper::toDto);
+            .map(affaireMapper::toDto)
+            .map(this::withPermissions);
     }
 
     /**
@@ -325,16 +326,22 @@ public class AffaireService {
      * @param id the id of the entity.
      * @return the entity.
      */
+
+    private AffaireDTO withPermissions(AffaireDTO dto) {
+        dto.setCanRead(aclUtilService.canRead(OBJECT_TYPE, dto.getId()));
+        dto.setCanWrite(aclUtilService.canWrite(OBJECT_TYPE, dto.getId()));
+        return dto;
+    }
+
     @Transactional(readOnly = true)
     public Optional<AffaireDTO> findOne(Long id) {
         log.debug("Request to get Affaire : {}", id);
 
-        // << ACL : contrôle d'accès en lecture
         if (!aclUtilService.canRead(OBJECT_TYPE, id)) {
             throw new AccessDeniedException("Pas d'accès en lecture à l'affaire " + id);
         }
 
-        return affaireRepository.findOneWithEagerRelationships(id).map(affaireMapper::toDto);
+        return affaireRepository.findOneWithEagerRelationships(id).map(affaireMapper::toDto).map(this::withPermissions);
     }
 
     /**
