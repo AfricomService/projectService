@@ -255,4 +255,14 @@ public class ContactSocieteResource {
 
         return ResponseEntity.ok(new ContactSocieteKeycloakUserCreationResultDTO(contactSocieteDTO, newPassword));
     }
+
+    @GetMapping("/matricule/{contactSocieteId}")
+    public ResponseEntity<String> getMatriculeByContactSocieteId(@PathVariable Long contactSocieteId) {
+        return ResponseEntity.ok(contactSocieteService.getMatriculeByContactSocieteId(contactSocieteId));
+    }
+
+    @PostMapping("/matricules")
+    public ResponseEntity<List<String>> getMatriculesByContactSocieteIds(@RequestBody List<Long> contactSocieteIds) {
+        return ResponseEntity.ok(contactSocieteService.getMatriculesByContactSocieteIds(contactSocieteIds));
+    }
 }

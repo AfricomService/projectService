@@ -69,10 +69,29 @@ public class AffaireDTO implements Serializable {
 
     private Long clientCommande;
 
+    private boolean canWrite;
+    private boolean canRead;
+
     private ClientDTO client;
 
     public Long getId() {
         return id;
+    }
+
+    public boolean isCanWrite() {
+        return canWrite;
+    }
+
+    public void setCanWrite(boolean canWrite) {
+        this.canWrite = canWrite;
+    }
+
+    public boolean isCanRead() {
+        return canRead;
+    }
+
+    public void setCanRead(boolean canRead) {
+        this.canRead = canRead;
     }
 
     public void setId(Long id) {

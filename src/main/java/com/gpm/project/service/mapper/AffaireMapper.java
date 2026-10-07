@@ -12,6 +12,8 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface AffaireMapper extends EntityMapper<AffaireDTO, Affaire> {
     @Mapping(target = "client", source = "client", qualifiedByName = "clientRaisonSociale")
+    @Mapping(target = "canRead", ignore = true)
+    @Mapping(target = "canWrite", ignore = true)
     AffaireDTO toDto(Affaire s);
 
     @Named("clientRaisonSociale")

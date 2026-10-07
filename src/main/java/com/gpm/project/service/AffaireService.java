@@ -75,21 +75,68 @@ public class AffaireService {
     }
 
     public void changeStatut(String newStatut, Long affaireId) {
-        assertWrite(affaireId); // << ACL
+        assertCanChangeStatut(affaireId); // replaces assertWrite
 
         Affaire affaire = affaireRepository.findById(affaireId).orElseThrow(() -> new RuntimeException("Affaire not found"));
 
         try {
             StatutAffaire statut = StatutAffaire.valueOf(newStatut);
             affaire.setStatut(statut);
+
+            switch (statut) {
+                case EtudeOpportunite:
+                    aclUtilService.grantToUser(
+                        OBJECT_TYPE,
+                        affaireId,
+                        affaire.getClient().getIdentifiantUnique().toLowerCase(),
+                        AclPermission.READ
+                    );
+                    break;
+                case ExecutionDesTravaux:
+                    // Works for a first activation AND for a reactivation after Fin:
+                    // 1. everybody drops to READ only (creator, logistique, managers, client, old responsable)
+                    aclUtilService.makeReadOnlyForAll(OBJECT_TYPE, affaireId);
+
+                    // 2. only the current project manager gets WRITE
+                    String responsable = affaire.getResponsableProjetUserLogin();
+                    if (responsable != null && !responsable.isBlank()) {
+                        aclUtilService.grantToUser(OBJECT_TYPE, affaireId, responsable.toLowerCase(), AclPermission.WRITE);
+                    }
+
+                    // 3. client keeps READ
+                    aclUtilService.grantToUser(
+                        OBJECT_TYPE,
+                        affaireId,
+                        affaire.getClient().getIdentifiantUnique().toLowerCase(),
+                        AclPermission.READ
+                    );
+                    break;
+                case ClotureProjet:
+                    break;
+                case Fin:
+                    aclUtilService.makeReadOnlyForAll(OBJECT_TYPE, affaireId);
+                    break;
+                default:
+                    break;
+            }
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Statut invalide : " + newStatut);
         }
 
         affaire.setUpdatedAt(ZonedDateTime.now());
         affaire.setUpdatedBy(SecurityUtils.getCurrentUserLogin().orElse("SYSTEM"));
-
         affaireRepository.save(affaire);
+    }
+
+    // << ACL : who may change the statut
+    private void assertCanChangeStatut(Long id) {
+        boolean privileged = SecurityUtils.hasCurrentUserAnyOfAuthorities(
+            AuthoritiesConstants.ADMIN,
+            AuthoritiesConstants.ACTIVATE_AFFAIRE
+        );
+        if (!privileged && !aclUtilService.canWrite(OBJECT_TYPE, id)) {
+            throw new AccessDeniedException("Pas d'accès en écriture à l'affaire " + id);
+        }
     }
 
     /**
@@ -118,18 +165,18 @@ public class AffaireService {
         Long societeId = affaire.getSocieteId();
 
         // 1. Creator: READ + WRITE
-        aclUtilService.grantOwner(OBJECT_TYPE, affaireId, currentLogin);
+        aclUtilService.grantOwner(OBJECT_TYPE, affaireId, currentLogin.toLowerCase());
 
         // 2. Company logistics contacts: WRITE
         grantRolePermission("LOGISTIQUE", societeId, affaireId, AclPermission.WRITE);
 
         // 3. Project manager: READ
-        aclUtilService.grantToUser(OBJECT_TYPE, affaireId, affaireDTO.getResponsableProjetUserLogin(), AclPermission.READ);
+        aclUtilService.grantToUser(OBJECT_TYPE, affaireId, affaireDTO.getResponsableProjetUserLogin().toLowerCase(), AclPermission.READ);
 
         // 4. Company managers: READ
         grantRolePermission("MANAGER", societeId, affaireId, AclPermission.READ);
 
-        return affaireMapper.toDto(affaire);
+        return withPermissions(affaireMapper.toDto(affaire));
     }
 
     private void grantRolePermission(String roleCode, Long societeId, Long affaireId, AclPermission permission) {
@@ -147,8 +194,25 @@ public class AffaireService {
                 .findById(userAuthSociete.getContactSocieteId())
                 .map(ContactSociete::getMatricule)
                 .filter(matricule -> matricule != null && !matricule.trim().isEmpty())
-                .ifPresent(matricule -> aclUtilService.grantToUser(OBJECT_TYPE, affaireId, matricule, permission));
+                .ifPresent(matricule -> aclUtilService.grantToUser(OBJECT_TYPE, affaireId, matricule.toLowerCase(), permission));
         }
+    }
+
+    public List<String> getMatriculesToGrantPermission(String roleCode, Long societeId) {
+        RoleContactSociete role = roleContactSocieteRepository
+            .findByCode(roleCode)
+            .orElseThrow(() -> new RuntimeException("RoleContactSociete " + roleCode + " not found"));
+
+        return userAuthSocieteRepository
+            .findAllByRoleContactSocieteIdAndSocieteId(role.getId(), societeId)
+            .stream()
+            .map(UserAuthSociete::getContactSocieteId)
+            .map(contactSocieteRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(ContactSociete::getMatricule)
+            .filter(matricule -> matricule != null && !matricule.trim().isEmpty())
+            .collect(Collectors.toList());
     }
 
     /**
@@ -162,7 +226,7 @@ public class AffaireService {
         assertWrite(affaireDTO.getId()); // << ACL
         Affaire affaire = affaireMapper.toEntity(affaireDTO);
         affaire = affaireRepository.save(affaire);
-        return affaireMapper.toDto(affaire);
+        return withPermissions(affaireMapper.toDto(affaire));
     }
 
     public void updateSocieteAssociees(Long affaireId, List<Long> societeIds) {
@@ -198,7 +262,8 @@ public class AffaireService {
                 return existingAffaire;
             })
             .map(affaireRepository::save)
-            .map(affaireMapper::toDto);
+            .map(affaireMapper::toDto)
+            .map(this::withPermissions);
     }
 
     /**
@@ -278,16 +343,22 @@ public class AffaireService {
      * @param id the id of the entity.
      * @return the entity.
      */
+
+    private AffaireDTO withPermissions(AffaireDTO dto) {
+        dto.setCanRead(aclUtilService.canRead(OBJECT_TYPE, dto.getId()));
+        dto.setCanWrite(aclUtilService.canWrite(OBJECT_TYPE, dto.getId()));
+        return dto;
+    }
+
     @Transactional(readOnly = true)
     public Optional<AffaireDTO> findOne(Long id) {
         log.debug("Request to get Affaire : {}", id);
 
-        // << ACL : contrôle d'accès en lecture
         if (!aclUtilService.canRead(OBJECT_TYPE, id)) {
             throw new AccessDeniedException("Pas d'accès en lecture à l'affaire " + id);
         }
 
-        return affaireRepository.findOneWithEagerRelationships(id).map(affaireMapper::toDto);
+        return affaireRepository.findOneWithEagerRelationships(id).map(affaireMapper::toDto).map(this::withPermissions);
     }
 
     /**
