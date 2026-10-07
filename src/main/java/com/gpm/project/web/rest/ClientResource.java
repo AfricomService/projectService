@@ -187,6 +187,13 @@ public class ClientResource {
         return ResponseUtil.wrapOrNotFound(clientDTO);
     }
 
+    @GetMapping("/clients-code/{id}")
+    public String getClientCode(@PathVariable Long id) {
+        log.debug("REST request to get Client : {}", id);
+        Optional<ClientDTO> clientDTO = clientService.findOne(id);
+        return clientDTO.get().getIdentifiantUnique();
+    }
+
     /**
      * {@code DELETE  /clients/:id} : delete the "id" client.
      *
@@ -221,11 +228,9 @@ public class ClientResource {
 
         Optional<ClientDTO> result = clientService.softDelete(id);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
-        );
+        return ResponseUtil.wrapOrNotFound(result, HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()));
     }
+
     /**
      * {@code PATCH  /clients/:id/activer} : active un client (statut "ACTIF").
      *
@@ -243,10 +248,7 @@ public class ClientResource {
 
         Optional<ClientDTO> result = clientService.activer(id);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
-        );
+        return ResponseUtil.wrapOrNotFound(result, HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()));
     }
 
     /**
@@ -266,9 +268,6 @@ public class ClientResource {
 
         Optional<ClientDTO> result = clientService.desactiver(id);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
-        );
+        return ResponseUtil.wrapOrNotFound(result, HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()));
     }
 }

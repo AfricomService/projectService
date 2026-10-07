@@ -1,5 +1,7 @@
 package com.gpm.project.web.rest;
 
+import com.gpm.project.domain.Affaire;
+import com.gpm.project.domain.enumeration.AclPermission;
 import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.service.AffaireService;
@@ -183,6 +185,17 @@ public class AffaireResource {
         log.debug("REST request to get Affaire : {}", id);
         Optional<AffaireDTO> affaireDTO = affaireService.findOne(id);
         return ResponseUtil.wrapOrNotFound(affaireDTO);
+    }
+
+    @GetMapping("/find-societe-id-by-affaire-id/{affaireId}")
+    public Long getAffaireById(@PathVariable Long affaireId) {
+        log.debug("REST request to get Affaire : {}", affaireId);
+        return affaireRepository.findById(affaireId).get().getSocieteId();
+    }
+
+    @GetMapping("/matricules-to-grant-permission")
+    public ResponseEntity<List<String>> getMatriculesToGrantPermission(@RequestParam String roleCode, @RequestParam Long societeId) {
+        return ResponseEntity.ok(affaireService.getMatriculesToGrantPermission(roleCode, societeId));
     }
 
     /**

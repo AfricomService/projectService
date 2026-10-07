@@ -224,6 +224,17 @@ public class AclUtilService {
             });
     }
 
+    /** Downgrade every entry of an object to READ only (removes all WRITE rights). */
+    public void makeReadOnlyForAll(String objectType, Long objectId) {
+        aclEntryRepository
+            .findByObjectTypeAndObjectId(objectType, objectId)
+            .forEach(e -> {
+                e.setCanRead(true);
+                e.setCanWrite(false);
+                aclEntryRepository.save(e);
+            });
+    }
+
     // ---------------------------------------------------------------------
     // internals
     // ---------------------------------------------------------------------
