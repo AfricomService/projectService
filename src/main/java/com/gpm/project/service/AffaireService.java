@@ -198,6 +198,23 @@ public class AffaireService {
         }
     }
 
+    public List<String> getMatriculesToGrantPermission(String roleCode, Long societeId) {
+        RoleContactSociete role = roleContactSocieteRepository
+            .findByCode(roleCode)
+            .orElseThrow(() -> new RuntimeException("RoleContactSociete " + roleCode + " not found"));
+
+        return userAuthSocieteRepository
+            .findAllByRoleContactSocieteIdAndSocieteId(role.getId(), societeId)
+            .stream()
+            .map(UserAuthSociete::getContactSocieteId)
+            .map(contactSocieteRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(ContactSociete::getMatricule)
+            .filter(matricule -> matricule != null && !matricule.trim().isEmpty())
+            .collect(Collectors.toList());
+    }
+
     /**
      * Update a affaire.
      *

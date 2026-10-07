@@ -157,4 +157,16 @@ public class ContactSocieteService {
 
         return contactSocietes.stream().map(contactSocieteMapper::toDto).collect(Collectors.toList());
     }
+
+    public String getMatriculeByContactSocieteId(Long contactSocieteId) {
+        return contactSocieteRepository.findById(contactSocieteId).map(ContactSociete::getMatricule).orElse(null);
+    }
+
+    public List<String> getMatriculesByContactSocieteIds(List<Long> contactSocieteIds) {
+        return contactSocieteRepository
+            .findAllById(contactSocieteIds)
+            .stream()
+            .map(ContactSociete::getMatricule)
+            .collect(Collectors.toList());
+    }
 }
