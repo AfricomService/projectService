@@ -7,6 +7,7 @@ import com.gpm.project.service.dto.ArticleImportResultDTO;
 import com.gpm.project.service.dto.SiteImportResultDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -168,6 +169,13 @@ public class ArticleResource {
         log.debug("REST request to get Article : {}", id);
         Optional<ArticleDTO> articleDTO = articleService.findOne(id);
         return ResponseUtil.wrapOrNotFound(articleDTO);
+    }
+
+    @GetMapping("/articles-price/{id}")
+    public BigDecimal getArticlePrice(@PathVariable Long id) {
+        log.debug("REST request to get Article : {}", id);
+        Optional<ArticleDTO> articleDTO = articleService.findOne(id);
+        return articleDTO.get().getPrixAchat();
     }
 
     /**

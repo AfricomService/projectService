@@ -115,8 +115,12 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Articles");
+        //        List<Article> articles = articleRepository.findAll();
+        //        log.debug("Request to get all Articles  : {}", articles);
         Page<ArticleDTO> page = articleRepository.findAll(pageable).map(articleMapper::toDto);
-        maskPriceIfNotAllowed(page.getContent());
+        //        log.debug("Request to get all Articles  Pageable: {}", articles.stream().toList());
+
+        //        maskPriceIfNotAllowed(page.getContent());
         return page;
     }
 
@@ -130,7 +134,7 @@ public class ArticleService {
     public Optional<ArticleDTO> findOne(Long id) {
         log.debug("Request to get Article : {}", id);
         Optional<ArticleDTO> result = articleRepository.findById(id).map(articleMapper::toDto);
-        result.ifPresent(dto -> maskPriceIfNotAllowed(List.of(dto)));
+        //        result.ifPresent(dto -> maskPriceIfNotAllowed(List.of(dto)));
         return result;
     }
 
@@ -221,7 +225,7 @@ public class ArticleService {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Articles");
 
-            String[] headers = {"Label", "Code", "Unité", "Code Client", "PUHT", "Granularite", "PrixAchat"};
+            String[] headers = { "Label", "Code", "Unité", "Code Client", "PUHT", "Granularite", "PrixAchat" };
 
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();
@@ -287,17 +291,16 @@ public class ArticleService {
     private boolean isBlank(String s) {
         return s == null || s.isBlank();
     }
-
     /**
      * Masque les champs de prix (prixUnitHT, prixAchat) pour les utilisateurs
      * qui n'ont pas l'autorité ROLE_CAN_SEE_PRICE.
      */
-    private void maskPriceIfNotAllowed(List<ArticleDTO> dtos) {
-        if (!SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.CAN_SEE_PRICE)) {
-            dtos.forEach(dto -> {
-                dto.setPrixUnitHT(null);
-                dto.setPrixAchat(null);
-            });
-        }
-    }
+    //    private void maskPriceIfNotAllowed(List<ArticleDTO> dtos) {
+    //        if (!SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.CAN_SEE_PRICE)) {
+    //            dtos.forEach(dto -> {
+    //                dto.setPrixUnitHT(null);
+    //                dto.setPrixAchat(null);
+    //            });
+    //        }
+    //    }
 }
