@@ -29,7 +29,6 @@ public class Zone implements Serializable {
     private String nom;
 
     @ManyToOne(optional = false)
-    @NotNull
     @JsonIgnoreProperties(value = { "zones" }, allowSetters = true)
     private Ville ville;
 

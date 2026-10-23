@@ -23,6 +23,26 @@ public class ContactSocieteDTO implements Serializable {
 
     private String statusCompteKeycloak;
 
+    private String cin;
+
+    private Long agenceId;
+
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
+
+    public Long getAgenceId() {
+        return agenceId;
+    }
+
+    public void setAgenceId(Long agenceId) {
+        this.agenceId = agenceId;
+    }
+
     public Long getId() {
         return id;
     }

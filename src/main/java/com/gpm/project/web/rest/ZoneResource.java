@@ -56,7 +56,7 @@ public class ZoneResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/zones")
-    public ResponseEntity<ZoneDTO> createZone(@Valid @RequestBody ZoneDTO zoneDTO) throws URISyntaxException {
+    public ResponseEntity<ZoneDTO> createZone(@RequestBody ZoneDTO zoneDTO) throws URISyntaxException {
         log.debug("REST request to save Zone : {}", zoneDTO);
         if (zoneDTO.getId() != null) {
             throw new BadRequestAlertException("A new zone cannot already have an ID", ENTITY_NAME, "idexists");
