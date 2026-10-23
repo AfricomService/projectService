@@ -46,4 +46,6 @@ public interface AgenceRepository extends JpaRepository<Agence, Long> {
 
     @Query("select agence.id from Agence agence where agence.societe.id = :societeId")
     List<Long> findIdsBySocieteId(@Param("societeId") Long societeId);
+
+    List<Agence> findBySocieteIdOrderByDesignationAsc(Long societeId);
 }

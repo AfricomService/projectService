@@ -6,6 +6,7 @@ import com.gpm.project.service.dto.VilleDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -150,6 +151,13 @@ public class VilleResource {
         Page<VilleDTO> page = villeService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/villes-by-zoneId")
+    public ResponseEntity<List<VilleDTO>> getAllVillesByZoneId(@RequestParam(name = "zoneId") Long zoneId) {
+        log.debug("REST request to get a page of Villes");
+        List<VilleDTO> villesList = villeService.findAllByZoneId(zoneId);
+        return ResponseEntity.ok().body(villesList);
     }
 
     /**
