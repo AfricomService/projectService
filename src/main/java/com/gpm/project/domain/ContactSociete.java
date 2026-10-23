@@ -40,6 +40,38 @@ public class ContactSociete implements Serializable {
     @Column(name = "status_compte_keycloak")
     private String statusCompteKeycloak;
 
+    @Column(name = "agence_id")
+    private Long agenceId;
+
+    public Long getAgenceId() {
+        return this.agenceId;
+    }
+
+    public ContactSociete agenceId(Long agenceId) {
+        this.setAgenceId(agenceId);
+        return this;
+    }
+
+    public void setAgenceId(Long agenceId) {
+        this.agenceId = agenceId;
+    }
+
+    @Column(name = "cin")
+    private String cin;
+
+    public String getCin() {
+        return this.cin;
+    }
+
+    public ContactSociete cin(String cin) {
+        this.setCin(cin);
+        return this;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {

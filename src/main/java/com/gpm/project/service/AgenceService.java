@@ -3,8 +3,10 @@ package com.gpm.project.service;
 import com.gpm.project.client.UserRestClient;
 import com.gpm.project.domain.Agence;
 import com.gpm.project.repository.AgenceRepository;
+import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AgenceDTO;
 import com.gpm.project.service.mapper.AgenceMapper;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -13,9 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.gpm.project.security.SecurityUtils;
-import java.time.ZonedDateTime;
 
 /**
  * Service Implementation for managing {@link Agence}.
@@ -52,6 +51,16 @@ public class AgenceService {
      * @param agenceDTO the entity to save.
      * @return the persisted entity.
      */
+
+    @Transactional(readOnly = true)
+    public List<AgenceDTO> findAgencesBySocieteId(Long societeId) {
+        log.debug("Request to get Agences by societeId : {}", societeId);
+        return agenceRepository
+            .findBySocieteIdOrderByDesignationAsc(societeId)
+            .stream()
+            .map(agenceMapper::toDto)
+            .collect(java.util.stream.Collectors.toList());
+    }
 
     public List<AgenceDTO> findAllByClientId(Long clientId) {
         return agenceMapper.toDto(agenceRepository.findByClientId(clientId));

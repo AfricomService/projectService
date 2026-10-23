@@ -11,6 +11,10 @@
       "fieldName": "nom",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "zoneId",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,

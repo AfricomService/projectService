@@ -68,6 +68,12 @@ public class AgenceResource {
             .body(result);
     }
 
+    @GetMapping("/agences/by-societe-id")
+    public ResponseEntity<List<AgenceDTO>> getAgencesBySocieteId(@RequestParam Long societeId) {
+        log.debug("REST request to get Agences by societeId : {}", societeId);
+        return ResponseEntity.ok().body(agenceService.findAgencesBySocieteId(societeId));
+    }
+
     @GetMapping("/agences/by-client-id")
     public ResponseEntity<List<AgenceDTO>> getAgencesByClientId(@RequestParam Long clientId) {
         log.debug("REST request to get Agences by clientId : {}", clientId);
