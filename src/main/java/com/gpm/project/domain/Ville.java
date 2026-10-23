@@ -30,6 +30,9 @@ public class Ville implements Serializable {
     @Column(name = "nom", nullable = false)
     private String nom;
 
+    @Column(name = "zone_id")
+    private Long zoneId;
+
     @OneToMany(mappedBy = "ville")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "ville" }, allowSetters = true)
@@ -61,6 +64,19 @@ public class Ville implements Serializable {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public Long getZoneId() {
+        return this.zoneId;
+    }
+
+    public Ville zoneId(Long zoneId) {
+        this.setZoneId(zoneId);
+        return this;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
     }
 
     public Set<Zone> getZones() {
@@ -119,6 +135,7 @@ public class Ville implements Serializable {
         return "Ville{" +
             "id=" + getId() +
             ", nom='" + getNom() + "'" +
+            ", zoneId=" + getZoneId() +
             "}";
     }
 }

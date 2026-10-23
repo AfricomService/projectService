@@ -4,7 +4,9 @@ import com.gpm.project.domain.Ville;
 import com.gpm.project.repository.VilleRepository;
 import com.gpm.project.service.dto.VilleDTO;
 import com.gpm.project.service.mapper.VilleMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -86,6 +88,12 @@ public class VilleService {
     public Page<VilleDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Villes");
         return villeRepository.findAll(pageable).map(villeMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VilleDTO> findAllByZoneId(Long zoneId) {
+        log.debug("Request to get all Villes by zoneId: {}", zoneId);
+        return villeRepository.findAllByZoneId(zoneId).stream().map(villeMapper::toDto).collect(Collectors.toList());
     }
 
     /**

@@ -15,6 +15,8 @@ public class VilleDTO implements Serializable {
     @NotNull
     private String nom;
 
+    private Long zoneId;
+
     public Long getId() {
         return id;
     }
@@ -29,6 +31,14 @@ public class VilleDTO implements Serializable {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
     }
 
     @Override
@@ -58,6 +68,7 @@ public class VilleDTO implements Serializable {
         return "VilleDTO{" +
             "id=" + getId() +
             ", nom='" + getNom() + "'" +
+            ", zoneId=" + getZoneId() +
             "}";
     }
 }
