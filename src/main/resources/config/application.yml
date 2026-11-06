@@ -250,8 +250,8 @@ jhipster:
 remote:
   gateway-url: http://169.255.70.44/api
   report-url: http://169.255.70.44/services/reportmanage/api
-  username: anas.daoud
-  password:
+  username: gpm.user1
+  password: gpm.user1
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
