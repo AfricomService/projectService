@@ -325,6 +325,20 @@ public class AffaireService {
     }
 
     /**
+     * Retourne id -> désignation pour une liste d'affaires (sans ACL : libellé seul).
+     */
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, String> findLabelsByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return java.util.Collections.emptyMap();
+        }
+        return affaireRepository
+            .findLabelsByIds(ids)
+            .stream()
+            .collect(Collectors.toMap(row -> (Long) row[0], row -> row[1] == null ? "—" : (String) row[1]));
+    }
+
+    /**
      * Retourne les ids des affaires dont la désignation, l'identifiant unique
      * ou le numéro contient le terme recherché (plafonné à 200 résultats).
      */
@@ -338,9 +352,7 @@ public class AffaireService {
     }
 
     /**
-     * Get one affaire by id.
-     *
-     * @param id the id of the entity.
+     * Get one affaire by id, with ACL permissions.
      * @return the entity.
      */
 

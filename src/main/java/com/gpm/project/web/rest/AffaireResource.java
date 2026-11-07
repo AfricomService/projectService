@@ -244,6 +244,14 @@ public class AffaireResource {
     }
 
     /**
+     * {@code GET  /affaires/labels} : id -> désignation pour une liste d'ids (sans ACL).
+     */
+    @GetMapping("/affaires/labels")
+    public ResponseEntity<java.util.Map<Long, String>> getAffaireLabels(@RequestParam List<Long> ids) {
+        return ResponseEntity.ok().body(affaireService.findLabelsByIds(ids));
+    }
+
+    /**
      * {@code DELETE  /affaires/:id} : delete the "id" affaire.
      *
      * @param id the id of the affaireDTO to delete.
