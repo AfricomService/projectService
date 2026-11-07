@@ -76,4 +76,7 @@ public interface AffaireRepository extends JpaRepository<Affaire, Long> {
         "   or str(a.numAffaire) like concat('%', :search, '%')"
     )
     List<Long> findIdsBySearch(@Param("search") String search, Pageable pageable);
+
+    @Query("select a.id, a.designationAffaire from Affaire a where a.id in :ids")
+    List<Object[]> findLabelsByIds(@Param("ids") List<Long> ids);
 }
