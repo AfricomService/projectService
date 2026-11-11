@@ -9,6 +9,7 @@ import com.gpm.project.security.AuthoritiesConstants; // << ACL
 import com.gpm.project.security.SecurityUtils;
 import com.gpm.project.service.dto.AffaireDTO;
 import com.gpm.project.service.mapper.AffaireMapper;
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException; // << ACL
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * Service Implementation for managing {@link Affaire}.
@@ -158,9 +160,31 @@ public class AffaireService {
         affaireDTO.setUpdatedBy(currentLogin);
         affaireDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
         affaireDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
-        affaireDTO.setIdentifiantUnique(numsequentielleService.genererIdentifiantAffaire("AFFAIRE"));
+        String identifiantSaisi = affaireDTO.getIdentifiantUnique() == null ? "" : affaireDTO.getIdentifiantUnique().trim();
+        if (identifiantSaisi.isEmpty()) {
+            // Ancienne logique : génération automatique
+            affaireDTO.setIdentifiantUnique(numsequentielleService.genererIdentifiantAffaire("AFFAIRE"));
+        } else {
+            // Valeur saisie : on la garde telle quelle, l'unicité est garantie par la contrainte DB
+            affaireDTO.setIdentifiantUnique(identifiantSaisi);
+        }
 
-        Affaire affaire = affaireRepository.save(affaireMapper.toEntity(affaireDTO));
+        Affaire affaire;
+        try {
+            // saveAndFlush (et non save) : force l'INSERT immédiatement pour que la violation
+            // de contrainte soit levée ici et pas plus tard au commit de la transaction.
+            affaire = affaireRepository.saveAndFlush(affaireMapper.toEntity(affaireDTO));
+        } catch (DataIntegrityViolationException e) {
+            String cause = e.getMostSpecificCause().getMessage();
+            if (cause != null && cause.contains("ux_affaire_identifiant_unique")) {
+                throw new BadRequestAlertException(
+                    "Cet identifiant unique est déjà utilisé : " + identifiantSaisi,
+                    "projectServiceAffaire",
+                    "identifiantuniqueexists"
+                );
+            }
+            throw e;
+        }
         Long affaireId = affaire.getId();
         Long societeId = affaire.getSocieteId();
 
