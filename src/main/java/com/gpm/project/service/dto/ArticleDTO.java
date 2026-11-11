@@ -9,7 +9,6 @@ import javax.validation.constraints.*;
 /**
  * A DTO for the {@link com.gpm.project.domain.Article} entity.
  */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ArticleDTO implements Serializable {
 
     private Long id;
@@ -42,6 +41,12 @@ public class ArticleDTO implements Serializable {
     private BigDecimal prixAchat;
 
     private String granularite;
+
+    private String itemCode;
+
+    private String familleArticle;
+
+    private String codeGroupe;
 
     public Long getId() {
         return id;
@@ -155,6 +160,30 @@ public class ArticleDTO implements Serializable {
         this.granularite = granularite;
     }
 
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
+    public String getFamilleArticle() {
+        return familleArticle;
+    }
+
+    public void setFamilleArticle(String familleArticle) {
+        this.familleArticle = familleArticle;
+    }
+
+    public String getCodeGroupe() {
+        return codeGroupe;
+    }
+
+    public void setCodeGroupe(String codeGroupe) {
+        this.codeGroupe = codeGroupe;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -194,6 +223,9 @@ public class ArticleDTO implements Serializable {
             ", prixUnitHT=" + getPrixUnitHT() +
             ", prixAchat=" + getPrixAchat() +
             ", granularite='" + getGranularite() + "'" +
+            ", itemCode='" + getItemCode() + "'" +
+            ", familleArticle='" + getFamilleArticle() + "'" +
+            ", codeGroupe='" + getCodeGroupe() + "'" +
             "}";
     }
 }
