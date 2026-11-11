@@ -177,10 +177,13 @@ public class ArticleService {
                     BigDecimal prixUnitHT = getCellBigDecimal(row, 4, formatter);
                     String granularite = getCellString(row, 5, formatter);
                     BigDecimal prixAchat = getCellBigDecimal(row, 6, formatter);
+                    String itemCode = getCellString(row, 7, formatter);
+                    String familleArticle = getCellString(row, 8, formatter);
+                    String codeGroupe = getCellString(row, 9, formatter);
 
                     // Required fields
                     if (isBlank(designation) || isBlank(code) || isBlank(uniteMesure)) {
-                        errors.add("Ligne " + excelLine + " : champs obligatoires manquants (Label, Code, Unité)");
+                        errors.add("Ligne " + excelLine + " : champs obligatoires manquants (Label, Code Africom services, UNIT)");
                         continue;
                     }
 
@@ -198,6 +201,9 @@ public class ArticleService {
                     article.setPrixUnitHT(prixUnitHT);
                     article.setGranularite(granularite);
                     article.setPrixAchat(prixAchat);
+                    article.setItemCode(itemCode);
+                    article.setFamilleArticle(familleArticle);
+                    article.setCodeGroupe(codeGroupe);
 
                     article.setCreatedAt(ZonedDateTime.now());
 
@@ -225,7 +231,18 @@ public class ArticleService {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Articles");
 
-            String[] headers = { "Label", "Code", "Unité", "Code Client", "PUHT", "Granularite", "PrixAchat" };
+            String[] headers = {
+                "Label",
+                "Code Africom services",
+                "UNIT",
+                "CODE CLIENT",
+                "UNIT PRICE",
+                "Granularite",
+                "Prix Achat",
+                "ITEM CODE",
+                "FAMILLE ARTICLE",
+                "Code Groupé",
+            };
 
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();

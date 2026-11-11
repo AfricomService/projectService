@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "article")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Article implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,6 +65,15 @@ public class Article implements Serializable {
 
     @Column(name = "granularite")
     private String granularite;
+
+    @Column(name = "item_code")
+    private String itemCode;
+
+    @Column(name = "famille_article")
+    private String familleArticle;
+
+    @Column(name = "code_groupe")
+    private String codeGroupe;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -251,6 +259,45 @@ public class Article implements Serializable {
         this.granularite = granularite;
     }
 
+    public String getItemCode() {
+        return this.itemCode;
+    }
+
+    public Article itemCode(String itemCode) {
+        this.setItemCode(itemCode);
+        return this;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
+    public String getFamilleArticle() {
+        return this.familleArticle;
+    }
+
+    public Article familleArticle(String familleArticle) {
+        this.setFamilleArticle(familleArticle);
+        return this;
+    }
+
+    public void setFamilleArticle(String familleArticle) {
+        this.familleArticle = familleArticle;
+    }
+
+    public String getCodeGroupe() {
+        return this.codeGroupe;
+    }
+
+    public Article codeGroupe(String codeGroupe) {
+        this.setCodeGroupe(codeGroupe);
+        return this;
+    }
+
+    public void setCodeGroupe(String codeGroupe) {
+        this.codeGroupe = codeGroupe;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -288,6 +335,9 @@ public class Article implements Serializable {
             ", prixUnitHT=" + getPrixUnitHT() +
             ", prixAchat=" + getPrixAchat() +
             ", granularite='" + getGranularite() + "'" +
+            ", itemCode='" + getItemCode() + "'" +
+            ", familleArticle='" + getFamilleArticle() + "'" +
+            ", codeGroupe='" + getCodeGroupe() + "'" +
             "}";
     }
 }

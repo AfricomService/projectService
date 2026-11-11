@@ -61,6 +61,18 @@
     {
       "fieldName": "granularite",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "itemCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "familleArticle",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "codeGroupe",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,
