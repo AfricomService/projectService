@@ -99,7 +99,7 @@ public class Affaire implements Serializable {
     @Column(name = "societe_id")
     private Long societeId;
 
-    @Column(name = "identifiant_unique")
+    @Column(name = "identifiant_unique", unique = true)
     private String identifiantUnique;
 
     @Column(name = "client_commande")
