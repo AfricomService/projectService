@@ -17,13 +17,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException; // << ACL
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * Service Implementation for managing {@link Affaire}.
@@ -386,7 +386,7 @@ public class AffaireService {
         return dto;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public Optional<AffaireDTO> findOne(Long id) {
         log.debug("Request to get Affaire : {}", id);
 
