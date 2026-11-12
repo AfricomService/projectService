@@ -43,6 +43,8 @@ public class ClientDTO implements Serializable {
 
     private Integer nextContactNumber;
 
+    private String matriculeFiscale;
+
     public Long getId() {
         return id;
     }
@@ -163,6 +165,14 @@ public class ClientDTO implements Serializable {
         this.nextContactNumber = nextContactNumber;
     }
 
+    public String getMatriculeFiscale() {
+        return matriculeFiscale;
+    }
+
+    public void setMatriculeFiscale(String matriculeFiscale) {
+        this.matriculeFiscale = matriculeFiscale;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -203,6 +213,7 @@ public class ClientDTO implements Serializable {
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", status='" + getStatus() + "'" +
             ", nextContactNumber=" + getNextContactNumber() +
+            ", matriculeFiscale='" + getMatriculeFiscale() + "'" +
             "}";
     }
 }

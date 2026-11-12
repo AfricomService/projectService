@@ -13,12 +13,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.gpm.project.service.dto.SiteLieuDTO;
 import java.util.stream.Collectors;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,8 @@ public class SiteService {
     private final ClientRepository clientRepository;
 
     private final UserRestClient userRestClient;
+
+    private static final int MAX_LIEU_PAGE_SIZE = 100;
 
     public SiteService(
         SiteRepository siteRepository,
@@ -218,6 +222,18 @@ public class SiteService {
     public Page<SiteListDTO> searchSiteListByClientId(Long clientId, String designation, Pageable pageable) {
         log.debug("Request to search light Site list by clientId : {} and designation : {}", clientId, designation);
         return siteRepository.searchListByClientId(clientId, designation, pageable);
+    }
+
+    /**
+     * Liste « Lieu » : sites d'un client, recherche par code ou désignation, paginée.
+     */
+    @Transactional(readOnly = true)
+    public Page<SiteLieuDTO> searchLieuxByClientId(Long clientId, String search, Pageable pageable) {
+        log.debug("Request to search Lieux by clientId : {} and search : {}", clientId, search);
+        String term = search == null ? "" : search.trim();
+        // Plafond de taille de page imposé côté serveur ; le tri vient de la requête (order by code)
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), MAX_LIEU_PAGE_SIZE));
+        return siteRepository.searchLieuxByClientId(clientId, term, safePageable);
     }
 
     /**

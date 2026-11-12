@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import com.gpm.project.service.dto.SiteLieuDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -242,6 +243,22 @@ public class SiteResource {
     ) {
         log.debug("REST request to search light Site list by clientId : {} and designation : {}", clientId, designation);
         Page<SiteListDTO> page = siteService.searchSiteListByClientId(clientId, designation, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /sites/client/:clientId/lieux} : sites d'un client pour la liste « Lieu »,
+     * recherche par code ou désignation (paramètre {@code search}), paginée.
+     */
+    @GetMapping("/sites/client/{clientId}/lieux")
+    public ResponseEntity<List<SiteLieuDTO>> searchLieuxByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String search,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to search Lieux by clientId : {} and search : {}", clientId, search);
+        Page<SiteLieuDTO> page = siteService.searchLieuxByClientId(clientId, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
