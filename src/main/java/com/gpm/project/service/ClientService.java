@@ -92,7 +92,7 @@ public class ClientService {
         clientDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
 
         if (clientDTO.getStatus() == null || clientDTO.getStatus().isBlank()) {
-            clientDTO.setStatus("DRAFT");
+            clientDTO.setStatus("ACTIF");
         }
 
         // Initialisation du compteur de contacts (premier contact du client démarrera à 001)

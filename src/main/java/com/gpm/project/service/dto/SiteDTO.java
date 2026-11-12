@@ -15,7 +15,6 @@ public class SiteDTO implements Serializable {
     @NotNull
     private String code;
 
-    @NotNull
     private String designation;
 
     private Float gpsX;

@@ -65,6 +65,10 @@
     {
       "fieldName": "nextContactNumber",
       "fieldType": "Integer"
+    },
+    {
+      "fieldName": "matriculeFiscale",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,
