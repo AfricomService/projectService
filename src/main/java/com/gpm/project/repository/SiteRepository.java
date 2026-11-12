@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.gpm.project.service.dto.SiteListDTO;
 
 /**
  * Spring Data JPA repository for the Site entity.
@@ -42,5 +43,29 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
 
     Page<Site> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation, Pageable pageable);
 
-    Optional<Site> findByCode(String code);
+    @Query(
+        value = "select new com.gpm.project.service.dto.SiteListDTO(s.id, s.code, s.designation) " +
+            "from Site s where s.client.id = :clientId",
+        countQuery = "select count(s) from Site s where s.client.id = :clientId"
+    )
+    Page<SiteListDTO> findListByClientId(@Param("clientId") Long clientId, Pageable pageable);
+
+    @Query(
+        value = "select new com.gpm.project.service.dto.SiteListDTO(s.id, s.code, s.designation) " +
+            "from Site s where s.client.id = :clientId " +
+            "and lower(s.designation) like lower(concat('%', :designation, '%'))",
+        countQuery = "select count(s) from Site s where s.client.id = :clientId " +
+            "and lower(s.designation) like lower(concat('%', :designation, '%'))"
+    )
+    Page<SiteListDTO> searchListByClientId(
+        @Param("clientId") Long clientId,
+        @Param("designation") String designation,
+        Pageable pageable
+    );
+
+    boolean existsByClientIdAndCode(Long clientId, String code);
+
+    Optional<Site> findFirstByClientIdAndCode(Long clientId, String code);
+
+    boolean existsByClientIdAndCodeAndIdNot(Long clientId, String code, Long id);
 }

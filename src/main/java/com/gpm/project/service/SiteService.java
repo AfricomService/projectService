@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.gpm.project.service.dto.SiteListDTO;
 import com.gpm.project.client.UserRestClient;
 import com.gpm.project.security.SecurityUtils;
 import java.time.ZonedDateTime;
@@ -40,6 +40,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class SiteService {
 
     private final Logger log = LoggerFactory.getLogger(SiteService.class);
+
+    private static final String ENTITY_NAME = "projectServiceSite";
 
     private final SiteRepository siteRepository;
 
@@ -66,6 +68,22 @@ public class SiteService {
     }
 
     /**
+     * Vérifie si un site avec ce code existe déjà pour ce client.
+     *
+     * @param excludeSiteId id du site à exclure (cas de la modification), ou null.
+     */
+    @Transactional(readOnly = true)
+    public boolean codeExistsForClient(Long clientId, String code, Long excludeSiteId) {
+        if (clientId == null || code == null) {
+            return false;
+        }
+        String trimmed = code.trim();
+        return excludeSiteId == null
+            ? siteRepository.existsByClientIdAndCode(clientId, trimmed)
+            : siteRepository.existsByClientIdAndCodeAndIdNot(clientId, trimmed, excludeSiteId);
+    }
+
+    /**
      * Save a site.
      *
      * @param siteDTO the entity to save.
@@ -73,6 +91,12 @@ public class SiteService {
      */
     public SiteDTO save(SiteDTO siteDTO) {
         log.debug("Request to save Site : {}", siteDTO);
+
+        siteDTO.setCode(siteDTO.getCode().trim());
+        Long clientId = siteDTO.getClient() != null ? siteDTO.getClient().getId() : null;
+        if (codeExistsForClient(clientId, siteDTO.getCode(), null)) {
+            throw new BadRequestAlertException("Ce site existe déjà pour ce client", ENTITY_NAME, "codeexists");
+        }
 
         siteDTO.setCreatedAt(ZonedDateTime.now());
         siteDTO.setUpdatedAt(ZonedDateTime.now());
@@ -94,6 +118,12 @@ public class SiteService {
      */
     public SiteDTO update(SiteDTO siteDTO) {
         log.debug("Request to update Site : {}", siteDTO);
+
+        siteDTO.setCode(siteDTO.getCode().trim());
+        Long clientId = siteDTO.getClient() != null ? siteDTO.getClient().getId() : null;
+        if (codeExistsForClient(clientId, siteDTO.getCode(), siteDTO.getId())) {
+            throw new BadRequestAlertException("Ce site existe déjà pour ce client", ENTITY_NAME, "codeexists");
+        }
 
         siteDTO.setUpdatedAt(ZonedDateTime.now());
         siteDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
@@ -173,6 +203,24 @@ public class SiteService {
     }
 
     /**
+     * Liste légère (id, code, désignation) des sites d'un client, paginée.
+     */
+    @Transactional(readOnly = true)
+    public Page<SiteListDTO> findSiteListByClientId(Long clientId, Pageable pageable) {
+        log.debug("Request to get light Site list by clientId : {}", clientId);
+        return siteRepository.findListByClientId(clientId, pageable);
+    }
+
+    /**
+     * Recherche légère (id, code, désignation) des sites d'un client par désignation, paginée.
+     */
+    @Transactional(readOnly = true)
+    public Page<SiteListDTO> searchSiteListByClientId(Long clientId, String designation, Pageable pageable) {
+        log.debug("Request to search light Site list by clientId : {} and designation : {}", clientId, designation);
+        return siteRepository.searchListByClientId(clientId, designation, pageable);
+    }
+
+    /**
      * Get one site by id.
      *
      * @param id the id of the entity.
@@ -213,6 +261,8 @@ public class SiteService {
         List<String> errors = new ArrayList<>();
         int successCount = 0;
         DataFormatter formatter = new DataFormatter();
+        String currentLogin = SecurityUtils.getCurrentUserLogin().orElse(null);
+        String currentUserId = userRestClient.getCurrentUserId();
 
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -246,25 +296,26 @@ public class SiteService {
                     String regionSite = getCellString(row, 8, formatter);
                     String zoneNom = getCellString(row, 9, formatter);
 
-                    if (isBlank(code) || isBlank(designation) || isBlank(villeNom)) {
-                        errors.add("Ligne " + excelLine + " : champs obligatoires manquants (code, désignation, gouvernorat)");
+                    if (isBlank(code)) {
+                        errors.add("Ligne " + excelLine + " : champ obligatoire manquant (code)");
                         continue;
                     }
 
-                    if (siteRepository.findByCode(code.trim()).isPresent()) {
-                        errors.add("Ligne " + excelLine + " : le code '" + code + "' existe déjà");
-                        continue;
+                    Optional<Site> existingSite = siteRepository.findFirstByClientIdAndCode(clientId, code.trim());
+
+                    Ville ville = null;
+                    if (!isBlank(villeNom)) {
+                        ville = villeRepository.findByNomIgnoreCase(villeNom.trim()).orElse(null);
+                        if (ville == null) {
+                            errors.add("Ligne " + excelLine + " : gouvernorat introuvable '" + villeNom + "'");
+                            continue;
+                        }
                     }
 
-                    Ville ville = villeRepository.findByNomIgnoreCase(villeNom.trim()).orElse(null);
-                    if (ville == null) {
-                        errors.add("Ligne " + excelLine + " : gouvernorat introuvable '" + villeNom + "'");
-                        continue;
-                    }
-
-                    Site site = new Site();
+                    boolean isUpdate = existingSite.isPresent();
+                    Site site = existingSite.orElseGet(Site::new);
                     site.setCode(code.trim());
-                    site.setDesignation(designation.trim());
+                    site.setDesignation(designation != null ? designation.trim() : null);
                     site.setGpsX(longitude);
                     site.setGpsY(latitude);
                     site.setNodaleGpm(nodaleGpm);
@@ -274,6 +325,16 @@ public class SiteService {
                     site.setVille(ville);
                     site.setZoneNom(zoneNom != null ? zoneNom.trim() : null);
                     site.setClient(client);
+
+                    ZonedDateTime now = ZonedDateTime.now();
+                    site.setUpdatedAt(now);
+                    site.setUpdatedBy(currentLogin);
+                    site.setUpdatedByUserLogin(currentUserId);
+                    if (!isUpdate) {
+                        site.setCreatedAt(now);
+                        site.setCreatedBy(currentLogin);
+                        site.setCreatedByUserLogin(currentUserId);
+                    }
 
                     siteRepository.save(site);
                     successCount++;
