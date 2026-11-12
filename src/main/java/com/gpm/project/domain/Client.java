@@ -27,7 +27,7 @@ public class Client implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "raison_sociale", nullable = false, unique = true)
+    @Column(name = "raison_sociale", nullable = false)
     private String raisonSociale;
 
     @NotNull
@@ -70,6 +70,9 @@ public class Client implements Serializable {
 
     @Column(name = "next_contact_number")
     private Integer nextContactNumber;
+
+    @Column(name = "matricule_fiscale")
+    private String matriculeFiscale;
 
     @OneToMany(mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -278,6 +281,19 @@ public class Client implements Serializable {
         this.nextContactNumber = nextContactNumber;
     }
 
+    public String getMatriculeFiscale() {
+        return this.matriculeFiscale;
+    }
+
+    public Client matriculeFiscale(String matriculeFiscale) {
+        this.setMatriculeFiscale(matriculeFiscale);
+        return this;
+    }
+
+    public void setMatriculeFiscale(String matriculeFiscale) {
+        this.matriculeFiscale = matriculeFiscale;
+    }
+
     public Set<Contact> getContacts() {
         return this.contacts;
     }
@@ -378,6 +394,7 @@ public class Client implements Serializable {
             ", updatedByUserLogin='" + getUpdatedByUserLogin() + "'" +
             ", status='" + getStatus() + "'" +
             ", nextContactNumber=" + getNextContactNumber() +
+            ", matriculeFiscale='" + getMatriculeFiscale() + "'" +
             "}";
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import com.gpm.project.service.dto.SiteLieuDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import com.gpm.project.service.dto.SiteListDTO;
 
 /**
  * REST controller for managing {@link com.gpm.project.domain.Site}.
@@ -212,6 +214,51 @@ public class SiteResource {
     ) {
         log.debug("REST request to search Sites by clientId : {} and designation : {}", clientId, designation);
         Page<SiteDTO> page = siteService.searchSitesByClientId(clientId, designation, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /sites/client/:clientId/list} : liste légère (id, code, désignation) des sites d'un client, paginée.
+     */
+    @GetMapping("/sites/client/{clientId}/list")
+    public ResponseEntity<List<SiteListDTO>> findSiteListByClientId(
+        @PathVariable Long clientId,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to get light Site list by clientId : {}", clientId);
+        Page<SiteListDTO> page = siteService.findSiteListByClientId(clientId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /sites/client/:clientId/list/search} : recherche légère par désignation, paginée.
+     */
+    @GetMapping("/sites/client/{clientId}/list/search")
+    public ResponseEntity<List<SiteListDTO>> searchSiteListByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String designation,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to search light Site list by clientId : {} and designation : {}", clientId, designation);
+        Page<SiteListDTO> page = siteService.searchSiteListByClientId(clientId, designation, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /sites/client/:clientId/lieux} : sites d'un client pour la liste « Lieu »,
+     * recherche par code ou désignation (paramètre {@code search}), paginée.
+     */
+    @GetMapping("/sites/client/{clientId}/lieux")
+    public ResponseEntity<List<SiteLieuDTO>> searchLieuxByClientId(
+        @PathVariable Long clientId,
+        @RequestParam(required = false, defaultValue = "") String search,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
+        log.debug("REST request to search Lieux by clientId : {} and search : {}", clientId, search);
+        Page<SiteLieuDTO> page = siteService.searchLieuxByClientId(clientId, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

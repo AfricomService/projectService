@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.gpm.project.service.dto.SiteListDTO;
+import com.gpm.project.service.dto.SiteLieuDTO;
 
 /**
  * Spring Data JPA repository for the Site entity.
@@ -42,5 +44,46 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
 
     Page<Site> findByClientIdAndDesignationContainingIgnoreCase(Long clientId, String designation, Pageable pageable);
 
-    Optional<Site> findByCode(String code);
+    @Query(
+        value = "select new com.gpm.project.service.dto.SiteListDTO(s.id, s.code, s.designation) " +
+            "from Site s where s.client.id = :clientId",
+        countQuery = "select count(s) from Site s where s.client.id = :clientId"
+    )
+    Page<SiteListDTO> findListByClientId(@Param("clientId") Long clientId, Pageable pageable);
+
+    @Query(
+        value = "select new com.gpm.project.service.dto.SiteListDTO(s.id, s.code, s.designation) " +
+            "from Site s where s.client.id = :clientId " +
+            "and lower(s.designation) like lower(concat('%', :designation, '%'))",
+        countQuery = "select count(s) from Site s where s.client.id = :clientId " +
+            "and lower(s.designation) like lower(concat('%', :designation, '%'))"
+    )
+    Page<SiteListDTO> searchListByClientId(
+        @Param("clientId") Long clientId,
+        @Param("designation") String designation,
+        Pageable pageable
+    );
+
+    @Query(
+        value = "select new com.gpm.project.service.dto.SiteLieuDTO(s.id, s.code, s.designation, v.id, v.nom, s.zoneId, s.zoneNom, s.gpsX, s.gpsY, s.nodaleGpm) " +
+            "from Site s left join s.ville v where s.client.id = :clientId " +
+            "and (lower(s.code) like lower(concat('%', :search, '%')) " +
+            "or lower(coalesce(s.designation, '')) like lower(concat('%', :search, '%'))) " +
+            "order by s.code asc",
+        countQuery = "select count(s) from Site s where s.client.id = :clientId " +
+            "and (lower(s.code) like lower(concat('%', :search, '%')) " +
+            "or lower(coalesce(s.designation, '')) like lower(concat('%', :search, '%')))"
+    )
+    Page<SiteLieuDTO> searchLieuxByClientId(
+        @Param("clientId") Long clientId,
+        @Param("search") String search,
+        Pageable pageable
+    );
+
+    boolean existsByClientIdAndCode(Long clientId, String code);
+
+    Optional<Site> findFirstByClientIdAndCode(Long clientId, String code);
+
+    boolean existsByClientIdAndCodeAndIdNot(Long clientId, String code, Long id);
+
 }

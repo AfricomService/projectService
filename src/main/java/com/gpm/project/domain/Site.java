@@ -25,11 +25,10 @@ public class Site implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "code", nullable = false)
     private String code;
 
-    @NotNull
-    @Column(name = "designation", nullable = false)
+    @Column(name = "designation")
     private String designation;
 
     @Column(name = "gps_x")
@@ -74,8 +73,7 @@ public class Site implements Serializable {
     @Column(name = "zone_nom")
     private String zoneNom;
 
-    @ManyToOne(optional = false)
-    @NotNull
+    @ManyToOne
     @JsonIgnoreProperties(value = { "zones" }, allowSetters = true)
     private Ville ville;
 
