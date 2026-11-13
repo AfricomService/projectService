@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-    Optional<Article> findByCode(String code);
 
     // Gets articles by affaireId. The :searchTerm filters by designation (you can expand this to code, etc.)
     @Query(

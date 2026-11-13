@@ -8,7 +8,10 @@ import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.repository.ArticleRepository;
 import com.gpm.project.service.dto.AffaireArticleDTO;
 import com.gpm.project.service.mapper.AffaireArticleMapper;
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
@@ -63,13 +66,22 @@ public class AffaireArticleService {
             .findById(affaireId)
             .orElseThrow(() -> new EntityNotFoundException("Affaire not found with ID: " + affaireId));
 
-        // 3. Create new relations
+        // 3. Create new relations (le code doit rester unique dans l'affaire)
+        Set<String> seenCodes = new HashSet<>();
         List<AffaireArticle> newRelations = articleIds
             .stream()
             .map(articleId -> {
                 Article article = articleRepository
                     .findById(articleId)
                     .orElseThrow(() -> new EntityNotFoundException("Article not found with ID: " + articleId));
+
+                if (!seenCodes.add(article.getCode())) {
+                    throw new BadRequestAlertException(
+                        "Deux articles avec le même code '" + article.getCode() + "' ne peuvent pas être dans la même affaire",
+                        "projectServiceAffaireArticle",
+                        "codeexists"
+                    );
+                }
 
                 AffaireArticle affaireArticle = new AffaireArticle();
                 affaireArticle.setAffaire(affaire);
@@ -93,6 +105,18 @@ public class AffaireArticleService {
     public AffaireArticleDTO save(AffaireArticleDTO affaireArticleDTO) {
         log.debug("Request to save AffaireArticle : {}", affaireArticleDTO);
         AffaireArticle affaireArticle = affaireArticleMapper.toEntity(affaireArticleDTO);
+
+        Article articleToLink = articleRepository
+            .findById(affaireArticle.getArticle().getId())
+            .orElseThrow(() -> new EntityNotFoundException("Article not found"));
+        if (affaireArticleRepository.existsByAffaireIdAndArticleCode(affaireArticle.getAffaire().getId(), articleToLink.getCode())) {
+            throw new BadRequestAlertException(
+                "Un article avec le code '" + articleToLink.getCode() + "' existe déjà dans cette affaire",
+                "projectServiceAffaireArticle",
+                "codeexists"
+            );
+        }
+
         affaireArticle = affaireArticleRepository.save(affaireArticle);
         return affaireArticleMapper.toDto(affaireArticle);
     }
