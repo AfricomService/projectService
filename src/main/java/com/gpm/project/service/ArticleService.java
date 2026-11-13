@@ -14,6 +14,7 @@ import com.gpm.project.service.dto.AffaireArticleDTO;
 import com.gpm.project.service.dto.ArticleDTO;
 import com.gpm.project.service.dto.ArticleImportResultDTO;
 import com.gpm.project.service.mapper.ArticleMapper;
+import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -81,6 +82,7 @@ public class ArticleService {
      */
     public ArticleDTO update(ArticleDTO articleDTO) {
         log.debug("Request to update Article : {}", articleDTO);
+        assertCodeUniqueInLinkedAffaires(articleDTO.getId(), articleDTO.getCode());
         Article article = articleMapper.toEntity(articleDTO);
         article = articleRepository.save(article);
         return articleMapper.toDto(article);
@@ -99,11 +101,22 @@ public class ArticleService {
             .findById(articleDTO.getId())
             .map(existingArticle -> {
                 articleMapper.partialUpdate(existingArticle, articleDTO);
+                assertCodeUniqueInLinkedAffaires(existingArticle.getId(), existingArticle.getCode());
 
                 return existingArticle;
             })
             .map(articleRepository::save)
             .map(articleMapper::toDto);
+    }
+
+    private void assertCodeUniqueInLinkedAffaires(Long articleId, String code) {
+        if (articleId != null && code != null && affaireArticleRepository.existsCodeConflictForArticle(articleId, code)) {
+            throw new BadRequestAlertException(
+                "Ce code existe déjà sur un autre article d'une affaire liée",
+                "projectServiceArticle",
+                "codeexists"
+            );
+        }
     }
 
     /**
@@ -187,9 +200,9 @@ public class ArticleService {
                         continue;
                     }
 
-                    // Duplicate code
-                    if (articleRepository.findByCode(code.trim()).isPresent()) {
-                        errors.add("Ligne " + excelLine + " : le code '" + code + "' existe déjà");
+                    // Duplicate code dans la même affaire (même code autorisé dans une autre affaire)
+                    if (affaireArticleRepository.existsByAffaireIdAndArticleCode(affaireId, code.trim())) {
+                        errors.add("Ligne " + excelLine + " : le code '" + code.trim() + "' existe déjà dans cette affaire");
                         continue;
                     }
 
