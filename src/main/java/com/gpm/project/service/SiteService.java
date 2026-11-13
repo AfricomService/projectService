@@ -72,6 +72,31 @@ public class SiteService {
     }
 
     /**
+     * Renseigne les champs d'audit à la création (created* et updated*).
+     */
+    private void fillCreationAudit(Site site) {
+        ZonedDateTime now = ZonedDateTime.now();
+        String login = SecurityUtils.getCurrentUserLogin().orElse("SYSTEM");
+        String userId = userRestClient.getCurrentUserId();
+
+        site.setCreatedAt(now);
+        site.setCreatedBy(login);
+        site.setCreatedByUserLogin(userId);
+        site.setUpdatedAt(now);
+        site.setUpdatedBy(login);
+        site.setUpdatedByUserLogin(userId);
+    }
+
+    /**
+     * Renseigne les champs d'audit à la modification (updated* uniquement).
+     */
+    private void fillUpdateAudit(Site site) {
+        site.setUpdatedAt(ZonedDateTime.now());
+        site.setUpdatedBy(SecurityUtils.getCurrentUserLogin().orElse("SYSTEM"));
+        site.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+    }
+
+    /**
      * Vérifie si un site avec ce code existe déjà pour ce client.
      *
      * @param excludeSiteId id du site à exclure (cas de la modification), ou null.
@@ -102,14 +127,8 @@ public class SiteService {
             throw new BadRequestAlertException("Ce site existe déjà pour ce client", ENTITY_NAME, "codeexists");
         }
 
-        siteDTO.setCreatedAt(ZonedDateTime.now());
-        siteDTO.setUpdatedAt(ZonedDateTime.now());
-        siteDTO.setCreatedBy(SecurityUtils.getCurrentUserLogin().get());
-        siteDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
-        siteDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
-        siteDTO.setCreatedByUserLogin(userRestClient.getCurrentUserId());
-
         Site site = siteMapper.toEntity(siteDTO);
+        fillCreationAudit(site);
         site = siteRepository.save(site);
         return siteMapper.toDto(site);
     }
@@ -129,11 +148,20 @@ public class SiteService {
             throw new BadRequestAlertException("Ce site existe déjà pour ce client", ENTITY_NAME, "codeexists");
         }
 
-        siteDTO.setUpdatedAt(ZonedDateTime.now());
-        siteDTO.setUpdatedBy(SecurityUtils.getCurrentUserLogin().get());
-        siteDTO.setUpdatedByUserLogin(userRestClient.getCurrentUserId());
+        Site existing = siteRepository
+            .findById(siteDTO.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+        ZonedDateTime createdAt = existing.getCreatedAt();
+        String createdBy = existing.getCreatedBy();
+        String createdByUserLogin = existing.getCreatedByUserLogin();
 
         Site site = siteMapper.toEntity(siteDTO);
+        // Les champs de création ne doivent jamais être modifiés (ni par le client, ni écrasés par null)
+        site.setCreatedAt(createdAt);
+        site.setCreatedBy(createdBy);
+        site.setCreatedByUserLogin(createdByUserLogin);
+        fillUpdateAudit(site);
+
         site = siteRepository.save(site);
         return siteMapper.toDto(site);
     }
@@ -150,7 +178,17 @@ public class SiteService {
         return siteRepository
             .findById(siteDTO.getId())
             .map(existingSite -> {
+                ZonedDateTime createdAt = existingSite.getCreatedAt();
+                String createdBy = existingSite.getCreatedBy();
+                String createdByUserLogin = existingSite.getCreatedByUserLogin();
+
                 siteMapper.partialUpdate(existingSite, siteDTO);
+
+                // Protège les champs de création contre une valeur envoyée par le client
+                existingSite.setCreatedAt(createdAt);
+                existingSite.setCreatedBy(createdBy);
+                existingSite.setCreatedByUserLogin(createdByUserLogin);
+                fillUpdateAudit(existingSite);
 
                 return existingSite;
             })
