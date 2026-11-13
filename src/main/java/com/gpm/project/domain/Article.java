@@ -25,7 +25,7 @@ public class Article implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "code", nullable = false)
     private String code;
 
     @NotNull

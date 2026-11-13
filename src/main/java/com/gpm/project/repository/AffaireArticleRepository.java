@@ -49,4 +49,15 @@ public interface AffaireArticleRepository extends JpaRepository<AffaireArticle, 
 
     // Deletes all relations for a given affaire (used for the replace method)
     void deleteByAffaireId(Long affaireId);
+
+    // Un article avec ce code est-il déjà rattaché à cette affaire ?
+    boolean existsByAffaireIdAndArticleCode(Long affaireId, String code);
+
+    // Changer le code de l'article X crée-t-il un doublon dans une des affaires où X est déjà rattaché ?
+    @Query(
+        "SELECT COUNT(aa) > 0 FROM AffaireArticle aa " +
+            "WHERE aa.article.code = :code AND aa.article.id <> :articleId " +
+            "AND aa.affaire.id IN (SELECT x.affaire.id FROM AffaireArticle x WHERE x.article.id = :articleId)"
+    )
+    boolean existsCodeConflictForArticle(@Param("articleId") Long articleId, @Param("code") String code);
 }
