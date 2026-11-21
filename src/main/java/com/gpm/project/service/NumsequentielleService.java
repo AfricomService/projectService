@@ -172,6 +172,17 @@ public class NumsequentielleService {
     }
 
     /**
+     * Génère et incrémente l'identifiant unique Note de frais.
+     * Format par défaut : NF-0001-26
+     *
+     * @return l'identifiant généré.
+     */
+    public String genererIdentifiantNoteFrais() {
+        log.debug("Request to generate identifiant for NoteFrais");
+        return genererIdentifiant("NOTE_FRAIS");
+    }
+
+    /**
      * Génère et incrémente un identifiant unique à partir d'un codeNumSeq donné.
      * Si un format FreeMarker est renseigné sur la séquence, il est utilisé pour
      * construire l'identifiant. Sinon, on retombe sur le format historique :
