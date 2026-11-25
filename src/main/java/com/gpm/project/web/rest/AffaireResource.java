@@ -198,6 +198,11 @@ public class AffaireResource {
         return ResponseEntity.ok(affaireService.getMatriculesToGrantPermission(roleCode, societeId));
     }
 
+    @GetMapping("/affaires/{affaireId}/societe-ids-contacts")
+    public ResponseEntity<List<Long>> getSocieteIdsForContacts(@PathVariable Long affaireId) {
+        return ResponseEntity.ok(affaireService.findSocieteIdsForContacts(affaireId));
+    }
+
     /**
      * {@code GET  /affaires/client/:clientId} : get the affaires by "clientId".
      *

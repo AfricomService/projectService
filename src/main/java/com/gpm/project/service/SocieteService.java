@@ -151,6 +151,18 @@ public class SocieteService {
     }
 
     /**
+     * Get one societe by raison sociale (insensible à la casse et aux espaces autour).
+     *
+     * @param raisonSociale la raison sociale recherchée.
+     * @return la première société trouvée.
+     */
+    @Transactional(readOnly = true)
+    public Optional<SocieteDTO> findOneByRaisonSociale(String raisonSociale) {
+        log.debug("Request to get Societe by raisonSociale : {}", raisonSociale);
+        return societeRepository.findAllByRaisonSocialeNormalisee(raisonSociale).stream().findFirst().map(societeMapper::toDto);
+    }
+
+    /**
      * Delete the societe by id.
      *
      * @param id the id of the entity.

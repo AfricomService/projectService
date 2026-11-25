@@ -58,6 +58,15 @@ public class SocieteResource {
     }
 
     /**
+     * {@code GET  /societes/by-raison-sociale} : get the societe by its raison sociale.
+     */
+    @GetMapping("/societes/by-raison-sociale")
+    public ResponseEntity<SocieteDTO> getSocieteByRaisonSociale(@RequestParam("raisonSociale") String raisonSociale) {
+        log.debug("REST request to get Societe by raisonSociale : {}", raisonSociale);
+        return ResponseUtil.wrapOrNotFound(societeService.findOneByRaisonSociale(raisonSociale));
+    }
+
+    /**
      * {@code POST  /societes} : Create a new societe.
      *
      * @param societeDTO the societeDTO to create.
