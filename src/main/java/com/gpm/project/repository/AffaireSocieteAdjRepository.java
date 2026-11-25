@@ -18,4 +18,6 @@ public interface AffaireSocieteAdjRepository extends JpaRepository<AffaireSociet
 
     @Query("SELECT u FROM AffaireSocieteAdj u WHERE u.affaireId = :affaireId")
     List<AffaireSocieteAdj> findAllByAffaireId(@Param("affaireId") Long affaireId);
+
+    List<AffaireSocieteAdj> findByAffaireId(Long affaireId);
 }

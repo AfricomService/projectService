@@ -206,6 +206,12 @@ public class NumsequentielleResource {
         return ResponseEntity.ok(identifiant);
     }
 
+    @PostMapping("/numsequentielles/generate-identifiant-note-frais")
+    public ResponseEntity<String> generateIdentifiantNoteFrais() {
+        String identifiant = numsequentielleService.genererIdentifiantNoteFrais();
+        return ResponseEntity.ok(identifiant);
+    }
+
     @PostMapping("/numsequentielles/preview-format")
     public ResponseEntity<String> previewFormat(@RequestParam String format, @RequestParam String codeNumSeq) {
         try {

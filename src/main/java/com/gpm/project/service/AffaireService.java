@@ -12,6 +12,8 @@ import com.gpm.project.service.mapper.AffaireMapper;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -237,6 +239,30 @@ public class AffaireService {
             .map(ContactSociete::getMatricule)
             .filter(matricule -> matricule != null && !matricule.trim().isEmpty())
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Ids des sociétés dont les contacts peuvent être affectés à l'affaire :
+     * société principale (en premier) + sociétés intermédiaires, sans doublon.
+     */
+    @Transactional(readOnly = true)
+    public List<Long> findSocieteIdsForContacts(Long affaireId) {
+        Affaire affaire = affaireRepository
+            .findById(affaireId)
+            .orElseThrow(() -> new RuntimeException("Affaire not found : " + affaireId));
+
+        Set<Long> ids = new LinkedHashSet<>();
+        if (affaire.getSocieteId() != null) {
+            ids.add(affaire.getSocieteId());
+        }
+        affaireSocieteAdjRepository
+            .findByAffaireId(affaireId)
+            .stream()
+            .map(AffaireSocieteAdj::getSocieteId)
+            .filter(java.util.Objects::nonNull)
+            .forEach(ids::add);
+
+        return new ArrayList<>(ids);
     }
 
     /**
