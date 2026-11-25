@@ -5,7 +5,10 @@ import com.gpm.project.domain.enumeration.AclPermission;
 import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
 import com.gpm.project.service.AffaireService;
+import com.gpm.project.service.RapportTemplateAffaireService;
 import com.gpm.project.service.dto.AffaireDTO;
+import com.gpm.project.service.dto.AffaireRapportTemplatesUpdateDTO;
+import com.gpm.project.service.dto.RemoteRapportTemplateDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,9 +50,12 @@ public class AffaireResource {
 
     private final AffaireRepository affaireRepository;
 
-    public AffaireResource(AffaireService affaireService, AffaireRepository affaireRepository) {
+    private final RapportTemplateAffaireService rapportTemplateAffaireService;
+
+    public AffaireResource(AffaireService affaireService, AffaireRepository affaireRepository, RapportTemplateAffaireService rapportTemplateAffaireService) {
         this.affaireService = affaireService;
         this.affaireRepository = affaireRepository;
+        this.rapportTemplateAffaireService = rapportTemplateAffaireService;
     }
 
     /**
@@ -292,6 +298,31 @@ public class AffaireResource {
     @PatchMapping("/affaires/{affaireId}/statut")
     public ResponseEntity<Void> changeStatut(@PathVariable Long affaireId, @RequestParam String statut) {
         affaireService.changeStatut(statut, affaireId);
+        return ResponseEntity.ok().build();
+    }
+
+    // GET /api/affaires/{id}/rapport-templates → pour pré-cocher la liste à l'ouverture de l'affaire
+    @GetMapping("/affaires/{id}/rapport-templates")
+    public ResponseEntity<List<Long>> getAffaireRapportTemplateIds(@PathVariable Long id) {
+        log.debug("REST request to get rapport template ids for Affaire : {}", id);
+        return ResponseEntity.ok(rapportTemplateAffaireService.getAssignedTemplateIds(id));
+    }
+
+    // variante si le front veut directement le détail des templates associés (labels, description…)
+    @GetMapping("/affaires/{id}/rapport-templates/details")
+    public ResponseEntity<List<RemoteRapportTemplateDTO>> getAffaireRapportTemplates(@PathVariable Long id) {
+        log.debug("REST request to get rapport templates for Affaire : {}", id);
+        return ResponseEntity.ok(rapportTemplateAffaireService.getAssignedTemplates(id));
+    }
+
+    // PUT /api/affaires/{id}/rapport-templates → body : { "rapportTemplateIds": [1, 5, 9] }
+    @PutMapping("/affaires/{id}/rapport-templates")
+    public ResponseEntity<Void> setAffaireRapportTemplates(
+        @PathVariable Long id,
+        @Valid @RequestBody AffaireRapportTemplatesUpdateDTO dto
+    ) throws URISyntaxException {
+        log.debug("REST request to set rapport templates for Affaire : {}", id);
+        rapportTemplateAffaireService.replaceAssignments(id, dto.getRapportTemplateIds());
         return ResponseEntity.ok().build();
     }
 }
