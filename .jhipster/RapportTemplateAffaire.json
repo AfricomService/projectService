@@ -1,0 +1,21 @@
+{
+  "microserviceName": "projectService",
+  "clientRootFolder": "projectService",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "affaireId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "rapportTemplateId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [],
+  "service": "no",
+  "readOnly": false,
+  "pagination": "no",
+  "name": "RapportTemplateAffaire",
+  "changelogDate": "20261125145154"
+}
