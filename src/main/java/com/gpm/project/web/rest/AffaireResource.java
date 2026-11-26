@@ -1,11 +1,17 @@
 package com.gpm.project.web.rest;
 
 import com.gpm.project.domain.Affaire;
+import com.gpm.project.domain.RapportTemplateAffaire;
 import com.gpm.project.domain.enumeration.AclPermission;
 import com.gpm.project.domain.enumeration.StatutAffaire;
 import com.gpm.project.repository.AffaireRepository;
+import com.gpm.project.repository.RapportTemplateAffaireRepository;
 import com.gpm.project.service.AffaireService;
+import com.gpm.project.service.RapportTemplateAffaireService;
+import com.gpm.project.service.ReportApiClient;
 import com.gpm.project.service.dto.AffaireDTO;
+import com.gpm.project.service.dto.AffaireRapportTemplatesUpdateDTO;
+import com.gpm.project.service.dto.RemoteRapportTemplateDTO;
 import com.gpm.project.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -47,9 +54,18 @@ public class AffaireResource {
 
     private final AffaireRepository affaireRepository;
 
-    public AffaireResource(AffaireService affaireService, AffaireRepository affaireRepository) {
+    private final RapportTemplateAffaireService rapportTemplateAffaireService;
+
+    private final ReportApiClient reportApiClient;
+
+    private final RapportTemplateAffaireRepository rapportTemplateAffaireRepository;
+
+    public AffaireResource(AffaireService affaireService, AffaireRepository affaireRepository, RapportTemplateAffaireService rapportTemplateAffaireService, ReportApiClient reportApiClient, RapportTemplateAffaireRepository rapportTemplateAffaireRepository) {
         this.affaireService = affaireService;
         this.affaireRepository = affaireRepository;
+        this.rapportTemplateAffaireService = rapportTemplateAffaireService;
+        this.reportApiClient = reportApiClient;
+        this.rapportTemplateAffaireRepository = rapportTemplateAffaireRepository;
     }
 
     /**
@@ -292,6 +308,94 @@ public class AffaireResource {
     @PatchMapping("/affaires/{affaireId}/statut")
     public ResponseEntity<Void> changeStatut(@PathVariable Long affaireId, @RequestParam String statut) {
         affaireService.changeStatut(statut, affaireId);
+        return ResponseEntity.ok().build();
+    }
+
+//    // GET /api/affaires/{id}/rapport-templates → pour pré-cocher la liste à l'ouverture de l'affaire
+//    @GetMapping("/affaires/{id}/rapport-templates")
+//    public ResponseEntity<List<Long>> getAffaireRapportTemplateIds(@PathVariable Long id) {
+//        log.debug("REST request to get rapport template ids for Affaire : {}", id);
+//        return ResponseEntity.ok(rapportTemplateAffaireService.getAssignedTemplateIds(id));
+//    }
+
+    // variante si le front veut directement le détail des templates associés (labels, description…)
+    @GetMapping("/affaires/{id}/rapport-templates/details")
+    public ResponseEntity<List<RemoteRapportTemplateDTO>> getAffaireRapportTemplates(@PathVariable Long id) {
+        log.debug("REST request to get rapport templates for Affaire : {}", id);
+        return ResponseEntity.ok(rapportTemplateAffaireService.getAssignedTemplates(id));
+    }
+
+//    // PUT /api/affaires/{id}/rapport-templates → body : { "rapportTemplateIds": [1, 5, 9] }
+//    @PutMapping("/affaires/{id}/rapport-templates")
+//    public ResponseEntity<Void> setAffaireRapportTemplates(
+//        @PathVariable Long id,
+//        @Valid @RequestBody AffaireRapportTemplatesUpdateDTO dto
+//    ) throws URISyntaxException {
+//        log.debug("REST request to set rapport templates for Affaire : {}", id);
+//        rapportTemplateAffaireService.replaceAssignments(id, dto.getRapportTemplateIds());
+//        return ResponseEntity.ok().build();
+//    }
+
+    @GetMapping("/affaires/rapport-templates")
+    public ResponseEntity<List<RemoteRapportTemplateDTO>> getAllRapportTemplates() {
+        log.debug("REST request to get all rapport templates");
+        return ResponseEntity.ok(reportApiClient.getTemplates(0, 1000, false).getContent());
+    }
+
+    @GetMapping("/affaires/rapport-templates/by-ids")
+    public ResponseEntity<List<RemoteRapportTemplateDTO>> getRapportTemplatesByIds(
+        @RequestParam("ids") List<Long> ids
+    ) {
+        log.debug("REST request to get rapport templates by ids: {}", ids);
+
+        List<RemoteRapportTemplateDTO> templates =
+            reportApiClient.getTemplates(0, 1000, false).getContent();
+
+        List<RemoteRapportTemplateDTO> filteredTemplates = templates.stream()
+            .filter(template -> ids.contains(template.getId()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(filteredTemplates);
+    }
+
+    @GetMapping("/rapport-templates/by-affaire-id")
+    public ResponseEntity<List<RemoteRapportTemplateDTO>> getRapportTemplatesByAffaireId(
+        @RequestParam("affaireId") Long affaireId
+    ) {
+        log.debug("REST request to get rapport templates by ids: {}");
+
+        List<Long> rapportTemplatesId = rapportTemplateAffaireRepository.findByAffaireId(affaireId).stream().map(RapportTemplateAffaire::getRapportTemplateId).toList();
+
+        List<RemoteRapportTemplateDTO> templates =
+            reportApiClient.getTemplates(0, 1000, false).getContent();
+
+        List<RemoteRapportTemplateDTO> filteredTemplates = templates.stream()
+            .filter(template -> rapportTemplatesId.contains(template.getId()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(filteredTemplates);
+    }
+
+    /**
+     * IDs des rapport templates associés à l'affaire (pour pré-cocher la sélection).
+     */
+    @GetMapping("/affaires/{id}/rapport-templates")
+    public ResponseEntity<List<Long>> getAffaireRapportTemplateIds(@PathVariable Long id) {
+        log.debug("REST request to get rapport template ids for Affaire : {}", id);
+        return ResponseEntity.ok(rapportTemplateAffaireService.getAssignedTemplateIds(id));
+    }
+
+    /**
+     * Remplace la sélection de rapport templates de l'affaire.
+     * Body : { "rapportTemplateIds": [1, 5, 9] }
+     */
+    @PutMapping("/affaires/{id}/rapport-templates")
+    public ResponseEntity<Void> setAffaireRapportTemplates(
+        @PathVariable Long id,
+        @Valid @RequestBody AffaireRapportTemplatesUpdateDTO dto
+    ) {
+        log.debug("REST request to set rapport templates for Affaire : {}", id);
+        rapportTemplateAffaireService.replaceAssignments(id, dto.getRapportTemplateIds());
         return ResponseEntity.ok().build();
     }
 }

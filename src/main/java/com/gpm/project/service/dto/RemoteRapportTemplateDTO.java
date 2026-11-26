@@ -18,6 +18,14 @@ public class RemoteRapportTemplateDTO {
     private Long projetId;
     private Boolean hasTemplateExcelFile;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
